@@ -43,6 +43,9 @@ export async function POST(req: Request) {
     return Response.json({ error: "Yêu cầu không hợp lệ", issues: parsed.error.issues }, { status: 400 });
   }
   const { subject, mode, chapters, messages } = parsed.data;
+  if (!getSubject(subject)!.modes.includes(mode)) {
+    return Response.json({ error: "Môn học này chưa hỗ trợ chế độ đã chọn" }, { status: 400 });
+  }
 
   // Chỉ lấy phần chữ: không tin vai trò system hay phần công cụ do client gửi lên.
   const turns: Turn[] = messages

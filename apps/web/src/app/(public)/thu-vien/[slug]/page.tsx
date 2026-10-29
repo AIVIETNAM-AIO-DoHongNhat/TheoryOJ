@@ -9,6 +9,7 @@ import { PageSkeleton } from "@/components/layout/PageSkeleton";
 import { Prose, ProseHtml } from "@/components/markdown/Prose";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getSubject } from "@/config/subjects";
 import { PdfReaderLoader } from "@/features/library/components/PdfReaderLoader";
 import { getDoc, getLibrary } from "@/features/library/server/catalog";
 import { readMarkdownDoc, renderDocx } from "@/features/library/server/render";
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: PageProps<"/thu-vien/[slug]">
 
 function askHref(doc: LibraryDoc): string {
   const mode = doc.kind === "giao_trinh" ? "qa" : "practice";
-  return `/tro-ly?che-do=${mode}${doc.relatedChapters.length ? `&chuong=${doc.relatedChapters.join(",")}` : ""}`;
+  return `/tro-ly?mon=${doc.subject}&che-do=${mode}${doc.relatedChapters.length ? `&chuong=${doc.relatedChapters.join(",")}` : ""}`;
 }
 
 function Actions({ doc }: { doc: LibraryDoc }) {
@@ -56,6 +57,9 @@ async function DocumentPageContent({ params }: PageProps<"/thu-vien/[slug]">) {
     >
       <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         <Badge>{KIND_LABELS[doc.kind]}</Badge>
+        <Badge variant="outline" render={<Link href={`/mon/${doc.subject}`} />} className="bg-white">
+          {getSubject(doc.subject)?.name}
+        </Badge>
         <span>{docMeta(doc)}</span>
       </div>
     </PageHeader>

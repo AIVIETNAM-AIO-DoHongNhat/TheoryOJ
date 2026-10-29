@@ -1,10 +1,25 @@
 /**
- * Câu hỏi gợi ý cho từng chương, bấm vào thì mở trợ lý với câu hỏi điền sẵn.
- * Giảng viên sửa danh sách ở đây (PLAN.md mục 4.2).
+ * Câu hỏi gợi ý theo môn và theo chương, bấm vào thì mở trợ lý với câu hỏi điền sẵn.
+ * Giảng viên sửa danh sách ở đây (PLAN.md mục 4.2). Mở môn mới thì thêm một khóa cùng id với subjects.ts.
  */
 import type { ModeId } from "@/features/chat/modes";
 
-export const chapterQuestions: Record<string, Record<number, { mode: ModeId; text: string }[]>> = {
+export interface Suggestion {
+  mode: ModeId;
+  text: string;
+}
+
+/** Bốn câu hiện ở màn hình trống của trợ lý. */
+export const subjectSuggestions: Record<string, Suggestion[]> = {
+  ktct: [
+    { mode: "qa", text: "Hàng hóa có những thuộc tính nào?" },
+    { mode: "qa", text: "Phân biệt tư bản bất biến và tư bản khả biến." },
+    { mode: "exercise", text: "Tư bản ứng trước 500 triệu, c/v = 4/1, m' = 150 %. Tính m và p'." },
+    { mode: "practice", text: "Nghị quyết 68-NQ/TW xác định vai trò của kinh tế tư nhân như thế nào?" },
+  ],
+};
+
+export const chapterQuestions: Record<string, Record<number, Suggestion[]>> = {
   ktct: {
     1: [
       { mode: "qa", text: "Đối tượng nghiên cứu của kinh tế chính trị Mác – Lênin là gì?" },

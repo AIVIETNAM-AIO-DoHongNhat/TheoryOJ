@@ -29,22 +29,22 @@ export function MainNav() {
                     {n.label}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="grid w-[640px] grid-cols-2 gap-1 p-2">
+                    <ul className="grid w-[560px] grid-cols-2 gap-1 p-2">
                       {n.children.map((c) => (
                         <li key={c.href}>
                           <NavigationMenuLink
                             render={<Link href={c.href} />}
-                            active={pathname === c.href}
-                            className="flex-col items-start gap-0.5 p-3"
+                            active={pathname.startsWith(c.href)}
+                            className={cn("flex-col items-start gap-0.5 p-3", c.soon && "opacity-60")}
                           >
-                            <span className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">{c.label}</span>
-                            <span className="line-clamp-2 text-sm leading-snug">{c.description}</span>
+                            <span className="text-sm font-semibold leading-snug">{c.label}</span>
+                            <span className={cn("text-xs", c.soon ? "text-muted-foreground" : "text-primary")}>{c.description}</span>
                           </NavigationMenuLink>
                         </li>
                       ))}
                       <li className="col-span-2 border-t pt-1">
                         <NavigationMenuLink render={<Link href={n.href} />} className="p-3 text-sm font-medium text-primary">
-                          Xem tất cả chương →
+                          Tất cả môn học →
                         </NavigationMenuLink>
                       </li>
                     </ul>

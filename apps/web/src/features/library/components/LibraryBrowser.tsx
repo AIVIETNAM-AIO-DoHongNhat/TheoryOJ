@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { ACTIVE_SUBJECTS, getSubject } from "@/config/subjects";
 
 import { DOC_KINDS, type DocKind, docMeta, KIND_LABELS, type LibraryDoc } from "../types";
 import { KIND_ICONS } from "./DocIcon";
@@ -18,19 +19,37 @@ function fold(s: string): string {
   return s.normalize("NFD").replace(/\p{M}/gu, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
 }
 
+// Lọc theo môn chỉ hiện khi Khoa đã mở từ hai môn trở lên.
+const MULTI_SUBJECT = ACTIVE_SUBJECTS.length > 1;
+
 export function LibraryBrowser({ docs }: { docs: LibraryDoc[] }) {
   const [query, setQuery] = useState("");
   const [kinds, setKinds] = useState<string[]>([]);
+  const [subjects, setSubjects] = useState<string[]>([]);
   const present = DOC_KINDS.filter((k) => docs.some((d) => d.kind === k));
 
   const groups = useMemo(() => {
     const q = fold(query.trim());
-    const shown = docs.filter((d) => (!kinds.length || kinds.includes(d.kind)) && (!q || fold(d.title).includes(q)));
+    const shown = docs.filter(
+      (d) =>
+        (!kinds.length || kinds.includes(d.kind)) &&
+        (!subjects.length || subjects.includes(d.subject)) &&
+        (!q || fold(d.title).includes(q)),
+    );
     return present.map((k) => ({ kind: k, docs: shown.filter((d) => d.kind === k) })).filter((g) => g.docs.length);
-  }, [docs, kinds, query, present]);
+  }, [docs, kinds, subjects, query, present]);
 
   return (
     <div className="flex flex-col gap-10">
+      {MULTI_SUBJECT && (
+        <ToggleGroup multiple value={subjects} onValueChange={setSubjects} variant="chip" spacing={1.5} aria-label="Lọc theo môn" className="flex-wrap">
+          {ACTIVE_SUBJECTS.map((s) => (
+            <ToggleGroupItem key={s.id} value={s.id} className="rounded-full px-3.5">
+              {s.name}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      )}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <ToggleGroup
           multiple
@@ -77,7 +96,10 @@ export function LibraryBrowser({ docs }: { docs: LibraryDoc[] }) {
                     <IconTile icon={KIND_ICONS[d.kind]} className="size-11" />
                     <span className="flex min-w-0 flex-1 flex-col gap-1">
                       <span className="text-[15px] font-medium leading-snug group-hover:text-primary">{d.title}</span>
-                      <span className="text-sm text-muted-foreground">{docMeta(d)}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {MULTI_SUBJECT && `${getSubject(d.subject)?.shortName} · `}
+                        {docMeta(d)}
+                      </span>
                     </span>
                     <span className="hidden items-center gap-1.5 text-sm font-medium text-primary sm:flex">
                       Đọc

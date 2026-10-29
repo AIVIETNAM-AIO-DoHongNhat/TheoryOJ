@@ -32,8 +32,8 @@ export const metadata: Metadata = {
     template: "%s | TheoryOJ",
   },
   description:
-    "Trợ lý học tập môn Kinh tế chính trị Mác – Lênin của Khoa Lý luận chính trị, Học viện An ninh nhân dân. " +
-    "Trả lời dựa trên giáo trình và văn kiện, trích nguồn đến số trang.",
+    "Trang học tập các môn lý luận chính trị của Khoa Lý luận chính trị, Học viện An ninh nhân dân: " +
+    "thư viện giáo trình và văn kiện, học liệu theo chương, bài viết và trợ lý học tập có trích dẫn đến số trang.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

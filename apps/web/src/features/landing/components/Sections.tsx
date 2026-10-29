@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, Check, ChevronRight, Library, MessageSquareText, Newspaper } from "lucide-react";
+import { ArrowRight, BookOpen, Check, Library, MessageSquareText, Newspaper } from "lucide-react";
 import Link from "next/link";
 
 import { IconTile, SectionHeading } from "@/components/brand";
@@ -7,18 +7,15 @@ import { Reveal } from "@/components/brand/Reveal";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { DEFAULT_SUBJECT, getSubject, SUBJECTS } from "@/config/subjects";
+import { SUBJECTS } from "@/config/subjects";
 import { MODE_ICONS } from "@/features/chat/mode-icons";
 import { MODE_IDS, MODES } from "@/features/chat/modes";
 import { PostCard } from "@/features/blog/components/PostCard";
 import type { Post } from "@/features/blog/types";
-import { KIND_ICONS } from "@/features/library/components/DocIcon";
-import { type LibraryDoc, printedPage } from "@/features/library/types";
+import { SubjectCard } from "@/features/learning/components/SubjectCard";
 import { cn } from "@/lib/utils";
 
-import { about, cta, facultySection, faq, features, latestPosts, materials, photos, principles, quickLinks, roadmap } from "../content";
+import { about, cta, facultySection, faq, features, latestPosts, photos, principles, quickLinks, roadmap, subjectsSection } from "../content";
 
 function Section({ id, className, children }: { id?: string; className?: string; children: React.ReactNode }) {
   return (
@@ -161,66 +158,24 @@ export function FeaturesSection() {
 
 /* ------------------------------ Học liệu ------------------------------ */
 
-export function MaterialsSection({ textbook, documents }: { textbook?: LibraryDoc; documents: LibraryDoc[] }) {
-  const subject = getSubject(DEFAULT_SUBJECT)!;
+export function SubjectsSection({ docCounts }: { docCounts: Record<string, number> }) {
   return (
     <Section id="hoc-lieu">
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <Reveal>
-          <SectionHeading overline={materials.overline} title={materials.title} lead={materials.lead} />
+          <SectionHeading overline={subjectsSection.overline} title={subjectsSection.title} lead={subjectsSection.lead} />
         </Reveal>
         <Button variant="outline" render={<Link href="/thu-vien" />} nativeButton={false} className="self-start md:self-auto">
           Vào thư viện
           <ArrowRight data-icon="inline-end" />
         </Button>
       </div>
-      <div className="mt-14 grid gap-10 lg:grid-cols-[1.35fr_1fr] lg:gap-12">
-        <Reveal className="flex flex-col gap-4">
-          <h3 className="font-sans text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            {materials.textbookLabel} · {subject.name}
-          </h3>
-          <Card className="gap-0 py-0">
-            {subject.chapters.map((c, i) => {
-              const range = textbook?.chapters.find((x) => x.number === c.number);
-              return (
-                <div key={c.number}>
-                  {i > 0 && <Separator />}
-                  <Link
-                    href={`/mon/${subject.id}/chuong/${c.number}`}
-                    className="group flex items-center gap-5 px-5 py-4 transition-colors hover:bg-primary-soft"
-                  >
-                    <span className="w-8 shrink-0 font-heading text-lg font-bold text-primary">{pad(c.number)}</span>
-                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                      <span className="text-[15px] leading-snug group-hover:text-primary">{c.title}</span>
-                      {textbook && range && (
-                        <span className="text-xs text-muted-foreground">
-                          Tr. {printedPage(textbook, range.from)}–{printedPage(textbook, range.to)}
-                        </span>
-                      )}
-                    </span>
-                    <ChevronRight className="size-4 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
-                  </Link>
-                </div>
-              );
-            })}
-          </Card>
-        </Reveal>
-        <Reveal delay={80} className="flex flex-col gap-4">
-          <h3 className="font-sans text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">{materials.documentsLabel}</h3>
-          <ul className="flex flex-col">
-            {documents.map((d) => {
-              const Icon = KIND_ICONS[d.kind];
-              return (
-                <li key={d.slug} className="border-b first:pt-1">
-                  <Link href={`/thu-vien/${d.slug}`} className="group flex items-start gap-3 py-4">
-                    <Icon className="mt-0.5 size-4 shrink-0 text-primary" strokeWidth={1.75} />
-                    <span className="text-[15px] font-medium leading-snug group-hover:text-primary">{d.title}</span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </Reveal>
+      <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {SUBJECTS.map((s, i) => (
+          <Reveal key={s.id} delay={(i % 3) * 60}>
+            <SubjectCard subject={s} docCount={docCounts[s.id] ?? 0} />
+          </Reveal>
+        ))}
       </div>
     </Section>
   );

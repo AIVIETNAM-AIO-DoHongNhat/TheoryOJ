@@ -53,10 +53,14 @@ export function MobileMenu() {
                       key={c.href}
                       href={c.href}
                       onClick={close}
-                      className={cn("rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted", pathname === c.href && "text-primary")}
+                      className={cn(
+                        "flex flex-col rounded-md px-3 py-2 text-sm hover:bg-muted",
+                        pathname.startsWith(c.href) && "text-primary",
+                        c.soon && "opacity-60",
+                      )}
                     >
                       <span className="font-medium">{c.label}</span>
-                      <span className="line-clamp-1 text-xs">{c.description}</span>
+                      <span className="text-xs text-muted-foreground">{c.description}</span>
                     </Link>
                   ))}
                 </div>

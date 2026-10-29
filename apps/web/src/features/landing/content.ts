@@ -2,6 +2,7 @@
  * Toàn bộ câu chữ của landing page (PLAN.md mục 4.4). Khoa sửa lời văn ở đây, không cần chạm vào bố cục.
  * Tên đơn vị và cách xưng hô chờ Khoa chốt (PLAN.md mục 11, quyết định 7).
  */
+
 import type { ModeId } from "@/features/chat/modes";
 
 export const site = {
@@ -38,13 +39,13 @@ export const hero = {
   title: "Học tập lý luận chính trị trực tuyến",
   lead:
     "Đọc giáo trình và văn kiện của Đảng, theo dõi bài viết ôn tập của giảng viên, " +
-    "hỏi đáp cùng trợ lý học tập có trích dẫn đến từng trang. Bắt đầu với môn Kinh tế chính trị Mác – Lênin.",
+    "hỏi đáp cùng trợ lý học tập có trích dẫn đến từng trang, cho các môn lý luận chính trị của Khoa.",
   primary: { href: "/thu-vien", label: "Vào thư viện" },
   secondary: { href: "/tro-ly", label: "Hỏi trợ lý" },
 };
 
 export const quickLinks = [
-  { href: "/mon/ktct", title: "Học liệu theo chương", text: "Sáu chương giáo trình, mỗi chương có tài liệu, bài viết và câu hỏi gợi ý." },
+  { href: "/mon", title: "Học liệu các môn", text: "Học liệu theo môn và theo chương, kèm tài liệu, bài viết và câu hỏi gợi ý." },
   { href: "/thu-vien", title: "Thư viện tài liệu", text: "Giáo trình, văn kiện, tài liệu tham khảo đọc trực tuyến hoặc tải về." },
   { href: "/bai-viet", title: "Bài viết", text: "Hướng dẫn và bài ôn tập do giảng viên Khoa biên soạn." },
   { href: "/tro-ly", title: "Trợ lý học tập", text: "Hỏi đáp, giải bài tập, liên hệ thực tiễn và ôn thi, có trích nguồn." },
@@ -61,7 +62,7 @@ export const about = {
   title: "Ứng dụng chuyển đổi số trong dạy và học lý luận chính trị",
   paragraphs: [
     "Hưởng ứng yêu cầu chuyển đổi số trong giáo dục, đào tạo, Khoa Lý luận chính trị xây dựng TheoryOJ, " +
-      "trợ lý học tập ứng dụng trí tuệ nhân tạo cho các môn lý luận chính trị, bắt đầu từ môn Kinh tế chính trị Mác – Lênin.",
+      "trang học tập trực tuyến cho các môn lý luận chính trị: thư viện tài liệu, học liệu theo chương, bài viết của giảng viên và trợ lý học tập ứng dụng trí tuệ nhân tạo.",
     "Trợ lý không thay thế giáo trình và bài giảng của giảng viên. Hệ thống giúp học viên tra cứu nhanh, " +
       "tự ôn tập ngoài giờ lên lớp và rèn luyện kỹ năng vận dụng lý luận vào thực tiễn công tác bảo vệ an ninh quốc gia.",
   ],
@@ -85,23 +86,10 @@ export const features = {
   } satisfies Record<ModeId, string[]>,
 };
 
-export const sampleQuestions: { mode: ModeId; text: string }[] = [
-  { mode: "qa", text: "Hàng hóa có những thuộc tính nào?" },
-  { mode: "qa", text: "Phân biệt tư bản bất biến và tư bản khả biến." },
-  { mode: "exercise", text: "Tư bản ứng trước 500 triệu, c/v = 4/1, m' = 150 %. Tính m và p'." },
-  { mode: "qa", text: "Độc quyền nhà nước trong chủ nghĩa tư bản có những biểu hiện nào?" },
-  { mode: "practice", text: "Nghị quyết 68-NQ/TW xác định vai trò của kinh tế tư nhân như thế nào?" },
-  { mode: "review", text: "Hãy hỏi tôi một câu về chương 5." },
-  { mode: "qa", text: "Vì sao công nghiệp hóa phải gắn với hiện đại hóa?" },
-  { mode: "practice", text: "Liên hệ quy luật cạnh tranh với công tác phòng chống gian lận thương mại." },
-];
-
-export const materials = {
+export const subjectsSection = {
   overline: "Học liệu",
-  title: "Giáo trình và văn kiện",
-  lead: "Mỗi chương có trang riêng gồm phần đọc trong giáo trình, văn kiện liên quan, bài viết ôn tập và câu hỏi gợi ý.",
-  textbookLabel: "Giáo trình",
-  documentsLabel: "Văn kiện mới cập nhật",
+  title: "Các môn lý luận chính trị",
+  lead: "Mỗi môn có học liệu theo chương, tài liệu trong Thư viện và trợ lý học tập riêng. Các môn được bổ sung dần theo kế hoạch của Khoa.",
 };
 
 export const principles = {
@@ -179,7 +167,7 @@ export const footer = {
     {
       title: "Học tập",
       links: [
-        { label: "Học liệu theo chương", href: "/mon/ktct" },
+        { label: "Học liệu các môn", href: "/mon" },
         { label: "Thư viện tài liệu", href: "/thu-vien" },
         { label: "Bài viết", href: "/bai-viet" },
         { label: "Giới thiệu", href: "/gioi-thieu" },

@@ -5,7 +5,6 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { DEFAULT_SUBJECT, getSubject } from "@/config/subjects";
 import { ChatWindow } from "@/features/chat/components/ChatWindow";
 import { MODE_IDS, type ModeId } from "@/features/chat/modes";
-import { sampleQuestions } from "@/features/landing/content";
 
 export const metadata: Metadata = { title: "Trợ lý" };
 
@@ -15,12 +14,13 @@ function first(v: string | string[] | undefined): string | undefined {
   return Array.isArray(v) ? v[0] : v;
 }
 
-// Nhận ?q=...&che-do=...&chuong=3,5 để thẻ câu hỏi mẫu và thẻ chương ở landing page mở sẵn trợ lý.
+// Nhận ?mon=...&che-do=...&chuong=3,5&q=... để các trang học liệu, thư viện, bài viết mở sẵn trợ lý đúng ngữ cảnh.
 async function Chat({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
-  const subject = getSubject(DEFAULT_SUBJECT)!;
-  const modeParam = first(params["che-do"]);
-  const mode: ModeId = MODE_IDS.includes(modeParam as ModeId) ? (modeParam as ModeId) : "qa";
+  const requested = getSubject(first(params.mon) ?? "");
+  const subject = requested?.active ? requested : getSubject(DEFAULT_SUBJECT)!;
+  const modeParam = first(params["che-do"]) as ModeId;
+  const mode: ModeId = MODE_IDS.includes(modeParam) && subject.modes.includes(modeParam) ? modeParam : subject.modes[0];
   const chapters = (first(params.chuong) ?? "")
     .split(",")
     .map(Number)
@@ -28,13 +28,10 @@ async function Chat({ searchParams }: { searchParams: SearchParams }) {
 
   return (
     <ChatWindow
-      subject={subject.id}
-      subjectName={subject.name}
-      chapters={subject.chapters}
+      initialSubject={subject.id}
       initialMode={mode}
       initialChapters={chapters}
       initialQuestion={(first(params.q) ?? "").slice(0, 1500)}
-      suggestions={sampleQuestions.slice(0, 4)}
     />
   );
 }

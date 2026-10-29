@@ -67,7 +67,7 @@ async function PostPageContent({ params }: PageProps<"/bai-viet/[slug]">) {
             )}
             <div className="flex flex-col gap-2">
               <p className="text-sm text-muted-foreground">Còn thắc mắc về nội dung bài viết?</p>
-              <Button render={<Link href={`/tro-ly${post.chapters.length ? `?chuong=${post.chapters.join(",")}` : ""}`} />} nativeButton={false}>
+              <Button render={<Link href={`/tro-ly?mon=${post.subject}${post.chapters.length ? `&chuong=${post.chapters.join(",")}` : ""}`} />} nativeButton={false}>
                 <MessageSquareText data-icon="inline-start" />
                 Hỏi trợ lý
               </Button>

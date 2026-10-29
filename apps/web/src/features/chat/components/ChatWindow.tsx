@@ -14,32 +14,32 @@ import {
   MessageScrollerViewport,
 } from "@/components/ui/message-scroller";
 import { Trace, TraceIcon, TraceLine, TraceTitle } from "@/components/ui/trace";
-import type { Chapter } from "@/config/subjects";
+import { type Chapter, getSubject } from "@/config/subjects";
+import { subjectSuggestions } from "@/features/learning/content";
 import { cn } from "@/lib/utils";
 
 import { MODE_ICONS } from "../mode-icons";
 import { MODES, type ModeId } from "../modes";
 import type { ChatMessage } from "../types";
-import { ChapterMenu, ModeMenu } from "./ChatControls";
+import { ChapterMenu, ModeMenu, SubjectMenu } from "./ChatControls";
 import { MessageView } from "./MessageView";
 
 const MAX_QUESTION = 1500;
 
 export interface ChatWindowProps {
-  subject: string;
-  subjectName: string;
-  chapters: Chapter[];
+  initialSubject: string;
   initialMode: ModeId;
   initialChapters: number[];
   initialQuestion: string;
-  suggestions: { mode: ModeId; text: string }[];
 }
 
 /**
  * Khung trợ lý một cột ở giữa. Chưa có tin nhắn thì ô nhập nằm giữa màn hình kèm câu hỏi gợi ý;
- * có tin nhắn thì hội thoại cuộn ở trên, ô nhập neo ở đáy. Chế độ và chương chọn ngay trong ô nhập.
+ * có tin nhắn thì hội thoại cuộn ở trên, ô nhập neo ở đáy. Môn, chế độ và chương chọn ngay trong ô nhập.
  */
 export function ChatWindow(props: ChatWindowProps) {
+  const [subjectId, setSubjectId] = useState(props.initialSubject);
+  const subject = getSubject(subjectId)!;
   const [mode, setMode] = useState<ModeId>(props.initialMode);
   const [chapters, setChapters] = useState<number[]>(props.initialChapters);
   const [input, setInput] = useState(props.initialQuestion);
@@ -47,8 +47,19 @@ export function ChatWindow(props: ChatWindowProps) {
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
   const busy = status === "submitted" || status === "streaming";
-  const body = { subject: props.subject, mode, chapters };
+  const body = { subject: subjectId, mode, chapters };
   const empty = messages.length === 0;
+  const suggestions = (subjectSuggestions[subjectId] ?? []).filter((s) => subject.modes.includes(s.mode)).slice(0, 4);
+
+  // Đổi môn thì bắt đầu hội thoại mới: chương và nguồn tài liệu của môn cũ không còn đúng.
+  const changeSubject = (id: string) => {
+    if (id === subjectId) return;
+    const next = getSubject(id)!;
+    setSubjectId(id);
+    setChapters([]);
+    if (!next.modes.includes(mode)) setMode(next.modes[0]);
+    setMessages([]);
+  };
 
   const send = (text: string, sendMode: ModeId = mode) => {
     const question = text.trim();
@@ -65,9 +76,12 @@ export function ChatWindow(props: ChatWindowProps) {
       onSend={() => send(input)}
       onStop={stop}
       busy={busy}
+      subject={subjectId}
+      onSubject={changeSubject}
+      modes={subject.modes}
       mode={mode}
       onMode={setMode}
-      chapterList={props.chapters}
+      chapterList={subject.chapters}
       chapters={chapters}
       onChapters={setChapters}
       large={empty}
@@ -82,12 +96,12 @@ export function ChatWindow(props: ChatWindowProps) {
             <AcademyLogo className="size-14 drop-shadow-none" />
             <h1 className="text-balance text-3xl font-bold sm:text-4xl">Đồng chí muốn ôn tập nội dung nào?</h1>
             <p className="max-w-xl text-pretty text-muted-foreground">
-              {props.subjectName}. Câu trả lời chỉ dựa trên giáo trình và văn kiện, kèm số trang để đối chiếu.
+              {subject.name}. Câu trả lời chỉ dựa trên giáo trình và văn kiện, kèm số trang để đối chiếu.
             </p>
           </div>
           {composer}
           <div className="grid gap-2 sm:grid-cols-2">
-            {props.suggestions.map((s) => {
+            {suggestions.map((s) => {
               const Icon = MODE_ICONS[s.mode];
               return (
                 <button
@@ -114,7 +128,7 @@ export function ChatWindow(props: ChatWindowProps) {
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="border-b">
         <div className="mx-auto flex h-11 max-w-3xl items-center justify-between gap-3 px-4">
-          <span className="truncate text-sm font-medium text-muted-foreground">{props.subjectName}</span>
+          <span className="truncate text-sm font-medium text-muted-foreground">{subject.name}</span>
           <Button variant="ghost" size="sm" onClick={() => setMessages([])} disabled={busy}>
             <SquarePen data-icon="inline-start" />
             Hội thoại mới
@@ -170,6 +184,9 @@ function Composer({
   onSend,
   onStop,
   busy,
+  subject,
+  onSubject,
+  modes,
   mode,
   onMode,
   chapterList,
@@ -182,6 +199,9 @@ function Composer({
   onSend: () => void;
   onStop: () => void;
   busy: boolean;
+  subject: string;
+  onSubject: (s: string) => void;
+  modes: ModeId[];
   mode: ModeId;
   onMode: (m: ModeId) => void;
   chapterList: Chapter[];
@@ -213,8 +233,9 @@ function Composer({
           aria-label="Câu hỏi"
           className={cn("max-h-52 px-5 pt-4 text-[15px]", large ? "min-h-20" : "min-h-12")}
         />
-        <InputGroupAddon align="block-end" className="gap-1 px-2.5 pb-2.5">
-          <ModeMenu value={mode} onChange={onMode} />
+        <InputGroupAddon align="block-end" className="no-scrollbar gap-1 overflow-x-auto px-2.5 pb-2.5">
+          <SubjectMenu value={subject} onChange={onSubject} />
+          <ModeMenu modes={modes} value={mode} onChange={onMode} />
           <ChapterMenu chapters={chapterList} value={chapters} onChange={onChapters} />
           {busy ? (
             <InputGroupButton variant="outline" size="icon-sm" onClick={onStop} aria-label="Dừng" className="ml-auto rounded-full">

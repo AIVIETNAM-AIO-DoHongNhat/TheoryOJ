@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
+import { getSubject } from "@/config/subjects";
 import { cn } from "@/lib/utils";
 
 import { formatDate, type Post } from "../types";
@@ -24,7 +25,8 @@ export function PostCard({ post, featured }: { post: Post; featured?: boolean })
           <div className="absolute inset-0 flex flex-col justify-between p-5 text-white sm:p-6">
             <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.16em] text-mint">{post.category}</span>
             <span className={cn("line-clamp-3 font-heading font-bold leading-snug text-white/90", featured ? "text-2xl" : "text-lg")}>
-              {post.chapters.length > 0 ? `Chương ${post.chapters.join(", ")}` : "Khoa Lý luận chính trị"}
+              {getSubject(post.subject)?.name ?? "Khoa Lý luận chính trị"}
+              {post.chapters.length > 0 && <span className="mt-1 block font-sans text-sm font-medium text-mint">Chương {post.chapters.join(", ")}</span>}
             </span>
           </div>
         )}

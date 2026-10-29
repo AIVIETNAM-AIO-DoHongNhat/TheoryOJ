@@ -56,7 +56,7 @@ async function ChapterPageContent({ params }: PageProps<"/mon/[mon]/chuong/[so]"
   return (
     <>
       <PageHeader
-        crumbs={[{ label: "Học liệu", href: `/mon/${subject.id}` }, { label: `Chương ${n}` }]}
+        crumbs={[{ label: "Học liệu", href: "/mon" }, { label: subject.shortName, href: `/mon/${subject.id}` }, { label: `Chương ${n}` }]}
         title={
           <>
             <span className="mb-2 block font-sans text-sm font-semibold uppercase tracking-[0.14em] text-primary">Chương {n}</span>
@@ -76,7 +76,7 @@ async function ChapterPageContent({ params }: PageProps<"/mon/[mon]/chuong/[so]"
                 Đọc trong giáo trình
               </Button>
             )}
-            <Button variant="outline" render={<Link href={`/tro-ly?che-do=review&chuong=${n}`} />} nativeButton={false} className="bg-white">
+            <Button variant="outline" render={<Link href={`/tro-ly?mon=${subject.id}&che-do=review&chuong=${n}`} />} nativeButton={false} className="bg-white">
               <GraduationCap data-icon="inline-start" />
               Ôn thi chương
             </Button>
@@ -91,7 +91,7 @@ async function ChapterPageContent({ params }: PageProps<"/mon/[mon]/chuong/[so]"
             {questions.map((q) => (
               <li key={q.text}>
                 <Link
-                  href={`/tro-ly?che-do=${q.mode}&chuong=${n}&q=${encodeURIComponent(q.text)}`}
+                  href={`/tro-ly?mon=${subject.id}&che-do=${q.mode}&chuong=${n}&q=${encodeURIComponent(q.text)}`}
                   className="group flex items-center gap-4 rounded-xl border bg-white p-4 transition-colors hover:border-primary/40 hover:bg-primary-soft"
                 >
                   <IconTile icon={MODE_ICONS[q.mode]} />
@@ -104,7 +104,7 @@ async function ChapterPageContent({ params }: PageProps<"/mon/[mon]/chuong/[so]"
               </li>
             ))}
           </ul>
-          <Button variant="link" render={<Link href={`/tro-ly?chuong=${n}`} />} nativeButton={false} className="self-start px-0">
+          <Button variant="link" render={<Link href={`/tro-ly?mon=${subject.id}&chuong=${n}`} />} nativeButton={false} className="self-start px-0">
             <MessageSquareText data-icon="inline-start" />
             Đặt câu hỏi khác về chương {n}
           </Button>
