@@ -1,0 +1,4 @@
+# Học liệu gốc lưu bằng Git LFS
+content/**/*.pdf  filter=lfs diff=lfs merge=lfs -text
+content/**/*.doc  filter=lfs diff=lfs merge=lfs -text
+content/**/*.docx filter=lfs diff=lfs merge=lfs -text

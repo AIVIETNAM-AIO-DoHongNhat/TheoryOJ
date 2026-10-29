@@ -1,0 +1,24 @@
+# Bí mật và môi trường
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Dữ liệu sinh ra
+legacy/streamlit/db/
+legacy/streamlit/logs.csv
+eval/**/results/
+
+# Node
+node_modules/
+.next/
+
+# Editor và hệ điều hành
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

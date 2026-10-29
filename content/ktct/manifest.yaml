@@ -1,0 +1,109 @@
+# Danh mục học liệu môn Kinh tế chính trị Mác – Lênin.
+#
+# Quy ước:
+#   file          đường dẫn tính từ content/ktct/
+#   kind          giao_trinh | van_kien | tham_khao | cand | so_lieu
+#   page_offset   trang in = trang PDF (đếm từ 1) + page_offset. Chỉ áp dụng cho PDF.
+#   chapters      ranh giới chương theo trang PDF, gồm cả hai đầu.
+#   related_chapters  chương có thể liên hệ, dùng cho chế độ Liên hệ thực tiễn.
+#   index         main (mặc định) | separate (chỉ mục riêng, không lẫn vào tìm kiếm chính)
+#   cite_by       page (PDF) | section (MD, DOCX: trích theo tiêu đề mục gần nhất)
+#
+# Đo ngày 29/10/2026. Những file có trường `todo` còn việc phải làm.
+
+subject: ktct
+name: Kinh tế chính trị Mác – Lênin
+
+documents:
+  - file: giao-trinh/GT_KTCT.pdf
+    title: Giáo trình Kinh tế chính trị Mác – Lênin (dành cho bậc đại học không chuyên lý luận chính trị)
+    publisher: Bộ Giáo dục và Đào tạo
+    kind: giao_trinh
+    cite_by: page
+    pdf_pages: 178
+    # Số trang in ở chân trang khớp với (trang PDF − 1) trên toàn bộ 178 trang.
+    # Lưu ý: PDF này được dàn trang lại bằng LibreOffice (2025), mục lục ở trang PDF 176–178
+    # ghi số trang khác với chân trang, nên số trang in ở đây là của bản PDF, chưa chắc khớp
+    # với sách in của NXB. Cần giảng viên đối chiếu vài trang với sách giấy.
+    page_offset: -1
+    todo: đối chiếu số trang với sách in
+    chapters:
+      - {number: 1, pages: [5, 18]}
+      - {number: 2, pages: [19, 49]}
+      - {number: 3, pages: [50, 75]}
+      - {number: 4, pages: [76, 103]}
+      - {number: 5, pages: [104, 135]}
+      - {number: 6, pages: [136, 175]}
+    # Trang PDF 1–4: bìa, ban biên soạn, lời nói đầu. 176–178: mục lục. Không nạp.
+    skip_pages: [1, 2, 3, 4, 176, 177, 178]
+
+  # ---------- Văn kiện ----------
+  - file: van-kien/13-NQ-11-NQ-TW-2017.md
+    title: Nghị quyết 11-NQ/TW (2017) về hoàn thiện thể chế kinh tế thị trường định hướng XHCN
+    kind: van_kien
+    cite_by: section
+    related_chapters: [5]
+
+  - file: van-kien/14-NQ-68-NQ-TW-2025.md
+    title: Nghị quyết 68-NQ/TW (2025) về phát triển kinh tế tư nhân
+    kind: van_kien
+    cite_by: section
+    related_chapters: [5]
+
+  - file: van-kien/15-NQ-57-NQ-TW-2024.md
+    title: Nghị quyết 57-NQ/TW (2024) về đột phá phát triển khoa học, công nghệ, đổi mới sáng tạo và chuyển đổi số quốc gia
+    kind: van_kien
+    cite_by: section
+    related_chapters: [6]
+
+  - file: van-kien/17-NQ-66-NQ-TW-2025.md
+    title: Nghị quyết 66-NQ/TW (2025) về đổi mới công tác xây dựng và thi hành pháp luật
+    kind: van_kien
+    cite_by: section
+    related_chapters: [5]
+
+  - file: van-kien/21-Bao-cao-tong-ket-40-nam-doi-moi.docx
+    title: Báo cáo tổng kết 40 năm đổi mới
+    kind: van_kien
+    cite_by: section
+    related_chapters: [5, 6]
+    # Chuyển từ _goc/21-Bao-cao-tong-ket-40-nam-doi-moi.doc bằng Microsoft Word (127 trang, 342 nghìn ký tự).
+    # Tiêu đề mục đều ở kiểu Normal, cần nhận dạng theo mẫu "I-", "1.1." khi cắt đoạn.
+    converted_from: _goc/21-Bao-cao-tong-ket-40-nam-doi-moi.doc
+    todo: ghi nguồn và ngày ban hành
+
+  # ---------- Tham khảo ----------
+  - file: tham-khao/15b-Hoi-Dap-NQ-57-NQ-TW.pdf
+    title: Hỏi – đáp về Nghị quyết 57-NQ/TW (NXB Chính trị quốc gia Sự thật)
+    kind: tham_khao
+    cite_by: page
+    pdf_pages: 168
+    page_offset: 0
+    related_chapters: [6]
+
+  - file: tham-khao/18-TBT-Nguyen-Phu-Trong-CNXH-2021.md
+    title: Một số vấn đề lý luận và thực tiễn về chủ nghĩa xã hội và con đường đi lên chủ nghĩa xã hội ở Việt Nam (Nguyễn Phú Trọng, 2021)
+    kind: tham_khao
+    cite_by: section
+    related_chapters: [5]
+
+  - file: tham-khao/20-VJOL-Hoan-thien-the-che-KTTN-NQ68.pdf
+    title: Hoàn thiện thể chế phát triển kinh tế tư nhân theo Nghị quyết 68-NQ/TW (Thông tin Khoa học lý luận chính trị, số 7 (120), 2025)
+    kind: tham_khao
+    cite_by: page
+    pdf_pages: 7
+    page_offset: 48         # trang PDF 1 là tr. 49 của tạp chí
+    related_chapters: [5]
+
+  # ---------- Văn bản CAND (mục 5 của PLAN.md) ----------
+  # Chưa có file. Khoa duyệt danh mục rồi đặt vào cand/ với kind: cand.
+
+  # ---------- Số liệu ----------
+  - file: so-lieu/19-Nien-giam-thong-ke-2025.pdf
+    title: Niên giám thống kê 2025
+    publisher: Tổng cục Thống kê
+    kind: so_lieu
+    index: separate         # 3.815/4.649 đoạn trong chỉ mục cũ, phải tách khỏi tìm kiếm chính
+    cite_by: page
+    pdf_pages: 1557
+    page_offset: -1
