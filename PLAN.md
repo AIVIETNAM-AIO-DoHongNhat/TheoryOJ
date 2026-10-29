@@ -73,6 +73,25 @@ Kết quả này dẫn tới ba điều chỉnh.
 - **Ngưỡng điểm không tách được câu khiêu khích.** Câu khiêu khích đạt tới 0,64, cao hơn bài tính thấp nhất (0,58). Ngay cả câu ngoài phạm vi (cao nhất 0,60) cũng chồng lên vùng điểm của bài tính. Ngưỡng chỉ là lớp chặn đầu, phải kết hợp với bước phân loại ở mục 3.
 - **Tách niên giám vẫn giữ,** nhưng với lý do giảm kích thước chỉ mục và chuẩn bị chế độ hỏi số liệu, không còn là lý do sửa lỗi tìm kiếm.
 
+### 2.4. Kết quả của dịch vụ tìm kiếm mới
+
+Đo ngày 29/10/2026 bằng `services/rag/scripts/evaluate.py` trên cùng 50 câu nháp. Chỉ mục mới có 1.540 đoạn (chưa nạp niên giám), cắt theo câu, gắn chương, trang in và mục. Kết quả lưu ở `eval/ktct/results/rag-20261029-1919.json`. Máy đo chỉ dùng CPU.
+
+| Chỉ số | Streamlit | vector | vector + từ khóa | + reranker |
+|---|---|---|---|---|
+| hit@5 trên 30 câu | 30/30 | 30/30 | 30/30 | 30/30 |
+| hit@1 | 30/30 | 30/30 | 25/30 | 23/30 |
+| Điểm cao nhất, câu lý thuyết và bài tính | 0,58 – 0,89 | 0,57 – 0,87 | như vector | 0,66 – 1,00 |
+| Điểm cao nhất, câu ngoài phạm vi | 0,43 – 0,60 | 0,36 – 0,55 | như vector | 0,00 – 0,11 |
+| Điểm cao nhất, câu khiêu khích | 0,43 – 0,64 | 0,42 – 0,67 | như vector | 0,00 – 0,97 |
+| Thời gian tìm, trung vị | – | 0,07 s | 0,10 s | 6,9 s (CPU), 0,53 s (RTX 4060) |
+
+Kết quả này dẫn tới ba nhận xét.
+
+- **hit@5 không còn phân biệt được các phương án,** vì bộ câu nháp quá dễ (mục 2.3). Chưa thể kết luận tìm từ khóa hay reranker giúp tăng độ phủ cho đến khi có câu khó.
+- **Reranker tách được câu ngoài phạm vi.** Với ngưỡng 0,3 trên điểm reranker, cả 30 câu trong phạm vi được giữ và cả 10 câu ngoài phạm vi bị chặn. Câu khiêu khích vẫn đạt tới 0,97, nên bước phân loại ở mục 3 là bắt buộc.
+- **hit@1 giảm khi thêm reranker,** vì điểm reranker bão hòa gần 1,0 và trang đứng đầu thường là trang lân cận hoặc một đoạn văn kiện cùng chủ đề (ví dụ `ktct-021`, `ktct-024`). Giảng viên cần xem bảy câu này để quyết định đây là lỗi tìm kiếm hay `gold` khoanh quá hẹp. Reranker trên CPU mất khoảng 7 giây mỗi câu, vượt mục tiêu độ trễ ở mục 9. Trên GPU (RTX 4060 Laptop, torch 2.15.0+cu132) còn 0,53 giây với cùng kết quả, nên máy chủ triển khai cần GPU.
+
 ---
 
 ## 3. Kiến trúc
@@ -276,6 +295,8 @@ documents:
 //     "max_score": 0.83 }
 ```
 
+Dịch vụ rag tự tạo và sở hữu hai bảng `documents`, `chunks`. Bảng `chunks` lưu số chương (`chapter`) thay cho khóa ngoại `chapter_id`, vì danh sách chương nằm trong `manifest.yaml`. Next.js chỉ đọc hai bảng này. `score` là điểm reranker trong khoảng 0–1, kèm `vector_score` để so với điểm nền.
+
 `POST /ingest` nhận `{ "subject": "ktct", "force": false }` và trả về số đoạn của từng file cùng danh sách file bị bỏ qua kèm lý do.
 
 ---
@@ -287,7 +308,7 @@ Lộ trình giả định một người phát triển chính trong khoảng 12 
 | Giai đoạn | Tuần | Việc chính | Tiêu chí hoàn thành |
 |---|---|---|---|
 | 0. Dữ liệu và mức nền | 1 | Đã xong: sửa repo, chuyển file `.doc`, đo `page_offset`, viết `manifest.yaml`, tách niên giám vào `so-lieu/`, soạn 50 câu nháp, đo hit@5 của bản Streamlit (mục 2.3). Còn lại: giảng viên duyệt và bổ sung câu khó vào bộ câu chuẩn, đo từ chối và tính toán bằng `--llm`, đối chiếu số trang với sách in, chốt mẫu hồ sơ sáng kiến. | `golden.jsonl` được giảng viên duyệt, có đủ điểm nền ở mục 9 cho bản Streamlit |
-| 1. Dịch vụ tìm kiếm | 2–3 | Dựng Postgres + pgvector, chuyển code Python vào `services/rag`, thêm metadata, tìm kết hợp, reranker, nạp tăng dần, `evaluate.py` | hit@5 từ 85 % trên bộ câu đã duyệt và không thấp hơn bản Streamlit trên cùng bộ câu |
+| 1. Dịch vụ tìm kiếm | 2–3 | Đã xong: Postgres + pgvector, `services/rag` (FastAPI `/search`, `/ingest`, `/health`), metadata chương, trang in, mục, tìm kết hợp, reranker, nạp tăng dần, `evaluate.py`, 19 kiểm thử (mục 2.4). Niên giám đã nạp vào chỉ mục riêng (3.370 đoạn, 114 giây trên GPU), chỉ tìm khi gọi với `kinds: ["so_lieu"]`. Còn lại: đo lại trên bộ câu đã duyệt. | hit@5 từ 85 % trên bộ câu đã duyệt và không thấp hơn bản Streamlit trên cùng bộ câu |
 | 2. Next.js và chatbot | 4–5 | Khởi tạo `apps/web`, landing page bản tĩnh, trang `/tro-ly` với 4 chế độ, KaTeX, trích dẫn, công cụ tính toán, viết lại câu hỏi, bước phân loại câu hỏi, ngưỡng từ chối | Từ chối đúng từ 90 % câu ngoài phạm vi và câu khiêu khích, bài tập đúng 100 % về số |
 | 3. Người dùng và quản trị | 6–7 | Better Auth, nhập tài khoản từ Excel, giới hạn tần suất, lưu hội thoại, đánh giá, trang quản trị và thống kê, gỡ `legacy/` | Giảng viên xem và lọc được log |
 | 4. Học liệu và ôn tập | 8–10 | Trang 6 chương, trắc nghiệm, bài tập sinh số, bảng tiến độ | Mỗi chương có tối thiểu 20 câu trắc nghiệm |

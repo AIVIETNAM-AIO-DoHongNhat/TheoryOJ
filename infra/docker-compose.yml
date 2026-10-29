@@ -1,0 +1,44 @@
+# Giai đoạn 1: db và rag. Giai đoạn 2 bổ sung web, caddy, ollama (mục 3 của PLAN.md).
+#
+#   docker compose -f infra/docker-compose.yml up -d db       # chỉ cơ sở dữ liệu, chạy rag trên máy
+#   docker compose -f infra/docker-compose.yml up -d          # cả rag trong container
+
+name: theoryoj
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: theoryoj
+      POSTGRES_USER: theoryoj
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-theoryoj}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    # Chỉ mở trên 127.0.0.1 để chạy rag trên máy khi phát triển. Bản triển khai bỏ dòng này.
+    ports:
+      - "127.0.0.1:${DB_PORT:-5433}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U theoryoj -d theoryoj"]
+      interval: 5s
+      retries: 10
+
+  rag:
+    build: ../services/rag
+    environment:
+      DATABASE_URL: postgresql://theoryoj:${POSTGRES_PASSWORD:-theoryoj}@db:5432/theoryoj
+      CONTENT_DIR: /content
+      RAG_API_KEY: ${RAG_API_KEY:-}
+    volumes:
+      - ../content:/content:ro
+      - hfcache:/root/.cache/huggingface
+    depends_on:
+      db:
+        condition: service_healthy
+    # Không mở cổng ra ngoài. Next.js gọi http://rag:8001 trong mạng nội bộ.
+    expose:
+      - "8001"
+
+volumes:
+  pgdata:
+  hfcache:

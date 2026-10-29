@@ -4,7 +4,7 @@
 #   file          đường dẫn tính từ content/ktct/
 #   kind          giao_trinh | van_kien | tham_khao | cand | so_lieu
 #   page_offset   trang in = trang PDF (đếm từ 1) + page_offset. Chỉ áp dụng cho PDF.
-#   chapters      ranh giới chương theo trang PDF, gồm cả hai đầu.
+#   chapters      ranh giới chương theo trang PDF, gồm cả hai đầu, kèm tên chương.
 #   related_chapters  chương có thể liên hệ, dùng cho chế độ Liên hệ thực tiễn.
 #   index         main (mặc định) | separate (chỉ mục riêng, không lẫn vào tìm kiếm chính)
 #   cite_by       page (PDF) | section (MD, DOCX: trích theo tiêu đề mục gần nhất)
@@ -28,12 +28,12 @@ documents:
     page_offset: -1
     todo: đối chiếu số trang với sách in
     chapters:
-      - {number: 1, pages: [5, 18]}
-      - {number: 2, pages: [19, 49]}
-      - {number: 3, pages: [50, 75]}
-      - {number: 4, pages: [76, 103]}
-      - {number: 5, pages: [104, 135]}
-      - {number: 6, pages: [136, 175]}
+      - {number: 1, pages: [5, 18], title: "Đối tượng, phương pháp nghiên cứu và chức năng của kinh tế chính trị Mác – Lênin"}
+      - {number: 2, pages: [19, 49], title: "Hàng hóa, thị trường và vai trò của các chủ thể tham gia thị trường"}
+      - {number: 3, pages: [50, 75], title: "Giá trị thặng dư trong nền kinh tế thị trường"}
+      - {number: 4, pages: [76, 103], title: "Cạnh tranh và độc quyền trong nền kinh tế thị trường"}
+      - {number: 5, pages: [104, 135], title: "Kinh tế thị trường định hướng xã hội chủ nghĩa và các quan hệ lợi ích kinh tế ở Việt Nam"}
+      - {number: 6, pages: [136, 175], title: "Công nghiệp hóa, hiện đại hóa và hội nhập kinh tế quốc tế của Việt Nam"}
     # Trang PDF 1–4: bìa, ban biên soạn, lời nói đầu. 176–178: mục lục. Không nạp.
     skip_pages: [1, 2, 3, 4, 176, 177, 178]
 
