@@ -1,14 +1,13 @@
 import Link from "next/link";
 
 import { AcademyLogo } from "@/components/brand";
-import { Button } from "@/components/ui/button";
 import { site } from "@/features/landing/content";
 
 import { MainNav } from "./MainNav";
 import { MobileMenu } from "./MobileMenu";
 
 /**
- * Đầu trang một dòng, dính ở đầu màn hình: logo và tên đơn vị, menu, đăng nhập.
+ * Đầu trang một dòng, dính ở đầu màn hình: logo và tên đơn vị, menu.
  * Nút Trợ lý học tập nằm ở cụm nút nổi góc phải (FloatingActions).
  */
 export function SiteHeader() {
@@ -24,10 +23,6 @@ export function SiteHeader() {
         </Link>
         <MainNav />
         <div className="flex items-center gap-2">
-          {/* Đăng nhập được làm ở giai đoạn 3 (Better Auth). */}
-          <Button variant="outline" size="sm" disabled className="hidden lg:inline-flex">
-            Đăng nhập
-          </Button>
           <MobileMenu />
         </div>
       </div>

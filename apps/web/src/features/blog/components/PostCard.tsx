@@ -3,12 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
-import { getSubject } from "@/config/subjects";
 import { cn } from "@/lib/utils";
 
 import { formatDate, type Post } from "../types";
+import { PostCover } from "./PostCover";
 
-/** Thẻ bài viết. Bài không có ảnh bìa dùng khối chữ thay ảnh, không để khung trống. */
+/** Thẻ bài viết. Bài không có ảnh bìa dùng bìa chữ (PostCover), không để khung trống. */
 export function PostCard({ post, featured }: { post: Post; featured?: boolean }) {
   return (
     <Link
@@ -18,17 +18,11 @@ export function PostCard({ post, featured }: { post: Post; featured?: boolean })
         featured && "md:grid md:grid-cols-2",
       )}
     >
-      <div className={cn("relative aspect-[16/9] overflow-hidden border-b bg-forest", featured && "md:aspect-auto md:border-b-0 md:border-r")}>
+      <div className={cn("relative aspect-[16/9] overflow-hidden border-b", featured && "md:aspect-auto md:min-h-72 md:border-b-0 md:border-r")}>
         {post.cover ? (
           <Image src={post.cover} alt="" fill sizes="(min-width: 768px) 560px, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.02]" />
         ) : (
-          <div className="absolute inset-0 flex flex-col justify-between p-5 text-white sm:p-6">
-            <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.16em] text-mint">{post.category}</span>
-            <span className={cn("line-clamp-3 font-heading font-bold leading-snug text-white/90", featured ? "text-2xl" : "text-lg")}>
-              {getSubject(post.subject)?.name ?? "Khoa Lý luận chính trị"}
-              {post.chapters.length > 0 && <span className="mt-1 block font-sans text-sm font-medium text-mint">Chương {post.chapters.join(", ")}</span>}
-            </span>
-          </div>
+          <PostCover post={post} featured={featured} className="absolute inset-0" />
         )}
       </div>
       <div className={cn("flex flex-1 flex-col gap-3 p-5 sm:p-6", featured && "md:justify-center md:p-8")}>

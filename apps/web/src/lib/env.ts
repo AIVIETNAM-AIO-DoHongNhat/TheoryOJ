@@ -17,6 +17,12 @@ const schema = z.object({
   RAG_TIMEOUT_MS: z.coerce.number().int().positive().default(15_000),
   /** Ngưỡng điểm reranker. Dưới ngưỡng thì trả câu từ chối cố định (PLAN.md mục 2.4). */
   REFUSAL_THRESHOLD: z.coerce.number().min(0).max(1).default(0.3),
+  /** Cùng cơ sở dữ liệu với services/rag. Next.js sở hữu bảng hội thoại và đánh giá. */
+  DATABASE_URL: z.string().default("postgresql://theoryoj:theoryoj@127.0.0.1:5433/theoryoj"),
+  /** Số câu hỏi tối đa mỗi trình duyệt trong 10 phút và trong một ngày, mỗi IP trong 10 phút. */
+  CHAT_LIMIT_VISITOR_10M: z.coerce.number().int().positive().default(20),
+  CHAT_LIMIT_VISITOR_DAY: z.coerce.number().int().positive().default(200),
+  CHAT_LIMIT_IP_10M: z.coerce.number().int().positive().default(120),
 });
 
 export const env = schema.parse(process.env);

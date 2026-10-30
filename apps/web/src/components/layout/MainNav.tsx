@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 import {
   NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger,
@@ -16,13 +17,24 @@ const item =
 
 export function MainNav() {
   const pathname = usePathname();
+  // Trạng thái mở gắn với đường dẫn lúc mở: sang trang khác thì menu thả xuống tự đóng,
+  // không còn treo lại khi rê chuột qua "Học liệu" rồi bấm mục khác.
+  const [open, setOpen] = useState<{ value: string | null; path: string }>({ value: null, path: pathname });
+  const value = open.path === pathname ? open.value : null;
+  const close = () => setOpen({ value: null, path: pathname });
+
   return (
-    <NavigationMenu className="hidden lg:flex" align="center">
+    <NavigationMenu
+      className="hidden lg:flex"
+      align="center"
+      value={value}
+      onValueChange={(v) => setOpen({ value: (v as string | null) ?? null, path: pathname })}
+    >
       <NavigationMenuList>
         {NAV.map((n) => {
           const active = isActive(pathname, n.href);
           return (
-            <NavigationMenuItem key={n.href}>
+            <NavigationMenuItem key={n.href} value={n.href}>
               {n.children ? (
                 <>
                   <NavigationMenuTrigger className={item} data-active={active || undefined}>
@@ -33,7 +45,7 @@ export function MainNav() {
                       {n.children.map((c) => (
                         <li key={c.href}>
                           <NavigationMenuLink
-                            render={<Link href={c.href} />}
+                            render={<Link href={c.href} onClick={close} />}
                             active={pathname.startsWith(c.href)}
                             className={cn("flex-col items-start gap-0.5 p-3", c.soon && "opacity-60")}
                           >
@@ -43,7 +55,7 @@ export function MainNav() {
                         </li>
                       ))}
                       <li className="col-span-2 border-t pt-1">
-                        <NavigationMenuLink render={<Link href={n.href} />} className="p-3 text-sm font-medium text-primary">
+                        <NavigationMenuLink render={<Link href={n.href} onClick={close} />} className="p-3 text-sm font-medium text-primary">
                           Tất cả môn học →
                         </NavigationMenuLink>
                       </li>
@@ -51,7 +63,7 @@ export function MainNav() {
                   </NavigationMenuContent>
                 </>
               ) : (
-                <NavigationMenuLink render={<Link href={n.href} />} active={active} className={cn(item, "inline-flex items-center")}>
+                <NavigationMenuLink render={<Link href={n.href} onClick={close} />} active={active} className={cn(item, "inline-flex items-center")}>
                   {n.label}
                 </NavigationMenuLink>
               )}

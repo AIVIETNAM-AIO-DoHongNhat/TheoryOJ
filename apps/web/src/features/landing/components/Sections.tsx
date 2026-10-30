@@ -1,21 +1,14 @@
-import { ArrowRight, BookOpen, Check, Library, MessageSquareText, Newspaper } from "lucide-react";
-import Link from "next/link";
+import { ArrowRight, Check } from "lucide-react";
 
-import { IconTile, SectionHeading } from "@/components/brand";
+import { SectionHeading } from "@/components/brand";
 import { PhotoSlot } from "@/components/brand/PhotoSlot";
 import { Reveal } from "@/components/brand/Reveal";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { SUBJECTS } from "@/config/subjects";
-import { MODE_ICONS } from "@/features/chat/mode-icons";
-import { MODE_IDS, MODES } from "@/features/chat/modes";
-import { PostCard } from "@/features/blog/components/PostCard";
-import type { Post } from "@/features/blog/types";
-import { SubjectCard } from "@/features/learning/components/SubjectCard";
 import { cn } from "@/lib/utils";
 
-import { about, cta, facultySection, faq, features, latestPosts, photos, principles, quickLinks, roadmap, subjectsSection } from "../content";
+import { about, faq, photos, principles, roadmap } from "../content";
 
 function Section({ id, className, children }: { id?: string; className?: string; children: React.ReactNode }) {
   return (
@@ -26,55 +19,6 @@ function Section({ id, className, children }: { id?: string; className?: string;
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
-
-/* ------------------------------ Lối vào nhanh ------------------------------ */
-
-const QUICK_ICONS = [BookOpen, Library, Newspaper, MessageSquareText];
-
-export function QuickLinksSection() {
-  return (
-    <section className="border-b">
-      <div className="mx-auto grid max-w-6xl gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
-        {quickLinks.map((q, i) => (
-          <Link key={q.href} href={q.href} className="group flex flex-col gap-3 bg-white px-4 py-8 transition-colors hover:bg-primary-soft sm:px-6">
-            <IconTile icon={QUICK_ICONS[i]} />
-            <span className="flex items-center gap-1.5 font-heading text-lg font-bold group-hover:text-primary">
-              {q.title}
-              <ArrowRight className="size-4 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
-            </span>
-            <span className="text-sm leading-relaxed text-muted-foreground">{q.text}</span>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ------------------------------ Bài viết mới ------------------------------ */
-
-export function LatestPostsSection({ posts }: { posts: Post[] }) {
-  if (posts.length === 0) return null;
-  return (
-    <Section className="border-t bg-subtle">
-      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <Reveal>
-          <SectionHeading overline={latestPosts.overline} title={latestPosts.title} />
-        </Reveal>
-        <Button variant="outline" render={<Link href="/bai-viet" />} nativeButton={false} className="self-start bg-white md:self-auto">
-          {latestPosts.more}
-          <ArrowRight data-icon="inline-end" />
-        </Button>
-      </div>
-      <div className="mt-12 grid gap-6 md:grid-cols-3">
-        {posts.map((p, i) => (
-          <Reveal key={p.slug} delay={i * 80}>
-            <PostCard post={p} />
-          </Reveal>
-        ))}
-      </div>
-    </Section>
-  );
-}
 
 /* ------------------------------ Giới thiệu ------------------------------ */
 
@@ -101,81 +45,6 @@ export function AboutSection() {
             ))}
           </ul>
         </Reveal>
-      </div>
-    </Section>
-  );
-}
-
-/* ------------------------------ Chức năng ------------------------------ */
-
-export function FeaturesSection() {
-  return (
-    <Section id="tro-ly" className="border-y bg-subtle">
-      <Reveal>
-        <SectionHeading overline={features.overline} title={features.title} lead={features.lead} />
-      </Reveal>
-      <Reveal delay={80}>
-        <div className="mt-14 grid gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-2 lg:grid-cols-4">
-          {MODE_IDS.map((id, i) => {
-            return (
-              <div key={id} className="flex flex-col gap-4 bg-white p-6 sm:p-7">
-                <div className="flex items-center justify-between">
-                  <IconTile icon={MODE_ICONS[id]} />
-                  <span className="font-heading text-sm font-bold text-muted-foreground/60">{pad(i + 1)}</span>
-                </div>
-                <h3 className="text-lg font-bold">{MODES[id].label}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{MODES[id].description}</p>
-                <ul className="flex flex-col gap-2 border-t pt-4">
-                  {features.bullets[id].map((b) => (
-                    <li key={b} className="flex items-start gap-2 text-[13px] leading-snug">
-                      <Check className="mt-0.5 size-3.5 shrink-0 text-primary" strokeWidth={2.5} />
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  variant="link"
-                  size="sm"
-                  render={<Link href={`/tro-ly?che-do=${id}`} />}
-                  nativeButton={false}
-                  className="mt-auto self-start px-0"
-                >
-                  Mở chế độ này
-                  <ArrowRight data-icon="inline-end" />
-                </Button>
-              </div>
-            );
-          })}
-        </div>
-      </Reveal>
-      <Button size="lg" render={<Link href="/tro-ly" />} nativeButton={false} className="mt-8 h-11 px-5">
-        <MessageSquareText data-icon="inline-start" />
-        Mở trợ lý học tập
-      </Button>
-    </Section>
-  );
-}
-
-/* ------------------------------ Học liệu ------------------------------ */
-
-export function SubjectsSection({ docCounts }: { docCounts: Record<string, number> }) {
-  return (
-    <Section id="hoc-lieu">
-      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <Reveal>
-          <SectionHeading overline={subjectsSection.overline} title={subjectsSection.title} lead={subjectsSection.lead} />
-        </Reveal>
-        <Button variant="outline" render={<Link href="/thu-vien" />} nativeButton={false} className="self-start md:self-auto">
-          Vào thư viện
-          <ArrowRight data-icon="inline-end" />
-        </Button>
-      </div>
-      <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {SUBJECTS.map((s, i) => (
-          <Reveal key={s.id} delay={(i % 3) * 60}>
-            <SubjectCard subject={s} docCount={docCounts[s.id] ?? 0} />
-          </Reveal>
-        ))}
       </div>
     </Section>
   );
@@ -220,26 +89,6 @@ export function PrinciplesSection() {
   );
 }
 
-/* ------------------------------ Ảnh hoạt động của Khoa ------------------------------ */
-
-export function FacultySection() {
-  return (
-    <Section>
-      <Reveal>
-        <SectionHeading overline={facultySection.overline} title={facultySection.title} lead={facultySection.lead} />
-      </Reveal>
-      <div className="mt-14 grid gap-4 md:grid-cols-3">
-        {photos.gallery.map((p, i) => (
-          <Reveal key={p.hint} delay={i * 80}>
-            <PhotoSlot photo={p} sizes="(min-width: 768px) 360px, 100vw" className="aspect-[4/3]" />
-            {p.src && <p className="mt-3 text-sm text-muted-foreground">{p.alt}</p>}
-          </Reveal>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
 /* --------------------------- Hỏi đáp và lộ trình --------------------------- */
 
 export function FaqSection() {
@@ -274,32 +123,6 @@ export function FaqSection() {
           </Accordion>
         </Reveal>
       </div>
-    </Section>
-  );
-}
-
-/* ------------------------------ Kêu gọi ------------------------------ */
-
-export function CtaSection() {
-  return (
-    <Section className="border-t py-16 sm:py-20">
-      <Reveal>
-        <div className="flex flex-col gap-8 border-l-4 border-primary pl-6 md:flex-row md:items-center md:justify-between sm:pl-8">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-2xl font-bold sm:text-3xl">{cta.title}</h2>
-            <p className="text-muted-foreground">{cta.text}</p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Button size="lg" render={<Link href={cta.primary.href} />} nativeButton={false} className="h-11 px-5">
-              {cta.primary.label}
-              <ArrowRight data-icon="inline-end" />
-            </Button>
-            <Button variant="outline" size="lg" render={<Link href={cta.secondary.href} />} nativeButton={false} className="h-11 px-5">
-              {cta.secondary.label}
-            </Button>
-          </div>
-        </div>
-      </Reveal>
     </Section>
   );
 }

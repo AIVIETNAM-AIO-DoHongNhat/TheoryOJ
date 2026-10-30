@@ -18,7 +18,7 @@ export function PhotoSlot({
   className?: string;
 }) {
   return (
-    <figure className={cn("relative overflow-hidden rounded-xl bg-subtle", className)}>
+    <figure className={cn("relative overflow-hidden rounded-xl bg-subtle text-foreground", className)}>
       {photo.src ? (
         <Image src={photo.src} alt={photo.alt} fill sizes={sizes} priority={priority} className="object-cover" />
       ) : (

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { SiteHeader } from "@/components/layout/SiteHeader";
 import { DEFAULT_SUBJECT, getSubject } from "@/config/subjects";
-import { ChatWindow } from "@/features/chat/components/ChatWindow";
+import { ChatApp } from "@/features/chat/components/ChatApp";
+import { ChatShell, ChatSkeleton } from "@/features/chat/components/ChatShell";
 import { MODE_IDS, type ModeId } from "@/features/chat/modes";
 
 export const metadata: Metadata = { title: "Trợ lý" };
@@ -17,6 +17,7 @@ function first(v: string | string[] | undefined): string | undefined {
 // Nhận ?mon=...&che-do=...&chuong=3,5&q=... để các trang học liệu, thư viện, bài viết mở sẵn trợ lý đúng ngữ cảnh.
 async function Chat({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
+
   const requested = getSubject(first(params.mon) ?? "");
   const subject = requested?.active ? requested : getSubject(DEFAULT_SUBJECT)!;
   const modeParam = first(params["che-do"]) as ModeId;
@@ -27,7 +28,7 @@ async function Chat({ searchParams }: { searchParams: SearchParams }) {
     .filter((n) => subject.chapters.some((c) => c.number === n));
 
   return (
-    <ChatWindow
+    <ChatApp
       initialSubject={subject.id}
       initialMode={mode}
       initialChapters={chapters}
@@ -38,13 +39,10 @@ async function Chat({ searchParams }: { searchParams: SearchParams }) {
 
 export default function TroLyPage({ searchParams }: PageProps<"/tro-ly">) {
   return (
-    <div className="flex h-dvh flex-col">
-      <SiteHeader />
-      <main className="flex min-h-0 flex-1 flex-col">
-        <Suspense fallback={<p className="mx-auto mt-16 text-sm text-muted-foreground">Đang mở trợ lý…</p>}>
-          <Chat searchParams={searchParams} />
-        </Suspense>
-      </main>
-    </div>
+    <ChatShell>
+      <Suspense fallback={<ChatSkeleton />}>
+        <Chat searchParams={searchParams} />
+      </Suspense>
+    </ChatShell>
   );
 }

@@ -24,26 +24,53 @@ export interface Photo {
   hint: string;
 }
 
+// Ảnh lấy từ các bài đăng trên hvannd.edu.vn (nguồn ghi trong public/anh-khoa/NGUON.md), đã cắt khung và bỏ logo đài.
 export const photos: { hero: Photo; about: Photo; gallery: Photo[] } = {
-  hero: { alt: "Ảnh tiêu biểu của Khoa", hint: "/anh-khoa/trang-chu.jpg" },
-  about: { alt: "Tập thể giảng viên Khoa Lý luận chính trị", hint: "/anh-khoa/tap-the.jpg" },
+  hero: {
+    src: "/anh-khoa/hoi-thao-cand.jpg",
+    alt: "Cán bộ, học viên Học viện An ninh nhân dân tại Lễ khai mạc Hội thao quân sự, võ thuật và thể thao Công an nhân dân năm 2026",
+    hint: "/anh-khoa/hoi-thao-cand.jpg",
+  },
+  about: {
+    src: "/anh-khoa/be-giang-luu-niem.jpg",
+    alt: "Đại biểu và học viên chụp ảnh lưu niệm tại Lễ bế giảng các lớp Cao cấp và Trung cấp lý luận chính trị",
+    hint: "/anh-khoa/be-giang-luu-niem.jpg",
+  },
   gallery: [
-    { alt: "Giờ giảng trên lớp", hint: "/anh-khoa/gio-giang.jpg" },
-    { alt: "Học viên ôn tập, thảo luận", hint: "/anh-khoa/hoc-vien.jpg" },
-    { alt: "Hoạt động chuyên môn của Khoa", hint: "/anh-khoa/chuyen-mon.jpg" },
+    {
+      src: "/anh-khoa/luu-niem-cuoc-thi.jpg",
+      alt: "Đại biểu, giảng viên và học viên chụp ảnh lưu niệm tại Cuộc thi “Đường đến triết học”",
+      hint: "/anh-khoa/luu-niem-cuoc-thi.jpg",
+    },
+    {
+      src: "/anh-khoa/khai-giang-trung-cap.jpg",
+      alt: "Quang cảnh Lễ khai giảng các lớp Trung cấp lý luận chính trị mở tại Học viện",
+      hint: "/anh-khoa/khai-giang-trung-cap.jpg",
+    },
+    {
+      src: "/anh-khoa/be-giang-toan-canh.jpg",
+      alt: "Toàn cảnh Lễ bế giảng lớp Cao cấp và Trung cấp lý luận chính trị",
+      hint: "/anh-khoa/be-giang-toan-canh.jpg",
+    },
   ],
 };
 
 export const hero = {
   overline: "Khoa Lý luận chính trị · Học viện An ninh nhân dân",
-  title: "Học tập lý luận chính trị trực tuyến",
+  titleStart: "Học tập lý luận chính trị",
+  titleAccent: "chủ động, chính xác",
   lead:
-    "Đọc giáo trình và văn kiện của Đảng, theo dõi bài viết ôn tập của giảng viên, " +
-    "hỏi đáp cùng trợ lý học tập có trích dẫn đến từng trang, cho các môn lý luận chính trị của Khoa.",
-  primary: { href: "/thu-vien", label: "Vào thư viện" },
-  secondary: { href: "/tro-ly", label: "Hỏi trợ lý" },
+    "Giáo trình và văn kiện đọc trực tuyến, bài viết ôn tập của giảng viên, " +
+    "trợ lý học tập trả lời có trích dẫn đến từng trang.",
+  askPlaceholder: "Hỏi trợ lý một câu về giáo trình…",
+  askButton: "Hỏi trợ lý",
+  links: [
+    { href: "/thu-vien", label: "Vào thư viện" },
+    { href: "/mon", label: "Học liệu các môn" },
+  ],
 };
 
+/** Lưới lối vào nhanh ngay dưới hero. */
 export const quickLinks = [
   { href: "/mon", title: "Học liệu các môn", text: "Học liệu theo môn và theo chương, kèm tài liệu, bài viết và câu hỏi gợi ý." },
   { href: "/thu-vien", title: "Thư viện tài liệu", text: "Giáo trình, văn kiện, tài liệu tham khảo đọc trực tuyến hoặc tải về." },
@@ -53,7 +80,7 @@ export const quickLinks = [
 
 export const latestPosts = {
   overline: "Bài viết",
-  title: "Bài viết mới",
+  title: "Bài viết mới từ giảng viên",
   more: "Tất cả bài viết",
 };
 
@@ -76,7 +103,7 @@ export const about = {
 
 export const features = {
   overline: "Trợ lý học tập",
-  title: "Hỏi đáp cùng trợ lý, có nguồn đến từng trang",
+  title: "Hỏi là có nguồn, đến từng trang",
   lead: "Trợ lý chỉ trả lời từ tài liệu trong Thư viện. Học viên chọn chế độ phù hợp; mỗi ý trong câu trả lời đều dẫn về trang gốc để đối chiếu.",
   bullets: {
     qa: ["Dùng đúng thuật ngữ của giáo trình", "Bấm vào nguồn để xem đoạn gốc"],
@@ -84,12 +111,6 @@ export const features = {
     practice: ["Căn cứ nghị quyết của Đảng", "Liên hệ nhiệm vụ bảo vệ an ninh kinh tế"],
     review: ["Câu hỏi tự luận theo từng chương", "Chỉ ra ý còn thiếu so với giáo trình"],
   } satisfies Record<ModeId, string[]>,
-};
-
-export const subjectsSection = {
-  overline: "Học liệu",
-  title: "Các môn lý luận chính trị",
-  lead: "Mỗi môn có học liệu theo chương, tài liệu trong Thư viện và trợ lý học tập riêng. Các môn được bổ sung dần theo kế hoạch của Khoa.",
 };
 
 export const principles = {
@@ -140,8 +161,8 @@ export const faq = {
 };
 
 export const cta = {
-  title: "Bắt đầu ôn tập cùng trợ lý",
-  text: "Chọn chương, đặt câu hỏi và đối chiếu câu trả lời với giáo trình.",
+  title: "Bắt đầu ôn tập ngay hôm nay",
+  text: "Chọn môn, chọn chương, đặt câu hỏi và đối chiếu câu trả lời với giáo trình.",
   primary: { href: "/tro-ly", label: "Sử dụng trợ lý" },
   secondary: { href: "/tro-ly?che-do=review", label: "Ôn thi theo chương" },
 };
@@ -177,4 +198,13 @@ export const footer = {
   ],
   disclaimer:
     "Câu trả lời do trí tuệ nhân tạo tạo ra từ tài liệu chính thống và có thể chưa chính xác. Đồng chí cần đối chiếu với giáo trình và hỏi giảng viên khi cần.",
+};
+
+/** Khung chat minh họa ở trang chủ. Đoạn trả lời lấy nguyên ý giáo trình KTCT, trang in 59. */
+export const assistantDemo = {
+  question: "Tỷ suất giá trị thặng dư phản ánh điều gì?",
+  answer:
+    "Tỷ suất giá trị thặng dư là tỷ lệ phần trăm giữa giá trị thặng dư và tư bản khả biến để sản xuất ra giá trị thặng dư đó.",
+  formula: "m' = m / v × 100 %",
+  source: "Giáo trình KTCT · chương 3, tr. 59",
 };

@@ -12,13 +12,21 @@ import { Message, MessageAvatar, MessageContent } from "@/components/ui/message"
 import type { ChatMessage, Citation } from "../types";
 import { CalculatorTrace } from "./CalculatorTrace";
 import { CitationChip } from "./CitationChip";
+import { FeedbackBar } from "./FeedbackBar";
 import { SourcesTrace } from "./SourcesTrace";
 
 function textOf(message: ChatMessage): string {
   return message.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
 }
 
-export function MessageView({ message }: { message: ChatMessage }) {
+export interface MessageViewProps {
+  message: ChatMessage;
+  /** Hiện nút sao chép và đánh giá; tắt khi câu trả lời đang chạy. */
+  showActions?: boolean;
+  feedback?: 1 | -1;
+}
+
+export function MessageView({ message, showActions = false, feedback }: MessageViewProps) {
   if (message.role === "user") {
     return (
       <Message align="end">
@@ -30,10 +38,10 @@ export function MessageView({ message }: { message: ChatMessage }) {
       </Message>
     );
   }
-  return <AssistantMessage message={message} />;
+  return <AssistantMessage message={message} showActions={showActions} feedback={feedback} />;
 }
 
-function AssistantMessage({ message }: { message: ChatMessage }) {
+function AssistantMessage({ message, showActions, feedback }: MessageViewProps) {
   const [open, setOpen] = useState<Set<number>>(new Set());
   const [sourcesExpanded, setSourcesExpanded] = useState(false);
 
@@ -94,6 +102,7 @@ function AssistantMessage({ message }: { message: ChatMessage }) {
             />
           </>
         )}
+        {showActions && <FeedbackBar messageId={message.id} text={text} initial={feedback} />}
       </MessageContent>
     </Message>
   );
