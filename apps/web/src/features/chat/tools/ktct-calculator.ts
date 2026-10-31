@@ -14,8 +14,10 @@ const inputSchema = z.object({
 
 export const ktctCalculator = tool({
   description:
-    "Tính các đại lượng của học thuyết giá trị thặng dư từ dữ kiện đề bài. Chỉ truyền những số đề bài cho, " +
+    "Tính các đại lượng KTCT từ dữ kiện đề bài: giá trị thặng dư, chu chuyển tư bản, lợi nhuận bình quân, " +
+    "giá cả sản xuất (chương 3) và lượng tiền cần thiết cho lưu thông (chương 2). Chỉ truyền những số đề bài cho, " +
     "tỷ suất ghi theo phần trăm (200 % thì truyền 200), cấu tạo hữu cơ 4/1 thì truyền cv_ratio = 4. " +
+    "Lượng tiền có bán chịu hoặc khấu trừ thì truyền đủ ban_chiu, khau_tru, den_han (khoản nào không có truyền 0). " +
     "Trả về giá trị tính được, từng bước thay số, và đại lượng còn thiếu dữ kiện.",
   inputSchema,
   execute: async ({ can_tim, ...known }) => {

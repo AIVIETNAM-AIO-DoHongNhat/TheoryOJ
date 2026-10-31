@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@/components/ui/input-group";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { type Exercise, getTemplate, makeExercise, parseAnswer, quantityLabel, TEMPLATES, UNITS } from "@/domain/ktct/exercises";
+import { EXERCISES, type Exercise, getTemplate, makeExercise, parseAnswer, quantityLabel, UNITS } from "@/domain/ktct/exercises";
 import { PERCENT, type Quantity, SYMBOL } from "@/domain/ktct/formulas";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +27,7 @@ export function ExerciseRunner({ subject, chapter, initial }: { subject: string;
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
+  const templates = EXERCISES[subject]?.[chapter] ?? [];
   const template = getTemplate(exercise.template)!;
   const parsed = Object.fromEntries(template.targets.map((q) => [q, parseAnswer(inputs[q] ?? "")])) as Record<Quantity, number | null>;
   const invalid = template.targets.filter((q) => (inputs[q] ?? "").trim() !== "" && parsed[q] === null);
@@ -64,7 +65,7 @@ export function ExerciseRunner({ subject, chapter, initial }: { subject: string;
           value={[exercise.template]}
           onValueChange={(v) => v[0] && next(v[0] as string)}
         >
-          {TEMPLATES.map((t) => (
+          {templates.map((t) => (
             <ToggleGroupItem key={t.id} value={t.id}>
               {t.title}
             </ToggleGroupItem>
@@ -165,7 +166,7 @@ export function ExerciseRunner({ subject, chapter, initial }: { subject: string;
                 {allCorrect ? "Đúng hết" : `Đúng ${result.results.filter((r) => r.correct).length}/${result.results.length}`}
               </Badge>
             </CardTitle>
-            <CardDescription>Các bước tính bằng bộ công thức chương 3, cùng công cụ trợ lý dùng khi giải bài tập.</CardDescription>
+            <CardDescription>Các bước tính theo công thức trong giáo trình, cùng công cụ trợ lý dùng khi giải bài tập.</CardDescription>
           </CardHeader>
           <CardContent>
             <ol className="flex flex-col gap-2 font-mono text-sm">

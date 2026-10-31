@@ -30,6 +30,24 @@ describe("solve", () => {
     expect(missing).toEqual(["p_rate"]);
   });
 
+  it("lợi nhuận bình quân và giá cả sản xuất theo bảng ba ngành của giáo trình (tr. 69)", () => {
+    const { values } = solve({ tong_m: 90, tong_K: 300, c: 80, v: 20 }, ["pbq_rate", "p_bq", "gcsx"]);
+    expect(values).toMatchObject({ pbq_rate: 30, p_bq: 30, gcsx: 130 });
+  });
+
+  it("chu chuyển: v quay n vòng thì cả năm dùng V = v × n", () => {
+    const { values } = solve({ v: 50, tg_mot_vong: 3, m_rate: 200 }, ["M"]);
+    expect(values).toMatchObject({ so_vong: 4, V_total: 200, M: 400 });
+  });
+
+  it("lượng tiền cần thiết cho lưu thông, có và không có bán chịu", () => {
+    expect(solve({ muc_gia: 50, khoi_luong_hang: 20, so_vong_tien: 8 }).values).toMatchObject({ tong_gia_ca: 1000, tien_can_thiet: 125 });
+    const credit = solve({ tong_gia_ca: 1000, ban_chiu: 100, khau_tru: 50, den_han: 150, so_vong_tien: 5 });
+    expect(credit.values.tien_can_thiet).toBe(200);
+    expect(credit.steps.find((s) => s.output === "tien_can_thiet")?.formula).toBe("M = (P.Q − (G1 + G2) + G3) / V");
+    expect(solve({ tong_gia_ca: 1200, tien_can_thiet: 150 }).values.so_vong_tien).toBe(8);
+  });
+
   it("ghi lại công thức và phép thay số của từng bước", () => {
     const { steps } = solve({ c: 600, v: 200, m_rate: 200 });
     expect(steps.find((s) => s.output === "m")).toMatchObject({

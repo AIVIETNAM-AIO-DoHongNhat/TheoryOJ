@@ -184,11 +184,10 @@ Giao diện không gắn với một môn: menu Học liệu, trang `/mon`, tran
 Đã làm ở giai đoạn 4:
 
 - **Trắc nghiệm theo chương.** Ngân hàng câu hỏi là file YAML trong `content/<môn>/question-bank/chuong-<n>.yaml` (quy ước ở `_mau.yaml`), mỗi câu có giải thích và trang in giáo trình. KTCT có 164 câu (23–31 câu mỗi chương), do người phát triển soạn từ giáo trình, gắn `status: nhap` cho tới khi giảng viên duyệt; trang hiện nhãn "chờ giảng viên duyệt" trong lúc đó. Mỗi đề lấy ngẫu nhiên 10 câu và trộn thứ tự phương án; đáp án không gửi xuống trình duyệt, máy chủ chấm khi nộp. `src/features/quiz/bank.test.ts` kiểm tra mọi file (ít nhất 20 câu, đáp án hợp lệ, giải thích không nhắc chữ cái phương án).
-- **Bài tập tính toán sinh số** (chương 3, `src/domain/ktct/exercises.ts`): 5 dạng bài, đáp án và lời giải từng bước tính bằng `solve` của công cụ trợ lý, chấp nhận sai số làm tròn 0,5 %.
+- **Bài tập tính toán sinh số** (`src/domain/ktct/exercises.ts`): chương 2 có 3 dạng về lượng tiền cần thiết cho lưu thông (tr. 40–41); chương 3 có 7 dạng gồm giá trị thặng dư, chu chuyển tư bản (tr. 57–58), lợi nhuận bình quân và giá cả sản xuất (tr. 69–70). Đáp án và lời giải từng bước tính bằng `solve` của công cụ trợ lý `tinh_ktct`, nên trợ lý cũng giải được các dạng này; chấp nhận sai số làm tròn 0,5 %.
 - **Tiến độ cá nhân** (`/tien-do`): mỗi lượt làm lưu vào bảng `practice_attempts` theo mã khách; trang tổng hợp điểm cao nhất, lượt gần nhất, bài tập, số câu đã hỏi trợ lý theo chương và gợi ý chương nên ôn tiếp.
 
-Chưa làm: thẻ ghi nhớ theo lịch lặp lại ngắt quãng; thống kê cho giảng viên theo chương (dữ liệu đã có trong `practice_attempts`, cần trang quản trị); bài tập cho các chương ngoài chương 3.
-- Hỏi đáp số liệu trên chỉ mục niên giám riêng.
+Chưa làm: thẻ ghi nhớ theo lịch lặp lại ngắt quãng; thống kê cho giảng viên theo chương (dữ liệu đã có trong `practice_attempts`, cần trang quản trị); hỏi đáp số liệu trên chỉ mục niên giám riêng. Chương 1, 4, 5, 6 chủ yếu là lý luận, giáo trình gần như không có công thức tính, nên chỉ có trắc nghiệm.
 
 ### 4.4. Trang chủ
 
@@ -348,7 +347,7 @@ Lộ trình giả định một người phát triển chính trong khoảng 12 
 | 1. Dịch vụ tìm kiếm | 2–3 | Đã xong: Postgres + pgvector, `services/rag` (FastAPI `/search`, `/ingest`, `/health`), metadata chương, trang in, mục, tìm kết hợp, reranker, nạp tăng dần, `evaluate.py`, 19 kiểm thử (mục 2.4). Niên giám đã nạp vào chỉ mục riêng (3.370 đoạn, 114 giây trên GPU), chỉ tìm khi gọi với `kinds: ["so_lieu"]`. Còn lại: đo lại trên bộ câu đã duyệt. | hit@5 từ 85 % trên bộ câu đã duyệt và không thấp hơn bản Streamlit trên cùng bộ câu |
 | 2. Next.js và chatbot | 4–5 | Đã xong: `apps/web` (Next.js 16.4, AI SDK 7), landing page bản tĩnh, `/tro-ly` với 4 chế độ, KaTeX, trích dẫn `[n]` bấm được, công cụ `tinh_ktct` tính bằng code, viết lại câu hỏi, phân loại bằng luật và mô hình, ngưỡng từ chối 0,3, `npm run eval` (mục 2.5). Giao diện chuyển sang shadcn/ui, khung chat dùng `MessageScroller`, `Message`, `Bubble`, `Trace`. Còn lại: đo bằng mô hình thật, chỉnh prompt phân loại theo kết quả. | Từ chối đúng từ 90 % câu ngoài phạm vi và câu khiêu khích, bài tập đúng 100 % về số |
 | 3. Lưu dữ liệu và giới hạn | 6–7 | Đã xong: lưu hội thoại và lịch sử theo mã khách, đánh giá 👍/👎 kèm lý do, giới hạn tần suất `/api/chat` (mục 2.6). Đăng nhập và trang quản trị để sau bản sáng kiến. Còn lại: gỡ `legacy/` sau khi đo lại điểm nền trên bộ câu đã duyệt. | Mọi lượt hỏi đáp và đánh giá được lưu, truy vấn được |
-| 4. Học liệu và ôn tập | 8–10 | Đã xong: trang 6 chương, 164 câu trắc nghiệm (23–31 câu mỗi chương) có giải thích và trang giáo trình, bài tập sinh số chương 3, trang tiến độ, bảng `practice_attempts` (mục 4.3). Còn lại: giảng viên duyệt ngân hàng câu hỏi và đổi `status` thành `da-duyet`. | Mỗi chương có tối thiểu 20 câu trắc nghiệm |
+| 4. Học liệu và ôn tập | 8–10 | Đã xong: trang 6 chương, 164 câu trắc nghiệm (23–31 câu mỗi chương) có giải thích và trang giáo trình, bài tập sinh số chương 2 và 3 (10 dạng), trang tiến độ, bảng `practice_attempts` (mục 4.3). Còn lại: giảng viên duyệt ngân hàng câu hỏi và đổi `status` thành `da-duyet`. | Mỗi chương có tối thiểu 20 câu trắc nghiệm |
 | 5. Thử nghiệm và triển khai | 11–12 | Triển khai với tên miền và HTTPS, kiểm thử bảo mật và nội dung, thử với một lớp khoảng 50 học viên trong 2 tuần, khảo sát trước và sau, bật số liệu thật trên landing page | Đạt các chỉ số ở mục 9 |
 | 6. Mở rộng môn | Sau 12 | Thêm `content/<mon>/`, một dòng trong `subjects.ts`, bộ câu chuẩn riêng | Không phải sửa code lõi |
 
