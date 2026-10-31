@@ -57,6 +57,21 @@ export const feedback = pgTable("feedback", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [uniqueIndex("feedback_message_visitor_idx").on(t.messageId, t.visitorId)]);
 
+/** Một lượt làm trắc nghiệm hoặc bài tập tính toán, gắn với mã khách. Bảng tiến độ đọc từ đây. */
+export const practiceAttempts = pgTable("practice_attempts", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  visitorId: text("visitor_id").notNull(),
+  subject: text("subject").notNull(),
+  chapter: integer("chapter").notNull(),
+  kind: text("kind", { enum: ["quiz", "exercise"] }).notNull(),
+  /** Số câu (trắc nghiệm) hoặc số đại lượng (bài tập) làm đúng. */
+  score: integer("score").notNull(),
+  total: integer("total").notNull(),
+  /** Trắc nghiệm: [{ id, chosen, correct }]. Bài tập: { template, given, answers, expected }. */
+  details: jsonb("details").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [index("practice_attempts_visitor_idx").on(t.visitorId, t.subject, t.createdAt)]);
+
 /** Đếm theo cửa sổ cố định cho /api/chat, theo mã khách và theo IP. */
 export const chatRateLimits = pgTable("chat_rate_limits", {
   key: text("key").primaryKey(),

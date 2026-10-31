@@ -1,4 +1,4 @@
 -- Chạy một lần khi tạo volume Postgres.
 -- Bảng documents, chunks do services/rag tự tạo (app/retrieval/store.py).
--- Bảng người dùng, hội thoại do Next.js tạo bằng Drizzle ở giai đoạn 2.
+-- Bảng hội thoại, đánh giá do Next.js tạo bằng Drizzle (apps/web: npm run db:migrate).
 CREATE EXTENSION IF NOT EXISTS vector;

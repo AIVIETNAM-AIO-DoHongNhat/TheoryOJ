@@ -1,0 +1,334 @@
+# Trắc nghiệm chương 2: Hàng hóa, thị trường và vai trò của các chủ thể tham gia thị trường.
+subject: ktct
+chapter: 2
+status: nhap
+questions:
+  - id: c2-01
+    q: Theo C. Mác, sản xuất hàng hóa là gì?
+    options:
+      - Kiểu tổ chức kinh tế mà người sản xuất làm ra sản phẩm để tự tiêu dùng
+      - Kiểu tổ chức hoạt động kinh tế mà người sản xuất làm ra sản phẩm nhằm mục đích trao đổi, mua bán
+      - Mọi hoạt động sản xuất của con người trong lịch sử
+      - Sản xuất do nhà nước giao kế hoạch
+    answer: B
+    explain: Sản xuất hàng hóa là kiểu tổ chức hoạt động kinh tế mà ở đó những người sản xuất ra sản phẩm nhằm mục đích trao đổi, mua bán.
+    page: 18
+
+  - id: c2-02
+    q: Hai điều kiện ra đời của sản xuất hàng hóa là gì?
+    options:
+      - Có tiền tệ và có thị trường
+      - Phân công lao động xã hội và sự tách biệt về mặt kinh tế giữa các chủ thể sản xuất
+      - Có nhà nước và có pháp luật
+      - Năng suất lao động cao và có máy móc
+    answer: B
+    explain: Sản xuất hàng hóa ra đời khi có phân công lao động xã hội và sự tách biệt về mặt kinh tế giữa các chủ thể sản xuất.
+    page: 19
+
+  - id: c2-03
+    q: Trong lịch sử, sự tách biệt về mặt kinh tế giữa các chủ thể sản xuất dựa trên cơ sở nào?
+    options:
+      - Sự khác biệt về trình độ tay nghề
+      - Sự tách biệt về sở hữu
+      - Sự khác biệt về vùng địa lý
+      - Sự phân chia giai cấp
+    answer: B
+    explain: Sự tách biệt về mặt kinh tế xuất hiện khách quan dựa trên sự tách biệt về sở hữu; xã hội càng phát triển, sự tách biệt về sở hữu càng sâu sắc.
+    page: 19
+
+  - id: c2-04
+    q: Hàng hóa có hai thuộc tính nào?
+    options:
+      - Giá trị và giá cả
+      - Giá trị sử dụng và giá trị
+      - Giá trị trao đổi và giá cả
+      - Công dụng và chất lượng
+    answer: B
+    explain: Hàng hóa có hai thuộc tính là giá trị sử dụng và giá trị.
+    page: 20
+
+  - id: c2-05
+    q: Giá trị hàng hóa là gì?
+    options:
+      - Công dụng của sản phẩm thỏa mãn nhu cầu con người
+      - Tỷ lệ trao đổi giữa các giá trị sử dụng khác nhau
+      - Lao động xã hội của người sản xuất hàng hóa kết tinh trong hàng hóa
+      - Số tiền người mua trả cho hàng hóa
+    answer: C
+    explain: Giá trị là lao động xã hội của người sản xuất hàng hóa kết tinh trong hàng hóa. Tỷ lệ trao đổi giữa các giá trị sử dụng là giá trị trao đổi, hình thức biểu hiện bên ngoài của giá trị.
+    page: 21
+
+  - id: c2-06
+    q: Quan hệ giữa giá trị và giá trị trao đổi được hiểu thế nào?
+    options:
+      - Giá trị trao đổi là nội dung, giá trị là hình thức
+      - Giá trị là nội dung, là cơ sở của trao đổi; giá trị trao đổi là hình thức biểu hiện ra bên ngoài của giá trị
+      - Hai phạm trù hoàn toàn đồng nhất
+      - Hai phạm trù không liên quan đến nhau
+    answer: B
+    explain: Giá trị trao đổi là hình thức biểu hiện ra bên ngoài của giá trị; giá trị là nội dung, là cơ sở của trao đổi.
+    page: 21
+
+  - id: c2-07
+    q: Lao động cụ thể tạo ra thuộc tính nào của hàng hóa?
+    options:
+      - Giá trị
+      - Giá trị sử dụng
+      - Giá trị trao đổi
+      - Giá trị thặng dư
+    answer: B
+    explain: Lao động cụ thể là lao động có ích dưới hình thức cụ thể của một nghề nghiệp chuyên môn, tạo ra giá trị sử dụng của hàng hóa.
+    page: 21
+
+  - id: c2-08
+    q: Lao động trừu tượng là gì và tạo ra gì?
+    options:
+      - Lao động trí óc, tạo ra giá trị sử dụng
+      - Sự hao phí sức lao động nói chung (cơ bắp, thần kinh, trí óc) không kể hình thức cụ thể, tạo ra giá trị của hàng hóa
+      - Lao động không có ích, không tạo ra gì
+      - Lao động của nhà quản lý, tạo ra lợi nhuận
+    answer: B
+    explain: Lao động trừu tượng là sự hao phí sức lao động nói chung của người sản xuất hàng hóa, không kể hình thức cụ thể; lao động trừu tượng tạo ra giá trị của hàng hóa.
+    page: 22
+
+  - id: c2-09
+    q: Lao động cụ thể và lao động trừu tượng lần lượt phản ánh tính chất nào của lao động sản xuất hàng hóa?
+    options:
+      - Tính chất xã hội và tính chất tư nhân
+      - Tính chất tư nhân và tính chất xã hội
+      - Tính chất giản đơn và tính chất phức tạp
+      - Tính chất cá biệt và tính chất trung bình
+    answer: B
+    explain: Lao động cụ thể phản ánh tính chất tư nhân (sản xuất cái gì, như thế nào là việc riêng của mỗi chủ thể); lao động trừu tượng phản ánh tính chất xã hội của lao động.
+    page: 22
+
+  - id: c2-10
+    q: Lượng giá trị của hàng hóa được đo bằng gì?
+    options:
+      - Thời gian lao động cá biệt của từng người sản xuất
+      - Thời gian lao động xã hội cần thiết
+      - Số lượng sản phẩm làm ra
+      - Giá cả trên thị trường
+    answer: B
+    explain: Lượng giá trị được đo bằng thời gian lao động xã hội cần thiết, tức thời gian cần để sản xuất một giá trị sử dụng trong điều kiện bình thường của xã hội, với trình độ thành thạo và cường độ lao động trung bình.
+    page: 23
+
+  - id: c2-11
+    q: Khi năng suất lao động tăng, lượng giá trị trong một đơn vị hàng hóa thay đổi thế nào?
+    options:
+      - Tăng lên
+      - Giảm xuống
+      - Không đổi
+      - Tăng gấp đôi
+    answer: B
+    explain: Năng suất lao động tăng làm giảm thời gian hao phí lao động cần thiết trong một đơn vị hàng hóa, nên lượng giá trị của đơn vị hàng hóa giảm xuống.
+    page: 23
+
+  - id: c2-12
+    q: Khi chỉ tăng cường độ lao động, điều nào sau đây đúng?
+    options:
+      - Lượng giá trị một đơn vị hàng hóa giảm
+      - Tổng số sản phẩm và tổng lượng giá trị tăng, lượng giá trị một đơn vị hàng hóa không đổi
+      - Tổng số sản phẩm không đổi
+      - Thời gian lao động xã hội cần thiết của một đơn vị hàng hóa tăng
+    answer: B
+    explain: Tăng cường độ lao động làm tổng số sản phẩm và tổng lượng giá trị tăng, nhưng thời gian lao động xã hội cần thiết để sản xuất một đơn vị hàng hóa không thay đổi.
+    page: 24
+
+  - id: c2-13
+    q: Trong cùng một đơn vị thời gian, lao động phức tạp so với lao động giản đơn thì thế nào?
+    options:
+      - Tạo ra ít giá trị hơn
+      - Tạo ra nhiều giá trị hơn, vì là lao động giản đơn được nhân bội lên
+      - Tạo ra lượng giá trị bằng nhau
+      - Không tạo ra giá trị
+    answer: B
+    explain: Lao động phức tạp tạo ra nhiều giá trị hơn lao động giản đơn trong cùng thời gian; lao động phức tạp là lao động giản đơn được nhân bội lên.
+    page: 25
+
+  - id: c2-14
+    q: Thứ tự phát triển các hình thái giá trị dẫn tới tiền tệ là gì?
+    options:
+      - Hình thái chung → giản đơn → mở rộng → tiền
+      - Hình thái giản đơn → mở rộng → chung → tiền
+      - Hình thái mở rộng → giản đơn → tiền → chung
+      - Hình thái tiền → chung → mở rộng → giản đơn
+    answer: B
+    explain: Hình thái giá trị phát triển từ giản đơn (ngẫu nhiên), đầy đủ (mở rộng), hình thái chung, đến hình thái tiền.
+    page: 25
+
+  - id: c2-15
+    q: Hạn chế của hình thái giá trị đầy đủ hay mở rộng là gì?
+    options:
+      - Chưa có vật ngang giá
+      - Vẫn là trao đổi trực tiếp với tỷ lệ chưa cố định
+      - Các vùng có quy ước khác nhau về vật ngang giá chung
+      - Tiền giấy bị mất giá
+    answer: B
+    explain: Hình thái mở rộng vẫn chỉ là trao đổi trực tiếp với những tỷ lệ chưa cố định. Hạn chế các vùng có vật ngang giá chung khác nhau thuộc về hình thái chung.
+    page: 26
+
+  - id: c2-16
+    q: Về bản chất, tiền là gì?
+    options:
+      - Một quy ước pháp lý do nhà nước đặt ra
+      - Một loại hàng hóa đặc biệt, làm vật ngang giá chung cho thế giới hàng hóa
+      - Một loại giấy tờ có giá
+      - Phương tiện cất trữ của cải
+    answer: B
+    explain: Tiền là một loại hàng hóa đặc biệt, kết quả của quá trình phát triển sản xuất và trao đổi, là vật ngang giá chung cho thế giới hàng hóa.
+    page: 26
+
+  - id: c2-17
+    q: Tiền có bao nhiêu chức năng theo giáo trình?
+    options:
+      - Ba
+      - Bốn
+      - Năm
+      - Sáu
+    answer: C
+    explain: Tiền có năm chức năng là thước đo giá trị, phương tiện lưu thông, phương tiện cất trữ, phương tiện thanh toán và tiền tệ thế giới.
+    page: 27
+
+  - id: c2-18
+    q: Chức năng nào của tiền không nhất thiết đòi hỏi tiền phải có đủ giá trị, là cơ sở để phát hành tiền giấy?
+    options:
+      - Thước đo giá trị
+      - Phương tiện lưu thông
+      - Phương tiện cất trữ
+      - Tiền tệ thế giới
+    answer: B
+    explain: Khi làm phương tiện lưu thông, tiền không nhất thiết phải có đủ giá trị; đây là cơ sở để các quốc gia phát hành tiền giấy.
+    page: 28
+
+  - id: c2-19
+    q: Giá cả hàng hóa là gì?
+    options:
+      - Giá trị sử dụng của hàng hóa
+      - Hình thức biểu hiện bằng tiền của giá trị hàng hóa
+      - Chi phí sản xuất của doanh nghiệp
+      - Lượng lao động cá biệt
+    answer: B
+    explain: Giá trị hàng hóa biểu hiện bằng tiền gọi là giá cả; giá trị là cơ sở của giá cả. Giá cả chịu tác động của giá trị hàng hóa, giá trị của tiền và quan hệ cung – cầu.
+    page: 27
+
+  - id: c2-20
+    q: Điểm khác của dịch vụ so với hàng hóa thông thường là gì?
+    options:
+      - Dịch vụ không cần hao phí lao động
+      - Dịch vụ là hàng hóa vô hình, không cất trữ được, sản xuất và tiêu dùng diễn ra đồng thời
+      - Dịch vụ không có giá trị sử dụng
+      - Dịch vụ không phải là hàng hóa
+    answer: B
+    explain: Dịch vụ là hàng hóa vô hình, không thể cất trữ; việc sản xuất và tiêu dùng dịch vụ diễn ra đồng thời.
+    page: 29
+
+  - id: c2-21
+    q: Khi mua bán quyền sử dụng đất, tiền thực hiện chức năng nào theo giáo trình?
+    options:
+      - Thước đo giá trị
+      - Phương tiện thanh toán
+      - Phương tiện cất trữ
+      - Tiền tệ thế giới
+    answer: B
+    explain: Trong trường hợp này tiền là phương tiện thanh toán, không phải thước đo giá trị; số tiền tăng lên chỉ là tiền chuyển từ túi chủ thể này sang túi chủ thể khác.
+    page: 30
+
+  - id: c2-22
+    q: C. Mác gọi chứng khoán, chứng quyền và các giấy tờ có giá là gì?
+    options:
+      - Tư bản thực
+      - Tư bản giả
+      - Tư bản bất biến
+      - Tư bản cho vay
+    answer: B
+    explain: C. Mác gọi những thứ này là tư bản giả, để phân biệt với tư bản tham gia sản xuất, trao đổi hàng hóa thực.
+    page: 31
+
+  - id: c2-23
+    q: Đâu không phải là vai trò của thị trường nêu trong giáo trình?
+    options:
+      - Thực hiện giá trị hàng hóa, là điều kiện, môi trường cho sản xuất phát triển
+      - Kích thích sáng tạo, phân bổ nguồn lực hiệu quả
+      - Gắn kết nền kinh tế thành một chỉnh thể và với kinh tế thế giới
+      - Tự khắc phục mọi khủng hoảng và phân hóa xã hội
+    answer: D
+    explain: Thị trường có ba vai trò chủ yếu là thực hiện giá trị hàng hóa; kích thích sáng tạo, phân bổ nguồn lực; gắn kết nền kinh tế. Nền kinh tế thị trường không tự khắc phục được khủng hoảng và phân hóa; đó là khuyết tật cần nhà nước điều tiết.
+    page: 33
+
+  - id: c2-24
+    q: Cơ chế thị trường được A. Smith ví như gì?
+    options:
+      - Bàn tay sắt
+      - Bàn tay vô hình
+      - Chiếc đồng hồ
+      - Cỗ máy tự động
+    answer: B
+    explain: Cơ chế thị trường là hệ thống các quan hệ mang tính tự điều chỉnh theo các quy luật kinh tế, được A. Smith ví như một bàn tay vô hình.
+    page: 34
+
+  - id: c2-25
+    q: Nội dung yêu cầu của quy luật giá trị là gì?
+    options:
+      - Sản xuất và trao đổi hàng hóa phải dựa trên hao phí lao động xã hội cần thiết
+      - Giá cả luôn bằng giá trị
+      - Sản xuất phải theo kế hoạch nhà nước
+      - Trao đổi dựa trên giá trị cá biệt
+    answer: A
+    explain: Quy luật giá trị yêu cầu sản xuất và trao đổi hàng hóa phải tiến hành trên cơ sở hao phí lao động xã hội cần thiết; trao đổi theo nguyên tắc ngang giá, lấy giá trị xã hội làm cơ sở.
+    page: 38
+
+  - id: c2-26
+    q: Đâu không phải là tác động của quy luật giá trị?
+    options:
+      - Điều tiết sản xuất và lưu thông hàng hóa
+      - Kích thích cải tiến kỹ thuật, hợp lý hóa sản xuất, tăng năng suất lao động
+      - Phân hóa người sản xuất thành giàu, nghèo một cách tự nhiên
+      - Bảo đảm mọi người sản xuất đều có thu nhập bằng nhau
+    answer: D
+    explain: Quy luật giá trị có ba tác động là điều tiết sản xuất và lưu thông, kích thích cải tiến kỹ thuật và phân hóa người sản xuất.
+    page: 38
+
+  - id: c2-27
+    q: Theo quy luật cung – cầu, khi cung nhỏ hơn cầu thì giá cả so với giá trị thế nào?
+    options:
+      - Giá cả thấp hơn giá trị
+      - Giá cả cao hơn giá trị
+      - Giá cả bằng giá trị
+      - Không xác định được
+    answer: B
+    explain: Cung lớn hơn cầu thì giá cả thấp hơn giá trị; cung nhỏ hơn cầu thì giá cả cao hơn giá trị; cung bằng cầu thì giá cả bằng giá trị.
+    page: 40
+
+  - id: c2-28
+    q: Trong công thức M = P·Q / V của quy luật lưu thông tiền tệ, V là gì?
+    options:
+      - Khối lượng hàng hóa
+      - Mức giá cả
+      - Số vòng lưu thông của đồng tiền
+      - Giá trị của tiền
+    answer: C
+    explain: M là số lượng tiền cần thiết, P là mức giá cả, Q là khối lượng hàng hóa, dịch vụ đưa ra lưu thông, V là số vòng lưu thông của đồng tiền.
+    page: 40
+
+  - id: c2-29
+    q: Kết quả của cạnh tranh trong nội bộ ngành là gì?
+    options:
+      - Hình thành lợi nhuận bình quân
+      - Hình thành giá trị thị trường của từng loại hàng hóa
+      - Xóa bỏ độc quyền
+      - Di chuyển tư bản sang ngành khác
+    answer: B
+    explain: Cạnh tranh trong nội bộ ngành hình thành giá trị thị trường của từng loại hàng hóa. Cạnh tranh giữa các ngành nhằm tìm nơi đầu tư có lợi nhất.
+    page: 42
+
+  - id: c2-30
+    q: Biện pháp của cạnh tranh giữa các ngành là gì?
+    options:
+      - Cải tiến kỹ thuật để hạ giá trị cá biệt
+      - Tự do di chuyển nguồn lực từ ngành này sang ngành khác
+      - Quảng cáo sản phẩm
+      - Liên kết thành tổ chức độc quyền
+    answer: B
+    explain: Mục đích của cạnh tranh giữa các ngành là tìm nơi đầu tư có lợi nhất; biện pháp là tự do di chuyển nguồn lực từ ngành này sang ngành khác.
+    page: 42

@@ -1,4 +1,6 @@
-import { ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, GraduationCap, MessageSquareText } from "lucide-react";
+import {
+  ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Calculator, GraduationCap, ListChecks, MessageSquareText,
+} from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -9,6 +11,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { PageSkeleton } from "@/components/layout/PageSkeleton";
 import { Button } from "@/components/ui/button";
 import { getSubject, SUBJECTS } from "@/config/subjects";
+import { EXERCISES } from "@/domain/ktct/exercises";
 import { PostCard } from "@/features/blog/components/PostCard";
 import { getPosts } from "@/features/blog/server/posts";
 import { MODE_ICONS } from "@/features/chat/mode-icons";
@@ -17,6 +20,8 @@ import { chapterQuestions } from "@/features/learning/content";
 import { KIND_ICONS } from "@/features/library/components/DocIcon";
 import { docsForChapter } from "@/features/library/server/catalog";
 import { KIND_LABELS, printedPage, readerHref } from "@/features/library/types";
+import { getQuizBank } from "@/features/quiz/server/bank";
+import { QUIZ_SIZE } from "@/features/quiz/types";
 
 export function generateStaticParams() {
   return SUBJECTS.filter((s) => s.active).flatMap((s) => s.chapters.map((c) => ({ mon: s.id, so: String(c.number) })));
@@ -50,6 +55,8 @@ async function ChapterPageContent({ params }: PageProps<"/mon/[mon]/chuong/[so]"
   const related = docs.filter((d) => d !== textbook);
   const posts = getPosts().filter((p) => p.subject === subject.id && p.chapters.includes(n));
   const questions = chapterQuestions[subject.id]?.[n] ?? [];
+  const quizSize = getQuizBank(subject.id, n)?.questions.length ?? 0;
+  const hasExercises = !!EXERCISES[subject.id]?.[n];
   const prev = subject.chapters.find((c) => c.number === n - 1);
   const next = subject.chapters.find((c) => c.number === n + 1);
 
@@ -131,6 +138,45 @@ async function ChapterPageContent({ params }: PageProps<"/mon/[mon]/chuong/[so]"
           )}
         </section>
       </div>
+
+      {(quizSize > 0 || hasExercises) && (
+        <section className="border-t">
+          <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-14">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <h2 className="text-2xl font-bold">Tự kiểm tra chương {n}</h2>
+              <Link href="/tien-do" className="text-sm font-medium text-primary hover:underline">Xem tiến độ của tôi →</Link>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              {quizSize > 0 && (
+                <Link
+                  href={`/mon/${subject.id}/chuong/${n}/trac-nghiem`}
+                  className="group flex items-start gap-4 rounded-xl border bg-white p-5 transition-colors hover:border-primary/40 hover:bg-primary-soft"
+                >
+                  <IconTile icon={ListChecks} />
+                  <span className="flex flex-col gap-1">
+                    <span className="font-medium group-hover:text-primary">Trắc nghiệm</span>
+                    <span className="text-sm text-muted-foreground">
+                      {Math.min(QUIZ_SIZE, quizSize)} câu ngẫu nhiên trong {quizSize} câu, có giải thích và trang giáo trình.
+                    </span>
+                  </span>
+                </Link>
+              )}
+              {hasExercises && (
+                <Link
+                  href={`/mon/${subject.id}/chuong/${n}/bai-tap`}
+                  className="group flex items-start gap-4 rounded-xl border bg-white p-5 transition-colors hover:border-primary/40 hover:bg-primary-soft"
+                >
+                  <IconTile icon={Calculator} />
+                  <span className="flex flex-col gap-1">
+                    <span className="font-medium group-hover:text-primary">Bài tập tính toán</span>
+                    <span className="text-sm text-muted-foreground">Số liệu đổi mỗi lần làm, chấm ngay và hiện lời giải từng bước.</span>
+                  </span>
+                </Link>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {posts.length > 0 && (
         <section className="border-t bg-subtle">

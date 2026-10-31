@@ -1,0 +1,345 @@
+# Trắc nghiệm chương 3: Giá trị thặng dư trong nền kinh tế thị trường.
+subject: ktct
+chapter: 3
+status: nhap
+questions:
+  - id: c3-01
+    q: Công thức chung của tư bản là gì?
+    options:
+      - H – T – H
+      - T – H – T'
+      - T – T'
+      - H – H'
+    answer: B
+    explain: Tiền trong lưu thông hàng hóa giản đơn vận động theo H – T – H; tư bản vận động theo T – H – T', với T' = T + t (t > 0).
+    page: 49
+
+  - id: c3-02
+    q: Mục đích của lưu thông tư bản (T – H – T') khác lưu thông hàng hóa giản đơn (H – T – H) ở chỗ nào?
+    options:
+      - Lưu thông tư bản nhằm giá trị sử dụng
+      - Lưu thông tư bản nhằm giá trị lớn hơn
+      - Hai hình thức có cùng mục đích
+      - Lưu thông tư bản nhằm trao đổi ngang giá
+    answer: B
+    explain: Mục đích của lưu thông hàng hóa giản đơn là giá trị sử dụng; mục đích của lưu thông tư bản là giá trị lớn hơn.
+    page: 49
+
+  - id: c3-03
+    q: Theo C. Mác, nhà tư bản mua được hàng hóa đặc biệt nào mà khi sử dụng tạo ra giá trị mới lớn hơn giá trị bản thân nó?
+    options:
+      - Máy móc
+      - Nguyên liệu
+      - Sức lao động
+      - Tiền tệ
+    answer: C
+    explain: Hàng hóa sức lao động có giá trị sử dụng đặc biệt, khi sử dụng không những bảo tồn giá trị mà còn tạo ra giá trị lớn hơn, đó là nguồn gốc của giá trị thặng dư.
+    page: 50
+
+  - id: c3-04
+    q: Hai điều kiện để sức lao động trở thành hàng hóa là gì?
+    options:
+      - Người lao động có tay nghề và có sức khỏe
+      - Người lao động được tự do về thân thể và không có đủ tư liệu sản xuất cần thiết
+      - Có thị trường và có tiền tệ
+      - Có hợp đồng lao động và có pháp luật bảo hộ
+    answer: B
+    explain: Sức lao động trở thành hàng hóa khi người lao động được tự do về thân thể và không có đủ tư liệu sản xuất để tự kết hợp với sức lao động của mình.
+    page: 50
+
+  - id: c3-05
+    q: Bộ phận nào không thuộc giá trị hàng hóa sức lao động?
+    options:
+      - Giá trị tư liệu sinh hoạt cần thiết để tái sản xuất sức lao động
+      - Phí tổn đào tạo người lao động
+      - Giá trị tư liệu sinh hoạt nuôi con của người lao động
+      - Giá trị thặng dư người lao động tạo ra
+    answer: D
+    explain: Giá trị hàng hóa sức lao động gồm giá trị tư liệu sinh hoạt để tái sản xuất sức lao động, phí tổn đào tạo và giá trị tư liệu sinh hoạt nuôi con người lao động. Giá trị thặng dư là phần dôi ra ngoài giá trị sức lao động.
+    page: 51
+
+  - id: c3-06
+    q: Giá trị thặng dư là gì?
+    options:
+      - Toàn bộ giá trị hàng hóa
+      - Bộ phận giá trị mới dôi ra ngoài giá trị sức lao động do công nhân tạo ra
+      - Phần chênh lệch do mua rẻ, bán đắt
+      - Giá trị máy móc chuyển vào sản phẩm
+    answer: B
+    explain: Giá trị thặng dư là bộ phận giá trị mới dôi ra ngoài giá trị sức lao động do công nhân tạo ra, là kết quả của lao động không công của công nhân cho nhà tư bản.
+    page: 53
+
+  - id: c3-07
+    q: Tư bản bất biến (c) là gì?
+    options:
+      - Bộ phận tư bản dùng để mua sức lao động
+      - Bộ phận tư bản dưới hình thái tư liệu sản xuất, giá trị được bảo tồn và chuyển nguyên vẹn vào sản phẩm
+      - Bộ phận tư bản tạo ra giá trị thặng dư
+      - Bộ phận tư bản cho vay
+    answer: B
+    explain: Tư bản bất biến tồn tại dưới hình thái tư liệu sản xuất, giá trị được lao động cụ thể bảo tồn và chuyển nguyên vẹn vào giá trị sản phẩm; nó không tạo ra giá trị thặng dư nhưng là điều kiện cần thiết.
+    page: 54
+
+  - id: c3-08
+    q: Vì sao bộ phận tư bản dùng để mua sức lao động được gọi là tư bản khả biến?
+    options:
+      - Vì giá của sức lao động thay đổi theo mùa
+      - Vì thông qua lao động trừu tượng của công nhân, nó tăng lên về lượng trong quá trình sản xuất
+      - Vì nó chuyển dần từng phần vào sản phẩm
+      - Vì nhà tư bản có thể thay đổi số công nhân
+    answer: B
+    explain: Bộ phận tư bản dưới hình thái sức lao động không tái hiện ra nhưng thông qua lao động trừu tượng của công nhân mà tăng lên, tức biến đổi về lượng, nên gọi là tư bản khả biến (v).
+    page: 55
+
+  - id: c3-09
+    q: Trong công thức giá trị hàng hóa G = c + (v + m), bộ phận nào là giá trị mới do hao phí lao động tạo ra?
+    options:
+      - c
+      - c + v
+      - v + m
+      - c + m
+    answer: C
+    explain: (v + m) là bộ phận giá trị mới do hao phí lao động tạo ra; c là giá trị tư liệu sản xuất đã tiêu dùng, lao động quá khứ được chuyển vào sản phẩm.
+    page: 55
+
+  - id: c3-10
+    q: Tiền công là gì theo giáo trình?
+    options:
+      - Khoản nhà tư bản trả từ vốn riêng của mình
+      - Giá cả của hàng hóa sức lao động, là bộ phận giá trị mới do chính người lao động tạo ra
+      - Toàn bộ giá trị mới người lao động tạo ra
+      - Một phần lợi nhuận được chia
+    answer: B
+    explain: Tiền công là giá cả của hàng hóa sức lao động; đó là bộ phận của giá trị mới do chính hao phí sức lao động của người làm thuê tạo ra.
+    page: 55
+
+  - id: c3-11
+    q: Tuần hoàn của tư bản lần lượt trải qua ba hình thái nào?
+    options:
+      - Tư bản bất biến, tư bản khả biến, tư bản cố định
+      - Tư bản tiền tệ, tư bản sản xuất, tư bản hàng hóa
+      - Tư bản thương nghiệp, tư bản cho vay, tư bản ngân hàng
+      - Tư bản cố định, tư bản lưu động, tư bản giả
+    answer: B
+    explain: Tuần hoàn tư bản lần lượt trải qua ba giai đoạn dưới ba hình thái tư bản tiền tệ, tư bản sản xuất, tư bản hàng hóa rồi quay về hình thái ban đầu cùng giá trị thặng dư.
+    page: 56
+
+  - id: c3-12
+    q: Tư bản cố định khác tư bản lưu động ở điểm nào?
+    options:
+      - Tư bản cố định tạo ra giá trị thặng dư, tư bản lưu động thì không
+      - Giá trị tư bản cố định chuyển dần từng phần vào sản phẩm theo mức hao mòn; giá trị tư bản lưu động chuyển một lần, toàn phần
+      - Tư bản cố định gồm sức lao động và nguyên liệu
+      - Tư bản lưu động chỉ tồn tại trong lưu thông
+    answer: B
+    explain: Tư bản cố định (tư liệu lao động) chuyển giá trị dần từng phần theo hao mòn; tư bản lưu động (sức lao động, nguyên nhiên vật liệu) chuyển giá trị một lần, toàn phần sau mỗi quá trình sản xuất.
+    page: 58
+
+  - id: c3-13
+    q: Hao mòn vô hình của tư bản cố định là gì?
+    options:
+      - Máy móc bị gỉ sét do thời tiết
+      - Sự mất giá thuần túy do năng suất sản xuất tư liệu lao động tăng và xuất hiện thế hệ máy mới
+      - Máy móc hỏng do sử dụng quá tải
+      - Chi phí bảo dưỡng máy móc
+    answer: B
+    explain: Hao mòn hữu hình là mất mát giá trị sử dụng và giá trị do sử dụng và tự nhiên; hao mòn vô hình là sự mất giá thuần túy do năng suất tăng và tư liệu lao động mới ra đời.
+    page: 58
+
+  - id: c3-14
+    q: Tỷ suất giá trị thặng dư được tính theo công thức nào?
+    options:
+      - "m' = m / (c + v) × 100 %"
+      - "m' = m / v × 100 %"
+      - "m' = m / c × 100 %"
+      - "m' = v / m × 100 %"
+    answer: B
+    explain: Tỷ suất giá trị thặng dư là tỷ lệ phần trăm giữa giá trị thặng dư và tư bản khả biến, m' = m / v × 100 %, hoặc m' = t' / t × 100 %.
+    page: 59
+
+  - id: c3-15
+    q: Tỷ suất giá trị thặng dư và khối lượng giá trị thặng dư lần lượt phản ánh điều gì?
+    options:
+      - Quy mô giá trị thặng dư và trình độ khai thác sức lao động
+      - Trình độ khai thác sức lao động làm thuê và quy mô giá trị thặng dư thu được
+      - Hiệu quả đầu tư và tốc độ chu chuyển
+      - Lợi nhuận và lợi tức
+    answer: B
+    explain: Tỷ suất giá trị thặng dư phản ánh trình độ khai thác sức lao động làm thuê; khối lượng giá trị thặng dư (M = m' × V) phản ánh quy mô giá trị thặng dư thu được.
+    page: 60
+
+  - id: c3-16
+    q: Ngày lao động 8 giờ, thời gian lao động tất yếu 4 giờ. Nhà tư bản kéo dài ngày lao động thêm 2 giờ, các điều kiện khác không đổi. Tỷ suất giá trị thặng dư mới là bao nhiêu?
+    options:
+      - 100 %
+      - 125 %
+      - 150 %
+      - 200 %
+    answer: C
+    explain: Thời gian lao động thặng dư tăng từ 4 lên 6 giờ, thời gian tất yếu vẫn 4 giờ, m' = 6 / 4 × 100 % = 150 %. Đây là sản xuất giá trị thặng dư tuyệt đối.
+    page: 60
+
+  - id: c3-17
+    q: Ngày lao động 8 giờ không đổi, giá trị sức lao động giảm khiến thời gian lao động tất yếu từ 4 giờ rút còn 2 giờ. Tỷ suất giá trị thặng dư là bao nhiêu?
+    options:
+      - 150 %
+      - 200 %
+      - 300 %
+      - 400 %
+    answer: C
+    explain: Thời gian lao động thặng dư là 8 − 2 = 6 giờ, m' = 6 / 2 × 100 % = 300 %. Đây là sản xuất giá trị thặng dư tương đối.
+    page: 61
+
+  - id: c3-18
+    q: Giá trị thặng dư tương đối thu được bằng cách nào?
+    options:
+      - Kéo dài ngày lao động
+      - Rút ngắn thời gian lao động tất yếu, kéo dài thời gian lao động thặng dư trong khi ngày lao động không đổi hoặc rút ngắn
+      - Tăng giá bán hàng hóa
+      - Cắt xén tiền công
+    answer: B
+    explain: Giá trị thặng dư tương đối có được nhờ rút ngắn thời gian lao động tất yếu (hạ giá trị sức lao động bằng tăng năng suất lao động xã hội).
+    page: 61
+
+  - id: c3-19
+    q: Vì sao giá trị thặng dư siêu ngạch được coi là hình thái biến tướng của giá trị thặng dư tương đối?
+    options:
+      - Vì cả hai đều do kéo dài ngày lao động
+      - Vì cả hai đều dựa trên tăng năng suất lao động
+      - Vì giá trị thặng dư siêu ngạch tồn tại vĩnh viễn ở mọi xí nghiệp
+      - Vì nó do nhà nước quy định
+    answer: B
+    explain: Giá trị thặng dư siêu ngạch có được khi một xí nghiệp tăng năng suất cá biệt làm giá trị cá biệt thấp hơn giá trị xã hội; hoạt động đó lan rộng làm tăng năng suất xã hội, hình thành giá trị thặng dư tương đối.
+    page: 61
+
+  - id: c3-20
+    q: Tích lũy tư bản là gì?
+    options:
+      - Nhà tư bản tiêu dùng hết giá trị thặng dư
+      - Sự chuyển hóa một phần giá trị thặng dư thành tư bản phụ thêm
+      - Gửi tiền nhàn rỗi vào ngân hàng
+      - Sáp nhập các doanh nghiệp với nhau
+    answer: B
+    explain: Sự chuyển hóa một phần giá trị thặng dư thành tư bản gọi là tích lũy tư bản; bản chất là tái sản xuất mở rộng tư bản chủ nghĩa. Nguồn gốc duy nhất của tư bản tích lũy là giá trị thặng dư.
+    page: 62
+
+  - id: c3-21
+    q: Đâu không phải là nhân tố ảnh hưởng tới quy mô tích lũy tư bản theo giáo trình?
+    options:
+      - Trình độ khai thác sức lao động
+      - Năng suất lao động xã hội
+      - Chênh lệch giữa tư bản sử dụng và tư bản tiêu dùng
+      - Tỷ suất lợi tức ngân hàng
+    answer: D
+    explain: Bốn nhân tố là trình độ khai thác sức lao động, năng suất lao động xã hội, sử dụng hiệu quả máy móc (chênh lệch tư bản sử dụng và tư bản tiêu dùng) và đại lượng tư bản ứng trước.
+    page: 63
+
+  - id: c3-22
+    q: Tích tụ tư bản khác tập trung tư bản ở điểm nào?
+    options:
+      - Tích tụ làm tăng quy mô tư bản xã hội; tập trung không làm tăng quy mô tư bản xã hội
+      - Tập trung làm tăng quy mô tư bản xã hội; tích tụ thì không
+      - Cả hai đều không làm tăng quy mô tư bản cá biệt
+      - Tích tụ là sáp nhập doanh nghiệp
+    answer: A
+    explain: Tích tụ là tư bản hóa giá trị thặng dư, tăng cả quy mô tư bản cá biệt và tư bản xã hội. Tập trung là hợp nhất các tư bản cá biệt, tăng quy mô tư bản cá biệt mà không làm tăng tư bản xã hội.
+    page: 64
+
+  - id: c3-23
+    q: Cấu tạo hữu cơ của tư bản (c/v) là gì?
+    options:
+      - Tỷ lệ giữa số máy móc và số công nhân
+      - Cấu tạo giá trị được quyết định bởi cấu tạo kỹ thuật và phản ánh sự biến đổi của cấu tạo kỹ thuật
+      - Tỷ lệ giữa lợi nhuận và tư bản ứng trước
+      - Tỷ lệ giữa tư bản cố định và tư bản lưu động
+    answer: B
+    explain: Quan hệ giữa số lượng tư liệu sản xuất và sức lao động là cấu tạo kỹ thuật; biểu hiện qua hình thái giá trị thành tỷ lệ c/v, gọi là cấu tạo hữu cơ. Tích lũy tư bản làm cấu tạo hữu cơ tăng.
+    page: 64
+
+  - id: c3-24
+    q: Chi phí sản xuất tư bản chủ nghĩa (k) được tính thế nào?
+    options:
+      - k = c + v + m
+      - k = c + v
+      - k = v + m
+      - k = m / v
+    answer: B
+    explain: Chi phí sản xuất là phần giá trị bù lại giá cả tư liệu sản xuất đã tiêu dùng và giá cả sức lao động đã sử dụng, k = c + v; khi đó G = k + m.
+    page: 66
+
+  - id: c3-25
+    q: Trong ví dụ của giáo trình, giá trị hàng hóa một năm là 450.000c + 100.000v + 100.000m = 650.000 USD. Chi phí sản xuất là bao nhiêu?
+    options:
+      - 450.000 USD
+      - 550.000 USD
+      - 650.000 USD
+      - 1.000.000 USD
+    answer: B
+    explain: k = c + v = 450.000 + 100.000 = 550.000 USD, bằng giá trị hàng hóa trừ giá trị thặng dư.
+    page: 66
+
+  - id: c3-26
+    q: Tư bản ứng trước 500 triệu, cấu tạo hữu cơ c/v = 4/1, tỷ suất giá trị thặng dư 150 %. Tỷ suất lợi nhuận là bao nhiêu?
+    options:
+      - 20 %
+      - 30 %
+      - 37,5 %
+      - 150 %
+    answer: B
+    explain: v = 500 / (1 + 4) = 100, c = 400; m = 150 % × 100 = 150; p' = m / (c + v) × 100 % = 150 / 500 × 100 % = 30 %.
+    page: 68
+
+  - id: c3-27
+    q: Lợi nhuận được C. Mác khái quát là gì?
+    options:
+      - Do tư bản ứng trước sinh ra
+      - Hình thái chuyển hóa, biểu hiện bề mặt của giá trị thặng dư khi được quan niệm là con đẻ của toàn bộ tư bản ứng trước
+      - Do mua rẻ, bán đắt mà có
+      - Phần thưởng cho rủi ro của nhà tư bản
+    answer: B
+    explain: Giá trị thặng dư, được quan niệm là con đẻ của toàn bộ tư bản ứng trước, mang hình thái chuyển hóa là lợi nhuận; lợi nhuận là hình thái biểu hiện của giá trị thặng dư.
+    page: 67
+
+  - id: c3-28
+    q: Nhân tố nào không làm tăng tỷ suất lợi nhuận?
+    options:
+      - Tăng tỷ suất giá trị thặng dư
+      - Tăng tốc độ chu chuyển tư bản
+      - Tiết kiệm tư bản bất biến
+      - Kéo dài thời gian chu chuyển tư bản
+    answer: D
+    explain: Tốc độ chu chuyển càng lớn thì tỷ suất lợi nhuận càng tăng; kéo dài thời gian chu chuyển làm giảm tốc độ chu chuyển.
+    page: 68
+
+  - id: c3-29
+    q: Cơ chế hình thành lợi nhuận bình quân là gì?
+    options:
+      - Cạnh tranh trong nội bộ ngành
+      - Cạnh tranh giữa các ngành, qua tự do di chuyển tư bản
+      - Nhà nước quy định mức lợi nhuận
+      - Thỏa thuận giữa các nhà tư bản
+    answer: B
+    explain: Cạnh tranh giữa các ngành là cơ chế hình thành lợi nhuận bình quân; tư bản di chuyển cho tới khi tỷ suất lợi nhuận các ngành xấp xỉ bằng nhau. Khi đó giá trị chuyển hóa thành giá cả sản xuất, GCSX = k + P.
+    page: 68
+
+  - id: c3-30
+    q: Lợi tức là gì theo giáo trình?
+    options:
+      - Toàn bộ lợi nhuận bình quân
+      - Một phần lợi nhuận bình quân người đi vay trả cho người cho vay, thực chất là một phần giá trị thặng dư
+      - Do tiền tự sinh ra tiền
+      - Phần chênh lệch giữa giá bán và giá mua
+    answer: B
+    explain: Lợi tức là một phần lợi nhuận bình quân mà người đi vay trả cho người cho vay; về thực chất là một phần giá trị thặng dư.
+    page: 71
+
+  - id: c3-31
+    q: Địa tô chênh lệch II là địa tô thu được do đâu?
+    options:
+      - Ruộng đất tốt, độ màu mỡ tự nhiên cao
+      - Mảnh đất đã được đầu tư, thâm canh làm tăng độ màu mỡ
+      - Mọi mảnh đất cho thuê, không kể độ màu mỡ
+      - Vị trí gần thành phố
+    answer: B
+    explain: Địa tô chênh lệch I do đất tốt, điều kiện tự nhiên thuận lợi; địa tô chênh lệch II do đất đã được đầu tư thâm canh; địa tô tuyệt đối thu trên mọi mảnh đất cho thuê.
+    page: 72

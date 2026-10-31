@@ -3,7 +3,9 @@ PY ?= $(if $(wildcard .venv/Scripts/python.exe),.venv/Scripts/python,.venv/bin/p
 COMPOSE = docker compose -f infra/docker-compose.yml
 RAG = cd services/rag &&
 
-.PHONY: db rag ingest ingest-all eval test
+WEB = cd apps/web &&
+
+.PHONY: db rag ingest ingest-all eval test web migrate eval-chat test-web
 
 db:            ## Khởi động Postgres + pgvector
 	$(COMPOSE) up -d db
@@ -22,3 +24,15 @@ eval:          ## Đo trên bộ câu chuẩn, so với điểm nền Streamlit
 
 test:
 	$(RAG) ../../$(PY) -m pytest -q
+
+web:           ## Chạy Next.js ở cổng 3000, cần rag và mô hình ngôn ngữ
+	$(WEB) npm run dev
+
+migrate:       ## Tạo hoặc cập nhật bảng của Next.js (hội thoại, đánh giá)
+	$(WEB) npm run db:migrate
+
+eval-chat:     ## Đo từ chối đúng và tính toán, cần rag và mô hình ngôn ngữ
+	$(WEB) npm run eval
+
+test-web:
+	$(WEB) npm test && npm run typecheck && npm run lint

@@ -1,0 +1,312 @@
+# Trắc nghiệm chương 4: Cạnh tranh và độc quyền trong nền kinh tế thị trường.
+subject: ktct
+chapter: 4
+status: nhap
+questions:
+  - id: c4-01
+    q: Theo giáo trình, độc quyền là gì?
+    options:
+      - Một doanh nghiệp duy nhất được nhà nước cấp phép kinh doanh
+      - Sự liên minh giữa các doanh nghiệp lớn, có khả năng thâu tóm sản xuất và tiêu thụ một số loại hàng hóa, định ra giá cả độc quyền để thu lợi nhuận độc quyền cao
+      - Sự cạnh tranh tự do giữa các doanh nghiệp vừa và nhỏ
+      - Quyền sở hữu trí tuệ đối với sáng chế
+    answer: B
+    explain: Độc quyền là liên minh giữa các doanh nghiệp lớn, thâu tóm sản xuất và tiêu thụ một số loại hàng hóa, định ra giá cả độc quyền nhằm thu lợi nhuận độc quyền cao.
+    page: 75
+
+  - id: c4-02
+    q: Đâu không phải là nguyên nhân hình thành độc quyền cuối thế kỷ XIX, đầu thế kỷ XX?
+    options:
+      - Sự phát triển của lực lượng sản xuất dưới tác động của tiến bộ khoa học kỹ thuật
+      - Cạnh tranh gay gắt
+      - Khủng hoảng kinh tế và sự phát triển của hệ thống tín dụng
+      - Nhà nước cấm cạnh tranh tự do
+    answer: D
+    explain: Giáo trình nêu ba nguyên nhân là sự phát triển của lực lượng sản xuất, cạnh tranh và khủng hoảng cùng sự phát triển của hệ thống tín dụng.
+    page: 76
+
+  - id: c4-03
+    q: Cuộc khủng hoảng kinh tế lớn nào trong thế giới tư bản chủ nghĩa đã thúc đẩy nhanh tích tụ, tập trung sản xuất, hình thành độc quyền?
+    options:
+      - Khủng hoảng năm 1825
+      - Khủng hoảng năm 1873
+      - Khủng hoảng năm 1929 – 1933
+      - Khủng hoảng năm 2008
+    answer: B
+    explain: Khủng hoảng kinh tế lớn năm 1873 làm phá sản hàng loạt doanh nghiệp vừa và nhỏ, buộc các doanh nghiệp lớn đẩy nhanh tích tụ và tập trung sản xuất.
+    page: 76
+
+  - id: c4-04
+    q: Câu "tự do cạnh tranh đẻ ra tập trung sản xuất và sự tập trung sản xuất này, khi phát triển đến mức độ nhất định, lại dẫn tới độc quyền" là của ai?
+    options:
+      - C. Mác
+      - Ph. Ăngghen
+      - V.I. Lênin
+      - A. Smith
+    answer: C
+    explain: Đây là nhận định của V.I. Lênin, Toàn tập, tập 27.
+    page: 76
+
+  - id: c4-05
+    q: Giá cả độc quyền gồm những loại nào?
+    options:
+      - Giá cả độc quyền cao khi bán và giá cả độc quyền thấp khi mua
+      - Giá cả độc quyền thấp khi bán và cao khi mua
+      - Giá trần và giá sàn do nhà nước quy định
+      - Giá cả sản xuất và giá cả thị trường
+    answer: A
+    explain: Các tổ chức độc quyền luôn áp đặt giá cao khi bán và giá thấp khi mua, nên giá cả độc quyền gồm giá cả độc quyền cao và giá cả độc quyền thấp.
+    page: 77
+
+  - id: c4-06
+    q: Nguồn gốc của lợi nhuận độc quyền cao thực chất là gì?
+    options:
+      - Do tổ chức độc quyền tự tạo ra nhờ máy móc hiện đại
+      - Vẫn do lao động của công nhân, cùng giá trị thặng dư của các nhà tư bản vừa và nhỏ, lao động của người sản xuất nhỏ và nhân dân các nước thuộc địa, phụ thuộc
+      - Do nhà nước trợ cấp
+      - Do mua rẻ bán đắt tạo ra giá trị mới
+    answer: B
+    explain: Lợi nhuận độc quyền cao thực chất vẫn do lao động của công nhân trong các xí nghiệp độc quyền và ngoài độc quyền, giá trị thặng dư của tư bản vừa và nhỏ bị mất, lao động của người sản xuất nhỏ và nhân dân các nước thuộc địa, phụ thuộc.
+    page: 77
+
+  - id: c4-07
+    q: Đâu là một nguyên nhân hình thành độc quyền nhà nước trong chủ nghĩa tư bản?
+    options:
+      - Các ngành kết cấu hạ tầng vốn lớn, thu hồi chậm, ít lợi nhuận mà tư nhân không muốn đầu tư
+      - Các doanh nghiệp tư nhân muốn nhà nước quốc hữu hóa
+      - Nhà nước muốn xóa bỏ chủ nghĩa tư bản
+      - Giai cấp công nhân yêu cầu nhà nước nắm toàn bộ nền kinh tế
+    answer: A
+    explain: Một nguyên nhân là xuất hiện những ngành quan trọng (năng lượng, giao thông, giáo dục, khoa học cơ bản…) mà độc quyền tư nhân không thể hoặc không muốn đầu tư, buộc nhà nước đảm nhận.
+    page: 78
+
+  - id: c4-08
+    q: Bản chất của độc quyền nhà nước trong chủ nghĩa tư bản là gì?
+    options:
+      - Phục vụ lợi ích của toàn thể nhân dân lao động
+      - Phục vụ lợi ích của các tổ chức độc quyền tư nhân và tiếp tục duy trì, phát triển chủ nghĩa tư bản
+      - Xóa bỏ chế độ tư hữu
+      - Thay thế hoàn toàn cơ chế thị trường
+    answer: B
+    explain: Độc quyền nhà nước trong chủ nghĩa tư bản hình thành nhằm phục vụ lợi ích của các tổ chức độc quyền tư nhân và tiếp tục duy trì, phát triển chủ nghĩa tư bản; là hình thức vận động mới của quan hệ sản xuất tư bản chủ nghĩa.
+    page: 79
+
+  - id: c4-09
+    q: Đâu là tác động tiêu cực của độc quyền?
+    options:
+      - Tạo khả năng lớn trong nghiên cứu, triển khai khoa học kỹ thuật
+      - Làm tăng năng suất lao động của tổ chức độc quyền
+      - Có thể kìm hãm tiến bộ kỹ thuật khi vị thế độc quyền có nguy cơ lung lay
+      - Thúc đẩy nền kinh tế phát triển theo hướng sản xuất lớn hiện đại
+    answer: C
+    explain: Thúc đẩy khoa học kỹ thuật, tăng năng suất, phát triển sản xuất lớn là tác động tích cực. Vì lợi ích độc quyền, nghiên cứu, phát minh chỉ được thực hiện khi vị thế độc quyền không bị đe dọa, nên độc quyền có thể kìm hãm tiến bộ kỹ thuật.
+    page: 81
+
+  - id: c4-10
+    q: Sự xuất hiện của độc quyền tác động thế nào tới cạnh tranh?
+    options:
+      - Thủ tiêu hoàn toàn cạnh tranh
+      - Không thủ tiêu cạnh tranh mà làm cạnh tranh đa dạng, gay gắt hơn
+      - Chỉ còn cạnh tranh giữa các doanh nghiệp nhỏ
+      - Biến cạnh tranh thành hợp tác thuần túy
+    answer: B
+    explain: Độc quyền sinh ra từ cạnh tranh tự do nhưng không thủ tiêu cạnh tranh; trái lại làm cạnh tranh đa dạng, gay gắt hơn.
+    page: 81
+
+  - id: c4-11
+    q: Trong trạng thái độc quyền, có những loại cạnh tranh nào giữa các tổ chức độc quyền?
+    options:
+      - Chỉ có cạnh tranh giữa các tổ chức độc quyền với nhau
+      - Cạnh tranh giữa độc quyền với doanh nghiệp ngoài độc quyền, giữa các tổ chức độc quyền với nhau và trong nội bộ tổ chức độc quyền
+      - Chỉ có cạnh tranh trong nội bộ ngành
+      - Không còn cạnh tranh
+    answer: B
+    explain: Giáo trình nêu ba loại cạnh tranh có thêm khi có độc quyền là giữa độc quyền với doanh nghiệp ngoài độc quyền, giữa các tổ chức độc quyền với nhau và trong nội bộ tổ chức độc quyền.
+    page: 82
+
+  - id: c4-12
+    q: V.I. Lênin khái quát độc quyền tư bản chủ nghĩa có bao nhiêu đặc điểm kinh tế?
+    options:
+      - Ba
+      - Bốn
+      - Năm
+      - Sáu
+    answer: C
+    explain: V.I. Lênin khái quát năm đặc điểm kinh tế của độc quyền tư bản chủ nghĩa.
+    page: 82
+
+  - id: c4-13
+    q: Thứ tự các hình thức tổ chức độc quyền cơ bản từ thấp đến cao là gì?
+    options:
+      - Trust → Cartel → Syndicate → Consortium
+      - Cartel → Syndicate → Trust → Consortium
+      - Syndicate → Cartel → Consortium → Trust
+      - Consortium → Trust → Syndicate → Cartel
+    answer: B
+    explain: Các hình thức tổ chức độc quyền cơ bản từ thấp đến cao gồm Cartel, Syndicate, Trust, Consortium.
+    page: 83
+
+  - id: c4-14
+    q: Trong Syndicate, các xí nghiệp thành viên mất độc lập về mặt nào?
+    options:
+      - Mất độc lập cả sản xuất và lưu thông
+      - Vẫn độc lập về sản xuất, chỉ mất độc lập về lưu thông hàng hóa
+      - Vẫn độc lập về lưu thông, mất độc lập về sản xuất
+      - Không mất độc lập về mặt nào
+    answer: B
+    explain: Thành viên Syndicate vẫn độc lập về sản xuất, chỉ mất độc lập về lưu thông vì mọi việc mua, bán do ban quản trị chung đảm nhận.
+    page: 83
+
+  - id: c4-15
+    q: Vì sao Cartel là liên minh độc quyền không vững chắc?
+    options:
+      - Vì thành viên mất hoàn toàn độc lập
+      - Vì các xí nghiệp vẫn độc lập cả sản xuất và lưu thông, chỉ cam kết thực hiện hiệp nghị nên dễ rút ra
+      - Vì Cartel bị pháp luật cấm
+      - Vì Cartel không có hiệp nghị
+    answer: B
+    explain: Các xí nghiệp trong Cartel vẫn độc lập cả về sản xuất và lưu thông, chỉ ký hiệp nghị về giá cả, sản lượng, thị trường; thành viên bất lợi dễ rút ra khiến Cartel thường tan vỡ.
+    page: 83
+
+  - id: c4-16
+    q: Theo V.I. Lênin, tư bản tài chính là gì?
+    options:
+      - Toàn bộ tiền gửi trong ngân hàng
+      - Kết quả hợp nhất giữa tư bản ngân hàng của một số ít ngân hàng độc quyền lớn nhất với tư bản của các liên minh độc quyền các nhà công nghiệp
+      - Tư bản cho vay nặng lãi
+      - Tư bản của nhà nước
+    answer: B
+    explain: V.I. Lênin viết tư bản tài chính là kết quả của sự hợp nhất giữa tư bản ngân hàng của một số ít ngân hàng độc quyền lớn nhất với tư bản của những liên minh độc quyền các nhà công nghiệp.
+    page: 85
+
+  - id: c4-17
+    q: Tài phiệt thực hiện sự thống trị kinh tế chủ yếu thông qua chế độ nào?
+    options:
+      - Chế độ tham dự
+      - Chế độ bầu cử
+      - Chế độ khoán
+      - Chế độ hợp tác xã
+    answer: A
+    explain: Qua chế độ tham dự (công ty mẹ chi phối công ty con, công ty con chi phối công ty cháu…), tài phiệt dùng lượng tư bản nhỏ để khống chế lượng tư bản lớn gấp nhiều lần.
+    page: 85
+
+  - id: c4-18
+    q: Xuất khẩu tư bản là gì?
+    options:
+      - Bán hàng hóa ra nước ngoài
+      - Xuất khẩu giá trị ra nước ngoài (đầu tư tư bản ra nước ngoài) nhằm thu giá trị thặng dư và các nguồn lợi nhuận khác
+      - Chuyển lợi nhuận về nước
+      - Nhập khẩu máy móc
+    answer: B
+    explain: Xuất khẩu tư bản là xuất khẩu giá trị ra nước ngoài nhằm mục đích giá trị thặng dư và các nguồn lợi nhuận khác ở nước nhập khẩu tư bản; gồm đầu tư trực tiếp và đầu tư gián tiếp.
+    page: 85
+
+  - id: c4-19
+    q: Mua cổ phiếu, trái phiếu, cho vay để thu lợi tức mà không trực tiếp quản lý thuộc hình thức xuất khẩu tư bản nào?
+    options:
+      - Đầu tư trực tiếp
+      - Đầu tư gián tiếp
+      - Xuất khẩu hàng hóa
+      - Viện trợ không hoàn lại
+    answer: B
+    explain: Đầu tư gián tiếp là cho vay thu lợi tức, mua cổ phần, cổ phiếu, trái phiếu, giấy tờ có giá… mà nhà đầu tư không trực tiếp tham gia quản lý.
+    page: 86
+
+  - id: c4-20
+    q: Câu "Hôm nay là bộ trưởng, ngày mai là chủ ngân hàng; hôm nay là chủ ngân hàng, ngày mai là bộ trưởng" minh họa đặc điểm nào của độc quyền nhà nước?
+    options:
+      - Sự hình thành sở hữu nhà nước
+      - Sự kết hợp về nhân sự giữa tổ chức độc quyền và nhà nước
+      - Độc quyền nhà nước là công cụ điều tiết kinh tế
+      - Xuất khẩu tư bản
+    answer: B
+    explain: V.I. Lênin dùng câu này để chỉ sự kết hợp về nhân sự giữa tổ chức độc quyền và nhà nước, thực hiện qua các đảng phái và hội chủ xí nghiệp.
+    page: 88
+
+  - id: c4-21
+    q: Đâu không phải là chức năng của sở hữu nhà nước trong độc quyền nhà nước tư bản chủ nghĩa?
+    options:
+      - Mở rộng sản xuất tư bản chủ nghĩa, bảo đảm địa bàn cho độc quyền phát triển
+      - Tạo thuận lợi cho tư bản độc quyền di chuyển giữa các ngành
+      - Làm chỗ dựa cho điều tiết kinh tế của nhà nước
+      - Xóa bỏ sở hữu tư nhân tư bản chủ nghĩa
+    answer: D
+    explain: Sở hữu nhà nước có ba chức năng là mở rộng sản xuất tư bản chủ nghĩa, tạo thuận lợi di chuyển tư bản độc quyền, làm chỗ dựa cho điều tiết kinh tế; nó gắn bó, đan kết với sở hữu độc quyền tư nhân chứ không xóa bỏ nó.
+    page: 89
+
+  - id: c4-22
+    q: Cơ chế điều tiết kinh tế của độc quyền nhà nước là sự dung hợp của những cơ chế nào?
+    options:
+      - Kế hoạch hóa tập trung và thị trường
+      - Thị trường, độc quyền tư nhân và điều tiết của nhà nước
+      - Độc quyền tư nhân và hợp tác xã
+      - Thị trường và viện trợ quốc tế
+    answer: B
+    explain: Cơ chế điều tiết kinh tế độc quyền nhà nước dung hợp ba cơ chế là thị trường, độc quyền tư nhân và điều tiết của nhà nước, nhằm phục vụ lợi ích của chủ nghĩa tư bản độc quyền.
+    page: 90
+
+  - id: c4-23
+    q: Concern là hình thức tổ chức độc quyền như thế nào?
+    options:
+      - Kết hợp hàng chục hãng vừa và nhỏ không liên quan về sản xuất, chủ yếu kinh doanh chứng khoán
+      - Tổ chức độc quyền đa ngành gồm hàng trăm xí nghiệp ở nhiều ngành, phân bổ ở nhiều nước
+      - Hiệp nghị về giá cả giữa các xí nghiệp cùng ngành
+      - Ban quản trị chung lo việc mua bán
+    answer: B
+    explain: Concern là tổ chức độc quyền đa ngành, có hàng trăm xí nghiệp thuộc nhiều ngành, ở nhiều nước. Kết hợp các hãng vừa và nhỏ không liên quan về sản xuất, chủ yếu kinh doanh chứng khoán là Conglomerate.
+    page: 91
+
+  - id: c4-24
+    q: Mục đích chủ yếu của các Conglomerate là gì?
+    options:
+      - Sản xuất hàng hóa thiết yếu
+      - Thu lợi nhuận từ kinh doanh chứng khoán
+      - Nghiên cứu khoa học cơ bản
+      - Đầu tư kết cấu hạ tầng
+    answer: B
+    explain: Conglomerate kết hợp hàng chục hãng vừa và nhỏ không liên quan trực tiếp về sản xuất; mục đích chủ yếu là thu lợi nhuận từ kinh doanh chứng khoán nên dễ phá sản hoặc chuyển thành Concern.
+    page: 91
+
+  - id: c4-25
+    q: Biểu hiện mới của xuất khẩu tư bản trong những thập kỷ gần đây là gì?
+    options:
+      - Luồng tư bản chủ yếu từ nước phát triển sang nước kém phát triển
+      - Đại bộ phận dòng đầu tư chảy qua lại giữa các nước tư bản phát triển với nhau
+      - Chỉ còn xuất khẩu tư bản nhà nước
+      - Xuất khẩu tư bản bị xóa bỏ
+    answer: B
+    explain: Trước kia luồng tư bản chủ yếu từ nước phát triển sang nước kém phát triển; gần đây đại bộ phận dòng đầu tư chảy qua lại giữa các nước tư bản phát triển, vì ở đó có các ngành hàm lượng khoa học kỹ thuật cao, lợi nhuận cao.
+    page: 93
+
+  - id: c4-26
+    q: Chế độ tham dự của tư bản tài chính ngày nay được bổ sung thêm bằng chế độ nào?
+    options:
+      - Chế độ ủy nhiệm
+      - Chế độ bao cấp
+      - Chế độ khoán sản phẩm
+      - Chế độ quốc hữu hóa
+    answer: A
+    explain: Cổ phiếu mệnh giá nhỏ được phát hành rộng rãi nên chế độ tham dự được bổ sung bằng chế độ ủy nhiệm, đại cổ đông được ủy nhiệm thay mặt các cổ đông nhỏ quyết định.
+    page: 92
+
+  - id: c4-27
+    q: Mâu thuẫn cơ bản của chủ nghĩa tư bản là gì?
+    options:
+      - Mâu thuẫn giữa cung và cầu
+      - Mâu thuẫn giữa trình độ xã hội hóa ngày càng cao của lực lượng sản xuất với quan hệ sản xuất dựa trên chiếm hữu tư nhân tư bản chủ nghĩa về tư liệu sản xuất
+      - Mâu thuẫn giữa các nước tư bản với nhau
+      - Mâu thuẫn giữa nông nghiệp và công nghiệp
+    answer: B
+    explain: Những hạn chế của chủ nghĩa tư bản bắt nguồn từ mâu thuẫn giữa trình độ xã hội hóa ngày càng cao của lực lượng sản xuất với quan hệ sản xuất dựa trên chiếm hữu tư nhân tư bản chủ nghĩa về tư liệu sản xuất.
+    page: 100
+
+  - id: c4-28
+    q: Đâu là vai trò tích cực của chủ nghĩa tư bản theo giáo trình?
+    options:
+      - Mục đích sản xuất vì lợi ích của đông đảo nhân dân lao động
+      - Thúc đẩy lực lượng sản xuất phát triển nhanh, chuyển sản xuất nhỏ thành sản xuất lớn hiện đại, thực hiện xã hội hóa sản xuất
+      - Xóa bỏ phân hóa giàu nghèo
+      - Chấm dứt chiến tranh và xung đột
+    answer: B
+    explain: Vai trò tích cực gồm thúc đẩy lực lượng sản xuất phát triển, chuyển sản xuất nhỏ thành sản xuất lớn hiện đại và thực hiện xã hội hóa sản xuất. Mục đích sản xuất vì thiểu số, phân hóa giàu nghèo, chiến tranh là giới hạn của chủ nghĩa tư bản.
+    page: 97

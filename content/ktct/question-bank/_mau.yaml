@@ -1,0 +1,26 @@
+# Mẫu ngân hàng trắc nghiệm. Mỗi chương một file chuong-<số>.yaml, cùng thư mục với file này.
+#
+# Quy ước:
+# - id: mã câu không trùng trong chương, ví dụ c3-07. Đã có người làm thì không đổi mã (tiến độ lưu theo mã).
+# - options: 2 đến 6 phương án. Trang web tự trộn thứ tự khi hiển thị, nên không viết "Cả A và B", "Tất cả đều đúng".
+# - answer: chữ cái của phương án đúng theo thứ tự viết trong file (A là phương án đầu tiên).
+# - explain: giải thích ngắn, bám lời văn giáo trình. Không nhắc chữ cái phương án ("phương án B") vì thứ tự đã bị trộn;
+#   nêu thẳng nội dung đúng.
+# - page: trang in ở chân trang giáo trình (không phải trang PDF). Trang web mở đúng trang khi bấm.
+# - status: nhap khi chưa duyệt; giảng viên duyệt xong cả chương thì đổi thành da-duyet (trang sẽ bỏ nhãn "chờ duyệt").
+#
+# Trang web đọc lại file khi khởi động lại; file sai cấu trúc sẽ báo lỗi kèm mã câu.
+subject: ktct
+chapter: 3
+status: nhap
+questions:
+  - id: c3-99
+    q: Câu hỏi viết ở đây?
+    options:
+      - Phương án thứ nhất
+      - Phương án thứ hai (đúng)
+      - Phương án thứ ba
+      - Phương án thứ tư
+    answer: B
+    explain: Giải thích vì sao phương án thứ hai đúng, nêu thẳng nội dung thay vì chữ cái.
+    page: 59

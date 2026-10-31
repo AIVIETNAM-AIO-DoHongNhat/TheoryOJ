@@ -1,0 +1,258 @@
+# Trắc nghiệm chương 1: Đối tượng, phương pháp nghiên cứu và chức năng của KTCT Mác – Lênin.
+# Mẫu và quy ước: xem _mau.yaml. Câu do người phát triển soạn từ giáo trình, chờ giảng viên duyệt.
+subject: ktct
+chapter: 1
+status: nhap
+questions:
+  - id: c1-01
+    q: Thuật ngữ "kinh tế chính trị" xuất hiện lần đầu năm 1615 trong tác phẩm của ai?
+    options:
+      - A. Smith
+      - A. Montchretien
+      - W. Petty
+      - F. Quesnay
+    answer: B
+    explain: Thuật ngữ xuất hiện ở châu Âu năm 1615 trong "Chuyên luận về kinh tế chính trị" của nhà kinh tế người Pháp A. Montchretien.
+    page: 4
+
+  - id: c1-02
+    q: Kinh tế chính trị chính thức trở thành môn học với các phạm trù, khái niệm chuyên ngành từ khi nào?
+    options:
+      - Từ thế kỷ XV, với chủ nghĩa trọng thương
+      - Từ thế kỷ XVII, với chủ nghĩa trọng nông
+      - Từ thế kỷ XVIII, với hệ thống lý luận của A. Smith
+      - Từ thế kỷ XIX, với bộ Tư bản của C. Mác
+    answer: C
+    explain: Tới thế kỷ XVIII, với hệ thống lý luận của A. Smith, kinh tế chính trị chính thức trở thành môn học với các phạm trù, khái niệm chuyên ngành.
+    page: 5
+
+  - id: c1-03
+    q: Chủ nghĩa trọng thương dành trọng tâm nghiên cứu vào lĩnh vực nào?
+    options:
+      - Sản xuất nông nghiệp
+      - Lưu thông
+      - Sản xuất công nghiệp
+      - Phân phối thu nhập
+    answer: B
+    explain: Trong thời kỳ tư bản thương nghiệp thống trị nền kinh tế, chủ nghĩa trọng thương dành trọng tâm vào nghiên cứu lĩnh vực lưu thông.
+    page: 5
+
+  - id: c1-04
+    q: Chủ nghĩa trọng thương lý giải thiếu khoa học về điều gì?
+    options:
+      - Cho rằng lợi nhuận có nguồn gốc từ thương nghiệp, qua việc mua rẻ, bán đắt
+      - Cho rằng chỉ có nông nghiệp mới là sản xuất
+      - Cho rằng giá trị do hao phí lao động tạo ra
+      - Cho rằng mục đích của nhà tư bản là tìm kiếm lợi nhuận
+    answer: A
+    explain: Chủ nghĩa trọng thương khái quát đúng mục đích tìm kiếm lợi nhuận, nhưng sai khi cho rằng lợi nhuận bắt nguồn từ thương nghiệp, thông qua mua rẻ, bán đắt.
+    page: 5
+
+  - id: c1-05
+    q: Hạn chế lịch sử của chủ nghĩa trọng nông là gì?
+    options:
+      - Chỉ nghiên cứu lĩnh vực lưu thông
+      - Cho rằng chỉ có nông nghiệp mới là sản xuất
+      - Không đề cập tới phạm trù tư bản và tái sản xuất
+      - Cho rằng tiền là hình thái duy nhất của của cải
+    answer: B
+    explain: Chủ nghĩa trọng nông đã luận giải nhiều phạm trù (giá trị, sản phẩm ròng, tư bản, tái sản xuất…) nhưng cho rằng chỉ có nông nghiệp mới là sản xuất.
+    page: 6
+
+  - id: c1-06
+    q: Kinh tế chính trị cổ điển Anh mở đầu với quan điểm của ai và kết thúc ở hệ thống lý luận của ai?
+    options:
+      - Mở đầu là A. Smith, kết thúc ở C. Mác
+      - Mở đầu là F. Quesnay, kết thúc ở A. Smith
+      - Mở đầu là W. Petty, kết thúc ở D. Ricardo
+      - Mở đầu là Thomas Mun, kết thúc ở W. Petty
+    answer: C
+    explain: Kinh tế chính trị cổ điển Anh mở đầu là các quan điểm của W. Petty, tiếp đến là A. Smith và kết thúc ở hệ thống lý luận của D. Ricardo.
+    page: 6
+
+  - id: c1-07
+    q: Đóng góp khoa học lớn của kinh tế chính trị cổ điển Anh là rút ra được kết luận nào?
+    options:
+      - Lợi nhuận sinh ra từ lưu thông
+      - Giá trị do hao phí lao động tạo ra, giá trị khác với của cải
+      - Chỉ lao động nông nghiệp mới tạo ra sản phẩm ròng
+      - Lao động sản xuất hàng hóa có tính hai mặt
+    answer: B
+    explain: Lý luận kinh tế chính trị cổ điển Anh đã rút ra được giá trị là do hao phí lao động tạo ra, giá trị khác với của cải. Tính hai mặt của lao động là phát hiện của C. Mác.
+    page: 6
+
+  - id: c1-08
+    q: C. Mác kế thừa trực tiếp thành quả lý luận khoa học của nhà kinh tế nào?
+    options:
+      - A. Smith
+      - W. Petty
+      - D. Ricardo
+      - F. Quesnay
+    answer: C
+    explain: C. Mác kế thừa một cách có phê phán lý luận kinh tế chính trị cổ điển, trực tiếp là của D. Ricardo.
+    page: 7
+
+  - id: c1-09
+    q: Phát hiện nào giúp C. Mác tạo bước nhảy vọt về lý luận so với D. Ricardo?
+    options:
+      - Giá trị do lao động tạo ra
+      - Tính hai mặt của lao động sản xuất hàng hóa
+      - Phân công lao động làm tăng năng suất
+      - Quy luật cung cầu quyết định giá cả
+    answer: B
+    explain: C. Mác phát hiện ra tính hai mặt của lao động sản xuất hàng hóa, tạo tiền đề luận giải khoa học về giá trị thặng dư.
+    page: 7
+
+  - id: c1-10
+    q: Lý luận kinh tế chính trị của C. Mác và Ph. Ăngghen được thể hiện tập trung và cô đọng nhất trong tác phẩm nào?
+    options:
+      - Tuyên ngôn của Đảng Cộng sản
+      - Chống Đuyrinh
+      - Bộ Tư bản
+      - Chủ nghĩa đế quốc, giai đoạn tột cùng của chủ nghĩa tư bản
+    answer: C
+    explain: Lý luận kinh tế chính trị của C. Mác và Ph. Ăngghen được thể hiện tập trung và cô đọng nhất trong bộ Tư bản.
+    page: 7
+
+  - id: c1-11
+    q: Đóng góp nổi bật của V.I. Lênin đối với kinh tế chính trị là gì?
+    options:
+      - Phát hiện tính hai mặt của lao động sản xuất hàng hóa
+      - Chỉ ra đặc điểm kinh tế của độc quyền, độc quyền nhà nước trong chủ nghĩa tư bản cuối thế kỷ XIX, đầu thế kỷ XX
+      - Đưa ra thuật ngữ "kinh tế chính trị"
+      - Xây dựng học thuyết địa tô
+    answer: B
+    explain: Nổi bật trong đóng góp của V.I. Lênin là chỉ ra những đặc điểm kinh tế của độc quyền, độc quyền nhà nước, cùng các vấn đề kinh tế chính trị của thời kỳ quá độ.
+    page: 8
+
+  - id: c1-12
+    q: Trước C. Mác, kinh tế chính trị cổ điển xác định đối tượng nghiên cứu trong lĩnh vực nào?
+    options:
+      - Lưu thông
+      - Nông nghiệp
+      - Sản xuất
+      - Tiêu dùng
+    answer: C
+    explain: Chủ nghĩa trọng thương tìm đối tượng trong lưu thông, chủ nghĩa trọng nông trong nông nghiệp, còn kinh tế chính trị cổ điển xác định đối tượng nghiên cứu trong nền sản xuất.
+    page: 9
+
+  - id: c1-13
+    q: Theo giáo trình, đối tượng nghiên cứu của kinh tế chính trị Mác – Lênin là gì?
+    options:
+      - Các yếu tố vật chất của lực lượng sản xuất
+      - Biểu hiện kỹ thuật của sản xuất và trao đổi
+      - Các quan hệ xã hội của sản xuất và trao đổi, đặt trong liên hệ biện chứng với trình độ lực lượng sản xuất và kiến trúc thượng tầng tương ứng
+      - Hành vi của người tiêu dùng và người sản xuất trên thị trường
+    answer: C
+    explain: Đối tượng nghiên cứu là các quan hệ xã hội của sản xuất và trao đổi, được đặt trong liên hệ biện chứng với trình độ phát triển của lực lượng sản xuất và kiến trúc thượng tầng tương ứng của phương thức sản xuất nhất định.
+    page: 11
+
+  - id: c1-14
+    q: Theo nghĩa hẹp, kinh tế chính trị là khoa học nghiên cứu gì?
+    options:
+      - Quan hệ sản xuất và trao đổi trong một phương thức sản xuất nhất định
+      - Những quy luật chi phối sản xuất vật chất trong mọi xã hội loài người
+      - Lịch sử các học thuyết kinh tế
+      - Hoạt động quản lý nhà nước về kinh tế
+    answer: A
+    explain: Theo nghĩa hẹp, kinh tế chính trị nghiên cứu quan hệ sản xuất và trao đổi trong một phương thức sản xuất nhất định, thể hiện rõ nhất trong bộ Tư bản.
+    page: 9
+
+  - id: c1-15
+    q: Câu "kinh tế chính trị không nghiên cứu sự sản xuất mà nghiên cứu những quan hệ xã hội giữa người với người trong sản xuất" là của ai?
+    options:
+      - C. Mác
+      - Ph. Ăngghen
+      - V.I. Lênin
+      - A. Smith
+    answer: C
+    explain: V.I. Lênin nhấn mạnh kinh tế chính trị nghiên cứu những quan hệ xã hội giữa người với người trong sản xuất, nghiên cứu chế độ xã hội của sản xuất.
+    page: 10
+
+  - id: c1-16
+    q: Trước đây, nhiều công trình ở các nước xã hội chủ nghĩa quy quan hệ sản xuất về ba quan hệ nào?
+    options:
+      - Sở hữu, tổ chức quản lý, phân phối thu nhập
+      - Sản xuất, lưu thông, tiêu dùng
+      - Cung, cầu, giá cả
+      - Lao động, vốn, đất đai
+    answer: A
+    explain: Cách hiểu cũ quy quan hệ sản xuất về quan hệ sở hữu, quan hệ tổ chức quản lý và quan hệ phân phối thu nhập, phù hợp với kinh tế kế hoạch hóa tập trung nhưng không phù hợp với kinh tế thị trường.
+    page: 11
+
+  - id: c1-17
+    q: Mục đích nghiên cứu ở cấp độ cao nhất của kinh tế chính trị Mác – Lênin là gì?
+    options:
+      - Nghiên cứu kinh tế hàng hóa tư bản chủ nghĩa
+      - Phát hiện các quy luật chi phối quan hệ giữa người với người trong sản xuất và trao đổi
+      - Tối đa hóa lợi nhuận cho doanh nghiệp
+      - Dự báo biến động giá cả trên thị trường
+    answer: B
+    explain: Mục đích cao nhất là phát hiện các quy luật chi phối quan hệ giữa người với người trong sản xuất và trao đổi, từ đó giúp các chủ thể vận dụng quy luật.
+    page: 12
+
+  - id: c1-18
+    q: Điểm khác nhau cơ bản giữa quy luật kinh tế và chính sách kinh tế là gì?
+    options:
+      - Quy luật kinh tế do nhà nước ban hành, chính sách kinh tế tồn tại khách quan
+      - Quy luật kinh tế tồn tại khách quan, chính sách kinh tế tác động vào quan hệ lợi ích mang tính chủ quan
+      - Quy luật kinh tế chỉ tồn tại trong chủ nghĩa tư bản
+      - Con người có thể thủ tiêu quy luật kinh tế bằng chính sách
+    answer: B
+    explain: Quy luật kinh tế tồn tại khách quan, không phụ thuộc ý chí con người; chính sách kinh tế cũng tác động vào quan hệ lợi ích nhưng mang tính chủ quan.
+    page: 12
+
+  - id: c1-19
+    q: Phương pháp nào được sử dụng như phương pháp chủ yếu của kinh tế chính trị Mác – Lênin?
+    options:
+      - Thí nghiệm trong phòng thí nghiệm
+      - Thống kê
+      - Trừu tượng hóa khoa học
+      - Mô hình hóa
+    answer: C
+    explain: Trừu tượng hóa khoa học là phương pháp chủ yếu, vì nghiên cứu kinh tế chính trị không thể tiến hành trong phòng thí nghiệm như khoa học tự nhiên.
+    page: 13
+
+  - id: c1-20
+    q: Phương pháp trừu tượng hóa khoa học được tiến hành như thế nào?
+    options:
+      - Giữ lại mọi yếu tố để mô tả đầy đủ hiện tượng
+      - Gạt bỏ yếu tố ngẫu nhiên, tạm thời, gián tiếp để tách ra dấu hiệu điển hình, bền vững, trực tiếp của đối tượng
+      - Thu thập số liệu và tính giá trị trung bình
+      - So sánh các nền kinh tế với nhau
+    answer: B
+    explain: Trừu tượng hóa khoa học gạt bỏ những yếu tố ngẫu nhiên, tạm thời, gián tiếp, trên cơ sở đó tách ra những dấu hiệu điển hình, bền vững, ổn định, trực tiếp của đối tượng nghiên cứu.
+    page: 14
+
+  - id: c1-21
+    q: Khi nghiên cứu quan hệ lợi ích kinh tế giữa người lao động và người sử dụng sức lao động, yếu tố nào không được gạt bỏ?
+    options:
+      - Tình cảm cá nhân giữa hai bên
+      - Lợi ích kinh tế mà mỗi bên nhận được
+      - Tuổi tác của người lao động
+      - Địa điểm nơi làm việc
+    answer: B
+    explain: Có thể gạt bỏ yếu tố tình cảm cá nhân, nhưng không thể gạt bỏ lợi ích kinh tế, vì như vậy quan hệ đó không còn là quan hệ lợi ích kinh tế nữa.
+    page: 14
+
+  - id: c1-22
+    q: Đâu không phải là chức năng của kinh tế chính trị Mác – Lênin theo giáo trình?
+    options:
+      - Chức năng nhận thức
+      - Chức năng tư tưởng
+      - Chức năng phương pháp luận
+      - Chức năng điều tiết thị trường
+    answer: D
+    explain: Giáo trình nêu bốn chức năng là nhận thức, thực tiễn, tư tưởng và phương pháp luận.
+    page: 14
+
+  - id: c1-23
+    q: Việc dùng lý luận kinh tế chính trị để hiểu cội nguồn bản chất của tiền, làm nền cho lý thuyết tiền tệ của kinh tế học, thể hiện chức năng nào?
+    options:
+      - Chức năng nhận thức
+      - Chức năng thực tiễn
+      - Chức năng tư tưởng
+      - Chức năng phương pháp luận
+    answer: D
+    explain: Giáo trình lấy ví dụ lý thuyết tiền tệ để minh họa chức năng phương pháp luận, nền tảng lý luận cho các khoa học kinh tế chuyên ngành.
+    page: 16

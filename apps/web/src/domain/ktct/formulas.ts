@@ -26,6 +26,7 @@ export type Values = Partial<Record<Quantity, number>>;
 
 export interface Step {
   output: Quantity;
+  inputs: Quantity[];
   formula: string;
   substitution: string;
   value: number;
@@ -113,6 +114,7 @@ export function solve(known: Values, targets: Quantity[] = []): Solution {
       values[rule.output] = value;
       steps.push({
         output: rule.output,
+        inputs: rule.inputs,
         formula: rule.formula,
         substitution: rule.inputs.map((q) => show(q, values[q]!)).join("; "),
         value: round(value),

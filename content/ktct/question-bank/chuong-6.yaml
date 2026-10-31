@@ -1,0 +1,290 @@
+# Trắc nghiệm chương 6: Công nghiệp hóa, hiện đại hóa và hội nhập kinh tế quốc tế của Việt Nam.
+subject: ktct
+chapter: 6
+status: nhap
+questions:
+  - id: c6-01
+    q: Cách mạng công nghiệp là gì theo giáo trình?
+    options:
+      - Sự thay đổi chế độ chính trị
+      - Bước phát triển nhảy vọt về chất trình độ của tư liệu lao động trên cơ sở phát minh đột phá về kỹ thuật, công nghệ, kéo theo thay đổi căn bản phân công lao động xã hội và năng suất lao động
+      - Sự ra đời của nhà máy đầu tiên
+      - Quá trình đô thị hóa
+    answer: B
+    explain: Cách mạng công nghiệp là những bước phát triển nhảy vọt về chất trình độ tư liệu lao động trên cơ sở phát minh đột phá về kỹ thuật, công nghệ, kéo theo thay đổi căn bản về phân công lao động xã hội và năng suất lao động.
+    page: 135
+
+  - id: c6-02
+    q: Nội dung cơ bản của cách mạng công nghiệp lần thứ nhất là gì?
+    options:
+      - Sử dụng năng lượng điện và động cơ điện
+      - Chuyển từ lao động thủ công sang lao động sử dụng máy móc, cơ giới hóa sản xuất bằng năng lượng nước và hơi nước
+      - Tự động hóa bằng công nghệ thông tin
+      - Kết nối vạn vật qua Internet
+    answer: B
+    explain: Cách mạng công nghiệp lần thứ nhất (giữa thế kỷ XVIII – giữa thế kỷ XIX, khởi phát từ Anh) chuyển lao động thủ công sang lao động máy móc, cơ giới hóa bằng năng lượng nước và hơi nước.
+    page: 136
+
+  - id: c6-03
+    q: Phát minh nào là mốc mở đầu quá trình cơ giới hóa sản xuất trong cách mạng công nghiệp lần thứ nhất?
+    options:
+      - Thoi bay của John Kay
+      - Máy hơi nước của James Watt
+      - Động cơ đốt trong
+      - Máy phát điện
+    answer: B
+    explain: Phát minh máy động lực, đặc biệt là máy hơi nước của James Watt, là mốc mở đầu quá trình cơ giới hóa sản xuất.
+    page: 136
+
+  - id: c6-04
+    q: C. Mác khái quát tính quy luật của cách mạng công nghiệp qua ba giai đoạn nào?
+    options:
+      - Cơ khí hóa, điện khí hóa, tự động hóa
+      - Hiệp tác giản đơn, công trường thủ công, đại công nghiệp
+      - Nông nghiệp, công nghiệp, dịch vụ
+      - Thủ công, bán tự động, tự động
+    answer: B
+    explain: C. Mác khái quát ba giai đoạn hiệp tác giản đơn, công trường thủ công và đại công nghiệp, đồng thời là ba giai đoạn tăng năng suất lao động xã hội.
+    page: 136
+
+  - id: c6-05
+    q: Đặc trưng cơ bản của cách mạng công nghiệp lần thứ ba là gì?
+    options:
+      - Sử dụng hơi nước
+      - Sử dụng điện để sản xuất hàng loạt
+      - Sự xuất hiện công nghệ thông tin, tự động hóa sản xuất
+      - Trí tuệ nhân tạo và Internet kết nối vạn vật
+    answer: C
+    explain: Cách mạng công nghiệp lần thứ ba (khoảng đầu thập niên 60 đến cuối thế kỷ XX) có đặc trưng là sự xuất hiện công nghệ thông tin, tự động hóa sản xuất.
+    page: 137
+
+  - id: c6-06
+    q: Cách mạng công nghiệp lần thứ tư được đề cập lần đầu tiên ở đâu?
+    options:
+      - Diễn đàn Kinh tế thế giới Davos năm 2016
+      - Hội chợ triển lãm công nghệ Hannover (Đức) năm 2011
+      - Hội nghị G20 năm 2008
+      - Thung lũng Silicon năm 2000
+    answer: B
+    explain: Thuật ngữ được đề cập lần đầu tại Hội chợ triển lãm công nghệ Hannover năm 2011 và được Chính phủ Đức đưa vào kế hoạch hành động chiến lược công nghệ cao năm 2012.
+    page: 137
+
+  - id: c6-07
+    q: Biểu hiện đặc trưng của cách mạng công nghiệp lần thứ tư là gì?
+    options:
+      - Máy dệt và đầu máy hơi nước
+      - Dây chuyền sản xuất hàng loạt
+      - Các công nghệ mới đột phá về chất như trí tuệ nhân tạo, big data, in 3D, trên nền Internet kết nối vạn vật
+      - Máy tính cá nhân
+    answer: C
+    explain: Cách mạng công nghiệp lần thứ tư hình thành trên cơ sở cách mạng số, gắn với Internet kết nối vạn vật, với các công nghệ đột phá như trí tuệ nhân tạo, big data, in 3D.
+    page: 138
+
+  - id: c6-08
+    q: Đâu không phải là vai trò của cách mạng công nghiệp đối với phát triển theo giáo trình?
+    options:
+      - Thúc đẩy sự phát triển lực lượng sản xuất
+      - Thúc đẩy hoàn thiện quan hệ sản xuất
+      - Thúc đẩy đổi mới phương thức quản trị phát triển
+      - Xóa bỏ hoàn toàn thất nghiệp
+    answer: D
+    explain: Giáo trình nêu ba vai trò là thúc đẩy lực lượng sản xuất, hoàn thiện quan hệ sản xuất, đổi mới phương thức quản trị phát triển. Cách mạng công nghiệp 4.0 còn có tác động tiêu cực đến việc làm và thu nhập.
+    page: 138
+
+  - id: c6-09
+    q: Công nghiệp hóa là gì?
+    options:
+      - Xây dựng thật nhiều nhà máy
+      - Quá trình chuyển nền sản xuất xã hội từ dựa trên lao động thủ công là chính sang dựa chủ yếu trên lao động bằng máy móc, nhằm tạo năng suất lao động xã hội cao
+      - Chỉ phát triển công nghiệp nặng
+      - Chuyển toàn bộ lao động nông nghiệp sang công nghiệp
+    answer: B
+    explain: Công nghiệp hóa là quá trình chuyển đổi nền sản xuất xã hội từ lao động thủ công là chính sang lao động bằng máy móc là chủ yếu, nhằm tạo năng suất lao động xã hội cao.
+    page: 145
+
+  - id: c6-10
+    q: Công nghiệp hóa theo mô hình cổ điển (tiêu biểu là nước Anh) bắt đầu từ ngành nào?
+    options:
+      - Công nghiệp nặng, cơ khí chế tạo máy
+      - Công nghiệp nhẹ, trực tiếp là ngành dệt
+      - Công nghiệp khai khoáng
+      - Ngành công nghệ thông tin
+    answer: B
+    explain: Công nghiệp hóa ở Anh bắt đầu từ công nghiệp nhẹ, trực tiếp là ngành dệt, ngành cần ít vốn, thu lợi nhuận nhanh; sau đó mới tạo tiền đề cho công nghiệp nặng.
+    page: 146
+
+  - id: c6-11
+    q: Công nghiệp hóa ở các nước tư bản cổ điển diễn ra trong khoảng thời gian bao lâu?
+    options:
+      - 20 – 30 năm
+      - 60 – 80 năm
+      - 100 – 150 năm
+      - 10 – 15 năm
+    answer: B
+    explain: Quá trình công nghiệp hóa của các nước tư bản cổ điển diễn ra tương đối dài, trung bình từ 60 – 80 năm; Nhật Bản và NICs chỉ mất khoảng 20 – 30 năm.
+    page: 146
+
+  - id: c6-12
+    q: Đặc điểm của mô hình công nghiệp hóa kiểu Liên Xô (cũ) là gì?
+    options:
+      - Ưu tiên phát triển công nghiệp nhẹ, dựa vào thị trường
+      - Ưu tiên phát triển công nghiệp nặng thông qua cơ chế kế hoạch hóa tập trung, mệnh lệnh
+      - Đẩy mạnh xuất khẩu, thay thế nhập khẩu
+      - Dựa hoàn toàn vào vốn nước ngoài
+    answer: B
+    explain: Mô hình Liên Xô (cũ) ưu tiên công nghiệp nặng, huy động nguồn lực qua cơ chế kế hoạch hóa tập trung, mệnh lệnh; cơ chế này duy trì quá lâu dẫn đến trì trệ.
+    page: 146
+
+  - id: c6-13
+    q: Nhật Bản và các nước công nghiệp mới (NICs) đã chọn con đường tiếp thu khoa học công nghệ nào?
+    options:
+      - Tự nghiên cứu, chế tạo từ trình độ thấp đến cao
+      - Chỉ tiếp nhận chuyển giao công nghệ từ nước ngoài
+      - Xây dựng chiến lược khoa học công nghệ nhiều tầng, kết hợp nghiên cứu chế tạo với tiếp nhận chuyển giao
+      - Đóng cửa, tự lực hoàn toàn
+    answer: C
+    explain: Nhật Bản và NICs dùng con đường thứ ba, kết hợp công nghệ truyền thống và hiện đại, vừa nghiên cứu chế tạo vừa tiếp nhận chuyển giao, vừa vững chắc vừa đi tắt, đón đầu.
+    page: 148
+
+  - id: c6-14
+    q: Đâu không phải là đặc điểm của công nghiệp hóa, hiện đại hóa ở Việt Nam?
+    options:
+      - Theo định hướng xã hội chủ nghĩa, thực hiện mục tiêu dân giàu, nước mạnh, dân chủ, công bằng, văn minh
+      - Gắn với phát triển kinh tế tri thức
+      - Trong điều kiện kinh tế thị trường định hướng xã hội chủ nghĩa và hội nhập kinh tế quốc tế
+      - Theo cơ chế kế hoạch hóa tập trung, ưu tiên tuyệt đối công nghiệp nặng
+    answer: D
+    explain: Giáo trình nêu bốn đặc điểm gồm định hướng xã hội chủ nghĩa, gắn với kinh tế tri thức, trong điều kiện kinh tế thị trường định hướng xã hội chủ nghĩa, trong bối cảnh toàn cầu hóa và hội nhập.
+    page: 150
+
+  - id: c6-15
+    q: Theo quy luật V.I. Lênin rút ra khi nghiên cứu tái sản xuất, cần ưu tiên phát triển gì?
+    options:
+      - Sản xuất tư liệu tiêu dùng
+      - Sản xuất tư liệu sản xuất để chế tạo ra tư liệu sản xuất
+      - Thương mại dịch vụ
+      - Nông nghiệp
+    answer: B
+    explain: V.I. Lênin rút ra quy luật cần ưu tiên phát triển sản xuất tư liệu sản xuất để chế tạo ra tư liệu sản xuất; đây là cơ sở xây dựng nền kinh tế độc lập, tự chủ cao.
+    page: 151
+
+  - id: c6-16
+    q: Theo OECD (1995), nền kinh tế tri thức là gì?
+    options:
+      - Nền kinh tế chỉ có ngành công nghệ thông tin
+      - Nền kinh tế trong đó sự sản sinh, phổ cập và sử dụng tri thức giữ vai trò quyết định nhất đối với phát triển kinh tế, tạo ra của cải, nâng cao chất lượng cuộc sống
+      - Nền kinh tế dựa vào khai thác tài nguyên
+      - Nền kinh tế có nhiều trường đại học
+    answer: B
+    explain: Theo OECD, kinh tế tri thức là nền kinh tế trong đó sự sản sinh ra, phổ cập và sử dụng tri thức giữ vai trò quyết định nhất đối với sự phát triển kinh tế.
+    page: 152
+
+  - id: c6-17
+    q: Trong nền kinh tế tri thức, điều nào sau đây đúng?
+    options:
+      - Tri thức trở thành lực lượng sản xuất trực tiếp, là nguồn lực quan trọng hàng đầu
+      - Lao động cơ bắp chiếm tỷ trọng ngày càng tăng
+      - Thông tin không còn quan trọng
+      - Chỉ các ngành mới mới dựa vào tri thức
+    answer: A
+    explain: Trong kinh tế tri thức, tri thức trở thành lực lượng sản xuất trực tiếp, là vốn quý nhất; thông tin là tài nguyên quan trọng nhất; ngành truyền thống ứng dụng công nghệ cao cũng là ngành dựa vào tri thức.
+    page: 152
+
+  - id: c6-18
+    q: Trong hệ thống cơ cấu kinh tế, cơ cấu nào giữ vị trí quan trọng nhất?
+    options:
+      - Cơ cấu vùng kinh tế
+      - Cơ cấu thành phần kinh tế
+      - Cơ cấu ngành kinh tế (công nghiệp – nông nghiệp – dịch vụ)
+      - Cơ cấu xuất nhập khẩu
+    answer: C
+    explain: Cơ cấu ngành kinh tế giữ vị trí quan trọng nhất vì phản ánh trình độ phát triển và kết quả công nghiệp hóa, hiện đại hóa.
+    page: 153
+
+  - id: c6-19
+    q: Chuyển dịch cơ cấu ngành kinh tế theo hướng hiện đại, hiệu quả là gì?
+    options:
+      - Tăng tỷ trọng nông nghiệp trong GDP
+      - Tăng tỷ trọng công nghiệp và dịch vụ, giảm tỷ trọng nông nghiệp trong GDP
+      - Giữ nguyên tỷ trọng các ngành
+      - Chỉ tăng tỷ trọng công nghiệp nặng
+    answer: B
+    explain: Chuyển dịch cơ cấu ngành theo hướng hiện đại, hiệu quả là tăng tỷ trọng công nghiệp và dịch vụ, giảm tỷ trọng nông nghiệp trong GDP.
+    page: 153
+
+  - id: c6-20
+    q: Khâu nào được coi là đột phá trong cách mạng công nghiệp 4.0 ở Việt Nam?
+    options:
+      - Phát triển và ứng dụng công nghệ thông tin
+      - Khai thác khoáng sản
+      - Mở rộng diện tích trồng lúa
+      - Tăng lao động phổ thông
+    answer: A
+    explain: Giáo trình nêu cần coi phát triển và ứng dụng công nghệ thông tin là khâu đột phá trong cách mạng công nghiệp 4.0 ở Việt Nam.
+    page: 155
+
+  - id: c6-21
+    q: Hội nhập kinh tế quốc tế của một quốc gia là gì?
+    options:
+      - Mở cửa hoàn toàn, không cần điều kiện
+      - Quá trình gắn kết nền kinh tế của mình với nền kinh tế thế giới dựa trên sự chia sẻ lợi ích, đồng thời tuân thủ các chuẩn mực quốc tế chung
+      - Chỉ tham gia các tổ chức quốc tế
+      - Phụ thuộc vào nền kinh tế nước lớn
+    answer: B
+    explain: Hội nhập kinh tế quốc tế là quá trình quốc gia gắn kết nền kinh tế của mình với nền kinh tế thế giới dựa trên chia sẻ lợi ích, đồng thời tuân thủ các chuẩn mực quốc tế chung.
+    page: 157
+
+  - id: c6-22
+    q: Trong toàn cầu hóa, phương diện nào là xu thế nổi trội nhất, vừa là trung tâm vừa là động lực?
+    options:
+      - Toàn cầu hóa văn hóa
+      - Toàn cầu hóa chính trị
+      - Toàn cầu hóa kinh tế
+      - Toàn cầu hóa xã hội
+    answer: C
+    explain: Toàn cầu hóa diễn ra trên nhiều phương diện, trong đó toàn cầu hóa kinh tế là xu thế nổi trội nhất, vừa là trung tâm, cơ sở vừa là động lực thúc đẩy toàn cầu hóa các lĩnh vực khác.
+    page: 157
+
+  - id: c6-23
+    q: Thứ tự các mức độ hội nhập kinh tế quốc tế từ thấp đến cao là gì?
+    options:
+      - FTA → PTA → CU → Thị trường chung → Liên minh kinh tế – tiền tệ
+      - PTA → FTA → CU → Thị trường chung → Liên minh kinh tế – tiền tệ
+      - CU → FTA → PTA → Liên minh kinh tế – tiền tệ → Thị trường chung
+      - Thị trường chung → CU → FTA → PTA
+    answer: B
+    explain: Các mức độ từ thấp đến cao là thỏa thuận thương mại ưu đãi (PTA), khu vực mậu dịch tự do (FTA), liên minh thuế quan (CU), thị trường chung, liên minh kinh tế – tiền tệ.
+    page: 159
+
+  - id: c6-24
+    q: Quan điểm của giáo trình về hội nhập đối với Việt Nam là gì?
+    options:
+      - Hội nhập bằng mọi giá
+      - Hội nhập là tất yếu nhưng không phải bằng mọi giá, cần lộ trình, cách thức tối ưu và chuẩn bị điều kiện
+      - Không nên hội nhập
+      - Chỉ hội nhập về văn hóa
+    answer: B
+    explain: Hội nhập là tất yếu, nhưng đối với Việt Nam không phải bằng mọi giá; phải cân nhắc lộ trình, cách thức tối ưu và chuẩn bị các điều kiện cần thiết.
+    page: 159
+
+  - id: c6-25
+    q: Đâu là tác động tiêu cực của hội nhập kinh tế quốc tế?
+    options:
+      - Mở rộng thị trường, thu hút vốn và công nghệ
+      - Nâng cao chất lượng nguồn nhân lực
+      - Gia tăng sự phụ thuộc vào thị trường bên ngoài, dễ tổn thương trước biến động quốc tế
+      - Thúc đẩy hội nhập văn hóa, chính trị
+    answer: C
+    explain: Mở rộng thị trường, nâng cao nguồn nhân lực, thúc đẩy hội nhập văn hóa, chính trị là tác động tích cực. Hội nhập có thể làm gia tăng phụ thuộc vào thị trường bên ngoài, khiến nền kinh tế dễ bị tổn thương trước biến động quốc tế.
+    page: 161
+
+  - id: c6-26
+    q: Nguy cơ về chuyển dịch cơ cấu kinh tế bất lợi khi hội nhập đối với nước đang phát triển là gì?
+    options:
+      - Tập trung quá nhiều vào ngành công nghệ cao
+      - Thiên hướng tập trung vào ngành dùng nhiều tài nguyên, nhiều lao động nhưng giá trị gia tăng thấp, dễ thành bãi thải công nghệ thấp
+      - Giảm tỷ trọng nông nghiệp quá nhanh
+      - Thiếu lao động phổ thông
+    answer: B
+    explain: Nước đang phát triển có nguy cơ tập trung vào ngành sử dụng nhiều tài nguyên, nhiều lao động, giá trị gia tăng thấp, ở vị trí bất lợi trong chuỗi giá trị toàn cầu, dễ thành bãi thải công nghiệp và công nghệ thấp.
+    page: 162

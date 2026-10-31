@@ -22,6 +22,7 @@ export const NAV: NavItem[] = [
       soon: !s.active,
     })),
   },
+  { href: "/on-tap", label: "Ôn tập" },
   { href: "/thu-vien", label: "Thư viện" },
   { href: "/bai-viet", label: "Bài viết" },
   { href: "/gioi-thieu", label: "Giới thiệu" },

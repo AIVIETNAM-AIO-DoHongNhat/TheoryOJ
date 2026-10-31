@@ -92,6 +92,26 @@ Kết quả này dẫn tới ba nhận xét.
 - **Reranker tách được câu ngoài phạm vi.** Với ngưỡng 0,3 trên điểm reranker, cả 30 câu trong phạm vi được giữ và cả 10 câu ngoài phạm vi bị chặn. Câu khiêu khích vẫn đạt tới 0,97, nên bước phân loại ở mục 3 là bắt buộc.
 - **hit@1 giảm khi thêm reranker,** vì điểm reranker bão hòa gần 1,0 và trang đứng đầu thường là trang lân cận hoặc một đoạn văn kiện cùng chủ đề (ví dụ `ktct-021`, `ktct-024`). Giảng viên cần xem bảy câu này để quyết định đây là lỗi tìm kiếm hay `gold` khoanh quá hẹp. Reranker trên CPU mất khoảng 7 giây mỗi câu, vượt mục tiêu độ trễ ở mục 9. Trên GPU (RTX 4060 Laptop, torch 2.15.0+cu132) còn 0,53 giây với cùng kết quả, nên máy chủ triển khai cần GPU.
 
+### 2.5. Chatbot trên Next.js
+
+Làm ngày 29/10/2026. Chưa có số đo vì máy phát triển chưa có Ollama và `.env` chưa có khóa OpenRouter. Luồng đầu–cuối đã được thử với một mô hình giả lập API OpenAI: câu bài tập gọi `tinh_ktct` và nhận đúng m = 400, W = 1.200, p' = 50 %; câu ngoài phạm vi nhận câu từ chối cố định mà không gọi mô hình trả lời.
+
+- **Phân loại hai lớp.** Luật bắt mẫu chèn lệnh rõ ràng (`bỏ qua mọi hướng dẫn`, `system prompt`, khối `TÀI LIỆU:` giả) mà không tốn lệnh gọi. Các câu còn lại do mô hình gán một trong bốn nhãn. Mô hình trả lời lạc đề thì câu được cho qua, vì ngưỡng điểm vẫn chặn câu ngoài phạm vi. Phân loại và tìm kiếm chạy song song để giảm độ trễ.
+- **Trích dẫn bằng số thứ tự.** Mô hình ghi `[n]` theo khối tài liệu thay cho `[tên tài liệu, tr. X]`, nên không thể bịa số trang. Giao diện đổi `[n]` thành thẻ hiện đoạn gốc, chương và trang in.
+- **Chế độ Ôn thi không dùng ngưỡng,** vì tin nhắn thường là dàn ý trả lời hoặc lời đề nghị "hãy hỏi tôi", điểm reranker thấp dù hợp lệ. Chế độ này chỉ dựa vào bước phân loại.
+- **Lưu hội thoại và cờ.** Ban đầu câu bị từ chối chỉ ghi vào log máy chủ; từ giai đoạn 3 mọi lượt được lưu vào bảng `messages` (mục 2.6).
+
+### 2.6. Lưu hội thoại, đánh giá, giới hạn tần suất
+
+Làm ngày 30/10/2026, thử đầu–cuối trên máy phát triển với mô hình giả lập. Bản sáng kiến chưa cần đăng nhập và trang quản trị: bản đầu của giai đoạn 3 có Better Auth, nhập tài khoản từ Excel và `/quan-tri`, nhưng đã gỡ cùng ngày để giữ sản phẩm gọn. Khi cần quản lý theo lớp có thể làm lại trên cùng bảng dữ liệu.
+
+- **Không đăng nhập.** Ai cũng dùng được trợ lý. Mỗi trình duyệt nhận một mã khách ngẫu nhiên trong cookie httpOnly `theoryoj_khach` (`lib/visitor.ts`), cấp ở câu hỏi đầu tiên. Mã này giữ lịch sử hội thoại và chỉ cho trình duyệt đã tạo hội thoại mở lại hay ghi tiếp; trình duyệt khác nhận 404. Xóa cookie thì mất lịch sử ở phía người dùng, dữ liệu trong DB vẫn còn.
+- **Giới hạn tần suất.** `/api/chat`: 20 câu trong 10 phút và 200 câu mỗi ngày theo mã khách, 120 câu trong 10 phút theo IP. Mã khách có thể bị xóa nên giới hạn theo IP mới là chốt chặn chính. Đếm trong bảng `chat_rate_limits` nên vẫn đúng khi chạy nhiều tiến trình. Ngưỡng đổi bằng biến môi trường `CHAT_LIMIT_*`.
+- **Lưu hội thoại.** Mỗi câu trả lời lưu cả `parts` (để mở lại có trích dẫn), câu hỏi, chế độ, chương, nhãn phân loại, lý do từ chối, cờ, câu tìm kiếm đã viết lại, điểm cao nhất, trích dẫn, thời gian từng bước. Câu bị dừng giữa chừng hoặc lỗi được đánh dấu `incomplete`. Người dùng xem lại và xóa hội thoại ở bảng Lịch sử; địa chỉ `/tro-ly/[id]` mở đúng hội thoại.
+- **Đánh giá.** 👍/👎 dưới mỗi câu trả lời; 👎 chọn một trong sáu lý do (`features/chat/feedback.ts`) và ghi chú tùy ý.
+- **Xem lại.** Chưa có giao diện. Giảng viên xem câu bị 👎, câu gắn cờ và câu bị từ chối bằng truy vấn trên bảng `messages`, `feedback`, ví dụ `select question, content, refused, flagged from messages where role = 'assistant' and (flagged or refused is not null)`.
+- **Chưa làm.** Chưa gỡ `legacy/`: bản Streamlit vẫn cần để đo điểm nền trên bộ câu chuẩn sau khi giảng viên duyệt (giai đoạn 0 và tiêu chí giai đoạn 1); gỡ sau lần đo đó.
+
 ---
 
 ## 3. Kiến trúc
@@ -102,7 +122,7 @@ Lời giải là tách tìm kiếm thành một dịch vụ riêng, không lưu 
 
 ```
 Trình duyệt ──HTTPS──▶ Caddy ──▶ apps/web (Next.js) ──────────────▶ LLM (Ollama)
-                                    │  giao diện, đăng nhập,
+                                    │  giao diện, hội thoại,
                                     │  hội thoại, prompt
                                     ▼
                               services/rag (FastAPI)
@@ -114,7 +134,7 @@ Trình duyệt ──HTTPS──▶ Caddy ──▶ apps/web (Next.js) ───
 
 Một câu hỏi đi qua `/api/chat` theo bảy bước.
 
-1. Xác thực người dùng, đọc chế độ và phạm vi chương.
+1. Đọc mã khách, kiểm tra giới hạn tần suất, đọc chế độ và phạm vi chương.
 2. Phân loại câu hỏi thành `hop_le`, `ngoai_pham_vi`, `khieu_khich` hoặc `chen_lenh`, bằng một lệnh gọi mô hình ngắn có đầu ra cố định. Ba nhãn sau nhận câu từ chối cố định, nhãn `khieu_khich` và `chen_lenh` được gắn cờ để giảng viên xem. Bước này cần vì câu khiêu khích dùng đúng thuật ngữ của môn nên vượt ngưỡng điểm (mục 2.3).
 3. Viết lại câu hỏi nối tiếp thành câu độc lập.
 4. Gọi `/search` với bộ lọc nguồn của chế độ đang chọn.
@@ -127,7 +147,7 @@ Một câu hỏi đi qua `/api/chat` theo bảy bước.
 | Web | Next.js 16 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui. Route được bảo vệ bằng `proxy.ts` (Next.js 15 gọi là `middleware.ts`). |
 | Chat | Vercel AI SDK (`ai`, `@ai-sdk/react`, `@ai-sdk/openai-compatible`), `react-markdown` + `remark-math` + `rehype-katex` |
 | Cơ sở dữ liệu | PostgreSQL 16 + pgvector, Drizzle ORM |
-| Đăng nhập | Better Auth. Tài khoản học viên do quản trị cấp từ danh sách lớp. Vai trò gồm `guest`, `student`, `lecturer`, `admin`. |
+| Đăng nhập | Chưa có ở bản sáng kiến. Mã khách ẩn danh trong cookie thay cho tài khoản (mục 2.6). |
 | Tìm kiếm | FastAPI, `sentence-transformers` (bge-m3, bge-reranker-v2-m3), PyMuPDF, python-docx, `uv` |
 | Mô hình ngôn ngữ | Ollama qua API tương thích OpenAI. Đổi mô hình bằng biến môi trường. |
 | Triển khai | Docker Compose gồm `caddy`, `web`, `rag`, `db`, `ollama`. Chỉ cổng 443 mở ra Internet. |
@@ -147,21 +167,34 @@ Một câu hỏi đi qua `/api/chat` theo bảy bước.
 
 Mọi chế độ đều có streaming, trích dẫn bấm được (hiện đoạn gốc, tài liệu, chương, trang in), bộ lọc chương, nút đánh giá 👍/👎 kèm lý do, và lưu lịch sử hội thoại.
 
-### 4.2. Học liệu và quản trị (MVP)
+### 4.2. Học liệu, thư viện, bài viết và quản trị (MVP)
 
-Mỗi chương có trang riêng gồm mục tiêu, khái niệm chính, công thức và câu hỏi gợi ý mở sẵn trong chatbot. Trang quản trị cho giảng viên tải tài liệu, khai báo chương theo trang, chạy nạp lại, xem nhật ký câu hỏi và lọc các câu trả lời bị đánh giá 👎.
+Trang web là cổng học tập; trợ lý là một tính năng trong đó.
 
-### 4.3. Sau MVP
+Giao diện không gắn với một môn: menu Học liệu, trang `/mon`, trang chủ, thư viện, bài viết và trợ lý đều đọc danh sách môn từ `config/subjects.ts`. Môn chưa mở vẫn hiện với nhãn "Sắp triển khai". Mở một môn mới cần: học liệu và `manifest.yaml` trong `content/<môn>/`, đặt `active: true` kèm chương, mô tả và các chế độ hỗ trợ trong `subjects.ts`, câu hỏi gợi ý trong `features/learning/content.ts`, và prompt riêng của môn trong `features/chat/server/prompts.ts` (hiện prompt và bộ phân loại còn viết cho KTCT, công cụ tính chỉ dùng cho KTCT).
 
-- Ngân hàng trắc nghiệm theo chương, có giải thích và nguồn.
-- Bài tập tính toán sinh số ngẫu nhiên, chấm tự động bằng cùng bộ công thức.
-- Thẻ ghi nhớ khái niệm theo lịch lặp lại ngắt quãng.
-- Bảng tiến độ cá nhân và thống kê cho giảng viên theo chương.
+- **Học liệu theo chương** (`/mon/[mon]`, `/mon/[mon]/chuong/[so]`): mỗi chương có nút đọc chương trong giáo trình, văn kiện liên quan (theo `related_chapters`), bài viết ôn tập và câu hỏi gợi ý mở sẵn trong trợ lý (`features/learning/content.ts`). Sẽ bổ sung mục tiêu, khái niệm chính, công thức.
+- **Thư viện** (`/thu-vien`, `/thu-vien/[slug]`): danh mục đọc trực tiếp từ `manifest.yaml`, lọc theo loại, tìm không dấu. PDF mở trong trình đọc pdf.js (`react-pdf`) có mục lục chương, số trang in, phóng to, tải về; `?trang=n` mở đúng trang PDF. Văn kiện `.md` và `.docx` (qua `mammoth`) hiển thị dạng văn bản. File gốc phục vụ qua `/api/tai-lieu/[slug]` có hỗ trợ Range. Trích dẫn của trợ lý có liên kết "Mở trong thư viện" tới đúng trang.
+- **Bài viết** (`/bai-viet`): mỗi bài là một file Markdown trong `content/bai-viet/` (mẫu ở `_mau.md`), giảng viên gửi bài, người phát triển đăng. Khi có giai đoạn 3 có thể chuyển sang trang quản trị.
+- **Ôn tập** (`/on-tap`, `/mon/[mon]/chuong/[so]/trac-nghiem`, `/mon/[mon]/chuong/[so]/bai-tap`, `/tien-do`): xem mục 4.3.
+- **Quản trị**: chưa làm ở bản sáng kiến. Dữ liệu hỏi đáp và đánh giá đã lưu đủ (mục 2.6) để làm trang nhật ký, tải tài liệu và chạy nạp lại khi cần.
+
+### 4.3. Ôn tập và tiến độ
+
+Đã làm ở giai đoạn 4:
+
+- **Trắc nghiệm theo chương.** Ngân hàng câu hỏi là file YAML trong `content/<môn>/question-bank/chuong-<n>.yaml` (quy ước ở `_mau.yaml`), mỗi câu có giải thích và trang in giáo trình. KTCT có 164 câu (23–31 câu mỗi chương), do người phát triển soạn từ giáo trình, gắn `status: nhap` cho tới khi giảng viên duyệt; trang hiện nhãn "chờ giảng viên duyệt" trong lúc đó. Mỗi đề lấy ngẫu nhiên 10 câu và trộn thứ tự phương án; đáp án không gửi xuống trình duyệt, máy chủ chấm khi nộp. `src/features/quiz/bank.test.ts` kiểm tra mọi file (ít nhất 20 câu, đáp án hợp lệ, giải thích không nhắc chữ cái phương án).
+- **Bài tập tính toán sinh số** (chương 3, `src/domain/ktct/exercises.ts`): 5 dạng bài, đáp án và lời giải từng bước tính bằng `solve` của công cụ trợ lý, chấp nhận sai số làm tròn 0,5 %.
+- **Tiến độ cá nhân** (`/tien-do`): mỗi lượt làm lưu vào bảng `practice_attempts` theo mã khách; trang tổng hợp điểm cao nhất, lượt gần nhất, bài tập, số câu đã hỏi trợ lý theo chương và gợi ý chương nên ôn tiếp.
+
+Chưa làm: thẻ ghi nhớ theo lịch lặp lại ngắt quãng; thống kê cho giảng viên theo chương (dữ liệu đã có trong `practice_attempts`, cần trang quản trị); bài tập cho các chương ngoài chương 3.
 - Hỏi đáp số liệu trên chỉ mục niên giám riêng.
 
-### 4.4. Landing page
+### 4.4. Trang chủ
 
 Trang chủ `/` là trang đầu tiên người truy cập và hội đồng xét sáng kiến nhìn thấy. Trang phải cho biết sản phẩm là gì, của đơn vị nào, vì sao tin được, và bắt đầu dùng từ đâu.
+
+Bản hiện tại (dạng cổng thông tin): đầu trang một dòng dính ở đầu màn hình (logo, menu Trang chủ, Học liệu ▾, Thư viện, Bài viết, Giới thiệu), nút Trợ lý học tập nổi ở góc phải, hero có ô ảnh của Khoa, số liệu lấy từ dữ liệu thật, bốn lối vào nhanh, giáo trình và văn kiện, bài viết mới, giới thiệu trợ lý, ảnh hoạt động của Khoa. Nguyên tắc hoạt động và hỏi đáp chuyển sang `/gioi-thieu`. Bảng dưới là danh sách ban đầu, giữ để đối chiếu.
 
 | # | Phần | Nội dung |
 |---|---|---|
@@ -187,7 +220,7 @@ Trang được sinh tĩnh. Phần 8 và 9 làm mới mỗi giờ bằng `revalid
 - **Nguồn tài liệu.** Bổ sung nhóm `kind = cand` gồm các văn bản đã công bố, ví dụ Luật Công an nhân dân, Luật An ninh quốc gia, Luật An ninh mạng bản hiện hành, Nghị quyết 12-NQ/TW (2022) về xây dựng lực lượng CAND. Khoa duyệt danh mục cuối cùng.
 - **Liên hệ nghiệp vụ.** Chế độ Liên hệ thực tiễn nối nội dung từng chương với nhiệm vụ của lực lượng. Chương 4 về cạnh tranh và độc quyền gắn với bảo vệ an ninh kinh tế và phòng chống gian lận thương mại. Chương 5 và Nghị quyết 68 gắn với bảo đảm môi trường kinh doanh an toàn. Chương 6 gắn với an ninh kinh tế đối ngoại và an ninh mạng. Mọi liên hệ đều phải trích nguồn văn kiện.
 - **Quy tắc trả lời.** Trợ lý dùng văn phong trang trọng và gọi người học là "đồng chí" (Khoa chốt cách xưng hô). Trợ lý không bình luận cá nhân về chủ trương, đường lối hay lãnh đạo, và không trả lời về nghiệp vụ, tổ chức nội bộ của lực lượng. Câu hỏi xuyên tạc hoặc khiêu khích nhận câu từ chối cố định và được gắn cờ để giảng viên xem.
-- **Giao diện.** Bảng màu theo nhận diện CAND gồm đỏ, vàng, xanh lá. Biểu trưng của Học viện và của ngành chỉ được gắn sau khi đơn vị có thẩm quyền cho phép.
+- **Giao diện.** Tối giản kiểu cổng thông tin cơ quan: nền trắng, màu chủ đạo xanh lá (`#15803d`), khối xanh đậm, đường kẻ mảnh. Tiêu đề dùng Roboto Condensed đậm (chữ đứng, cứng cáp), nội dung dùng Roboto. Trợ lý học tập là nút nổi góc phải, phía trên nút về đầu trang. Component dựng trên shadcn/ui (Base UI, style `base-nova`), bảng màu map vào token của shadcn trong `apps/web/src/app/globals.css`. Logo Học viện lấy từ hvannd.edu.vn (`apps/web/public/brand/logo-hvannd.png`, 110 × 110 px); trước khi công khai cần đơn vị có thẩm quyền cho phép và xin file gốc độ phân giải cao. Ảnh hoạt động của Khoa trên trang chủ và trang giới thiệu cũng lấy từ hvannd.edu.vn (nguồn từng ảnh ở `apps/web/public/anh-khoa/NGUON.md`), cần xin phép tương tự.
 
 ---
 
@@ -200,33 +233,36 @@ TheoryOJ/
 ├── apps/web/                          # Next.js
 │   ├── src/
 │   │   ├── app/                       # Chỉ định tuyến
-│   │   │   ├── (public)/              # Không cần đăng nhập
-│   │   │   │   ├── page.tsx           # Landing page
+│   │   │   ├── (public)/              # Layout có header và footer
+│   │   │   │   ├── page.tsx           # Trang chủ
 │   │   │   │   ├── gioi-thieu/page.tsx
-│   │   │   │   └── dang-nhap/page.tsx
-│   │   │   ├── (hoc-tap)/             # Cần đăng nhập
-│   │   │   │   ├── tong-quan/         # Tiến độ cá nhân
 │   │   │   │   ├── mon/[mon]/chuong/[so]/
-│   │   │   │   ├── tro-ly/            # Chat mới và [id] hội thoại cũ
-│   │   │   │   └── on-tap/            # trac-nghiem, bai-tap
-│   │   │   ├── (quan-tri)/quan-tri/   # tai-lieu, nhat-ky, danh-gia
-│   │   │   ├── api/                   # chat, feedback, auth, admin/ingest
+│   │   │   │   ├── thu-vien/[slug]/   # Trình đọc tài liệu
+│   │   │   │   ├── bai-viet/[slug]/
+│   │   │   │   ├── mon/[mon]/chuong/[so]/trac-nghiem/, bai-tap/
+│   │   │   │   ├── on-tap/, tien-do/  # Ôn tập theo chương, tiến độ cá nhân
+│   │   │   ├── (hoc-tap)/             # Trợ lý toàn màn hình
+│   │   │   │   └── tro-ly/            # Chat mới và [id] hội thoại cũ
+│   │   │   ├── api/                   # chat, tai-lieu
 │   │   │   ├── opengraph-image.tsx, sitemap.ts, robots.ts
 │   │   │   └── layout.tsx, globals.css
 │   │   ├── features/
 │   │   │   ├── landing/               # components/, content.ts, queries.ts
+│   │   │   ├── library/               # Danh mục từ manifest, trình đọc PDF, render MD/DOCX
+│   │   │   ├── blog/                  # Đọc content/bai-viet/*.md
+│   │   │   ├── learning/              # Câu hỏi gợi ý theo chương
 │   │   │   ├── chat/
 │   │   │   │   ├── components/        # ChatWindow, CitationChip, ModeSelector…
 │   │   │   │   ├── server/            # prompts, modes, rewrite-query, build-context,
 │   │   │   │   │                      # guardrails, persist
 │   │   │   │   └── tools/ktct-calculator.ts
-│   │   │   ├── learning/  quiz/  progress/  admin/
+│   │   │   ├── quiz/  exercise/  progress/   # Trắc nghiệm, bài tập, tiến độ
 │   │   ├── components/                # ui/ (shadcn), layout/, markdown/
-│   │   ├── lib/                       # env, auth, llm, rag-client, db/schema/
+│   │   ├── lib/                       # env, visitor, rate-limit, llm, rag-client, db/schema/
 │   │   ├── domain/ktct/formulas.ts    # Công thức KTCT và kiểm thử
 │   │   ├── config/subjects.ts         # Danh sách môn và chương
 │   │   └── proxy.ts
-│   └── drizzle/, package.json, .env.example
+│   └── drizzle/ (migration), package.json
 ├── services/rag/                      # FastAPI
 │   ├── app/
 │   │   ├── main.py, settings.py, schemas.py
@@ -235,10 +271,11 @@ TheoryOJ/
 │   │   └── retrieval/                 # embedder, store, hybrid, reranker
 │   ├── scripts/                       # ingest_all.py, evaluate.py
 │   └── tests/, pyproject.toml, Dockerfile
+├── content/bai-viet/                  # Bài viết Markdown, _mau.md là mẫu
 ├── content/ktct/                      # Học liệu
 │   ├── manifest.yaml
 │   ├── giao-trinh/  van-kien/  tham-khao/  cand/  so-lieu/
-│   └── question-bank/
+│   └── question-bank/                 # chuong-<n>.yaml, _mau.yaml
 ├── eval/ktct/golden.jsonl             # Bộ câu hỏi chuẩn
 ├── legacy/streamlit/                  # Code cũ, xóa sau giai đoạn 3
 ├── infra/                             # docker-compose.yml, db/init.sql
@@ -282,10 +319,10 @@ documents:
 
 | Nhóm | Bảng |
 |---|---|
-| Người dùng | `users` (role, class_code) |
+| Người dùng | Chưa có; hội thoại và đánh giá gắn với `visitor_id` |
 | Nội dung | `subjects`, `chapters`, `documents` (kind, page_offset, sha256), `chunks` (chapter_id, page, section, `embedding vector(1024)`, tsv) |
-| Hội thoại | `conversations` (mode), `messages` (citations jsonb, rewritten_query, latency_ms), `feedback` (rating, reason) |
-| Học tập | `questions` (mcq, essay, calc), `attempts`, `progress` |
+| Hội thoại | `conversations` (visitor_id), `messages` (citations jsonb, rewritten_query, latency_ms), `feedback` (rating, reason) |
+| Học tập | `practice_attempts` (trắc nghiệm và bài tập, theo mã khách); câu hỏi nằm trong file YAML, không lưu DB |
 
 ```json
 // POST {RAG_URL}/search
@@ -309,9 +346,9 @@ Lộ trình giả định một người phát triển chính trong khoảng 12 
 |---|---|---|---|
 | 0. Dữ liệu và mức nền | 1 | Đã xong: sửa repo, chuyển file `.doc`, đo `page_offset`, viết `manifest.yaml`, tách niên giám vào `so-lieu/`, soạn 50 câu nháp, đo hit@5 của bản Streamlit (mục 2.3). Còn lại: giảng viên duyệt và bổ sung câu khó vào bộ câu chuẩn, đo từ chối và tính toán bằng `--llm`, đối chiếu số trang với sách in, chốt mẫu hồ sơ sáng kiến. | `golden.jsonl` được giảng viên duyệt, có đủ điểm nền ở mục 9 cho bản Streamlit |
 | 1. Dịch vụ tìm kiếm | 2–3 | Đã xong: Postgres + pgvector, `services/rag` (FastAPI `/search`, `/ingest`, `/health`), metadata chương, trang in, mục, tìm kết hợp, reranker, nạp tăng dần, `evaluate.py`, 19 kiểm thử (mục 2.4). Niên giám đã nạp vào chỉ mục riêng (3.370 đoạn, 114 giây trên GPU), chỉ tìm khi gọi với `kinds: ["so_lieu"]`. Còn lại: đo lại trên bộ câu đã duyệt. | hit@5 từ 85 % trên bộ câu đã duyệt và không thấp hơn bản Streamlit trên cùng bộ câu |
-| 2. Next.js và chatbot | 4–5 | Khởi tạo `apps/web`, landing page bản tĩnh, trang `/tro-ly` với 4 chế độ, KaTeX, trích dẫn, công cụ tính toán, viết lại câu hỏi, bước phân loại câu hỏi, ngưỡng từ chối | Từ chối đúng từ 90 % câu ngoài phạm vi và câu khiêu khích, bài tập đúng 100 % về số |
-| 3. Người dùng và quản trị | 6–7 | Better Auth, nhập tài khoản từ Excel, giới hạn tần suất, lưu hội thoại, đánh giá, trang quản trị và thống kê, gỡ `legacy/` | Giảng viên xem và lọc được log |
-| 4. Học liệu và ôn tập | 8–10 | Trang 6 chương, trắc nghiệm, bài tập sinh số, bảng tiến độ | Mỗi chương có tối thiểu 20 câu trắc nghiệm |
+| 2. Next.js và chatbot | 4–5 | Đã xong: `apps/web` (Next.js 16.4, AI SDK 7), landing page bản tĩnh, `/tro-ly` với 4 chế độ, KaTeX, trích dẫn `[n]` bấm được, công cụ `tinh_ktct` tính bằng code, viết lại câu hỏi, phân loại bằng luật và mô hình, ngưỡng từ chối 0,3, `npm run eval` (mục 2.5). Giao diện chuyển sang shadcn/ui, khung chat dùng `MessageScroller`, `Message`, `Bubble`, `Trace`. Còn lại: đo bằng mô hình thật, chỉnh prompt phân loại theo kết quả. | Từ chối đúng từ 90 % câu ngoài phạm vi và câu khiêu khích, bài tập đúng 100 % về số |
+| 3. Lưu dữ liệu và giới hạn | 6–7 | Đã xong: lưu hội thoại và lịch sử theo mã khách, đánh giá 👍/👎 kèm lý do, giới hạn tần suất `/api/chat` (mục 2.6). Đăng nhập và trang quản trị để sau bản sáng kiến. Còn lại: gỡ `legacy/` sau khi đo lại điểm nền trên bộ câu đã duyệt. | Mọi lượt hỏi đáp và đánh giá được lưu, truy vấn được |
+| 4. Học liệu và ôn tập | 8–10 | Đã xong: trang 6 chương, 164 câu trắc nghiệm (23–31 câu mỗi chương) có giải thích và trang giáo trình, bài tập sinh số chương 3, trang tiến độ, bảng `practice_attempts` (mục 4.3). Còn lại: giảng viên duyệt ngân hàng câu hỏi và đổi `status` thành `da-duyet`. | Mỗi chương có tối thiểu 20 câu trắc nghiệm |
 | 5. Thử nghiệm và triển khai | 11–12 | Triển khai với tên miền và HTTPS, kiểm thử bảo mật và nội dung, thử với một lớp khoảng 50 học viên trong 2 tuần, khảo sát trước và sau, bật số liệu thật trên landing page | Đạt các chỉ số ở mục 9 |
 | 6. Mở rộng môn | Sau 12 | Thêm `content/<mon>/`, một dòng trong `subjects.ts`, bộ câu chuẩn riêng | Không phải sửa code lõi |
 
@@ -333,12 +370,11 @@ Lộ trình giả định một người phát triển chính trong khoảng 12 
 Các biện pháp bảo mật gồm:
 
 - Chỉ cổng 443 qua Caddy mở ra ngoài. `rag`, `db`, `ollama` nằm trong mạng nội bộ Docker.
-- Giới hạn tần suất và độ dài câu hỏi ở `/api/chat` theo tài khoản và theo IP.
-- Mật khẩu băm, buộc đổi ở lần đăng nhập đầu, khóa tạm khi nhập sai nhiều lần, captcha nếu mở đăng ký.
+- Giới hạn tần suất và độ dài câu hỏi ở `/api/chat` theo mã khách và theo IP.
 - Header CSP và HSTS. Mọi route API kiểm tra dữ liệu vào bằng Zod.
 - Câu hỏi và đoạn tài liệu được đặt trong khối phân tách riêng. System prompt yêu cầu mô hình bỏ qua chỉ dẫn nằm trong hai khối này.
 - Chỉ nạp văn bản đã công bố. Không đưa thông tin định danh học viên vào prompt.
-- Ghi nhật ký thao tác quản trị, sao lưu Postgres hằng ngày, giám sát lỗi và tải GPU.
+- Sao lưu Postgres hằng ngày, giám sát lỗi và tải GPU.
 - Đơn vị an ninh mạng của Học viện kiểm thử xâm nhập trước khi mở công khai.
 
 ---
@@ -351,8 +387,8 @@ Hồ sơ thường được xét theo tính mới, hiệu quả và khả năng 
 |---|---|---|
 | Tính mới | Trợ lý trả lời mọi lúc, trích nguồn đến trang, liên hệ với nhiệm vụ CAND, so với hiện trạng tự tra cứu | Mô tả hiện trạng có Khoa xác nhận |
 | Chất lượng trả lời | Chỉ số mục 9 của bản Streamlit so với bản mới | Kết quả `make eval` |
-| Hiệu quả học tập | Điểm trắc nghiệm đầu và cuối đợt thử nghiệm, so với lớp đối chứng nếu có | Bảng `attempts` |
-| Mức độ sử dụng | Số học viên, số câu hỏi theo chương, tỷ lệ 👍 | Bảng `messages`, `feedback` |
+| Hiệu quả học tập | Điểm trắc nghiệm đầu và cuối đợt thử nghiệm, so với lớp đối chứng nếu có | Bảng `practice_attempts` |
+| Mức độ sử dụng | Số trình duyệt dùng trợ lý, số câu hỏi theo chương, tỷ lệ 👍 | Bảng `messages`, `feedback` |
 | Mức độ hài lòng | Khảo sát học viên và giảng viên thang 5 điểm trước và sau | Form khảo sát trên web |
 | An toàn | Sơ đồ triển khai, kết quả kiểm thử bảo mật và kiểm thử nội dung | Mục 3, 5, 9 |
 | Nhân rộng | Thêm môn Triết học chỉ bằng nội dung, có thể dùng chung cho các trường CAND khác | Giai đoạn 6 |
@@ -367,8 +403,8 @@ Nghị quyết 57-NQ/TW về đột phá phát triển khoa học, công nghệ,
 |---|---|---|
 | 1 | Mô hình ngôn ngữ chạy tại Học viện hay qua API bên ngoài | Ưu tiên chạy tại Học viện. Trước giai đoạn 5, so sánh `qwen2.5:7b` với vài mô hình mở lớn hơn bằng `make eval` và chọn mô hình nhỏ nhất đạt mục 9. Chỉ dùng API ngoài khi Học viện cho phép. Riêng việc đo trên bộ câu chuẩn (không chứa dữ liệu học viên) tạm dùng `qwen/qwen-2.5-7b-instruct` qua OpenRouter, cấu hình trong `.env`. |
 | 2 | Máy chủ, GPU, dung lượng VRAM, tên miền | Hỏi đơn vị CNTT của Học viện trong tuần 1. Quyết định 1 phụ thuộc vào câu trả lời này. |
-| 3 | Đối tượng truy cập | Đợt thử nghiệm chỉ mở chatbot cho học viên có tài khoản. Landing page và học liệu chương để công khai. |
-| 4 | Tài khoản riêng hay tích hợp hệ thống sẵn có | Dùng tài khoản riêng do quản trị cấp. |
+| 3 | Đối tượng truy cập | Đã chốt 30/10/2026: bản sáng kiến mở trợ lý cho mọi người, không cần đăng nhập, chặn lạm dụng bằng giới hạn tần suất theo IP. |
+| 4 | Tài khoản riêng hay tích hợp hệ thống sẵn có | Chưa cần ở bản sáng kiến. Khi cần, dùng tài khoản riêng do quản trị cấp. |
 | 5 | Người soạn bộ câu chuẩn và ngân hàng trắc nghiệm | Cần ít nhất một giảng viên KTCT tham gia từ tuần 1. |
-| 6 | Hiển thị toàn văn giáo trình | Mặc định chỉ hiện đoạn trích. |
+| 6 | Hiển thị toàn văn giáo trình | Đã chốt 29/10/2026: mọi tài liệu trong Thư viện đọc toàn văn công khai. Trước khi mở công khai, Khoa cần xác nhận quyền phát hành giáo trình, sách của NXB Chính trị quốc gia Sự thật và bài tạp chí; văn kiện của Đảng không vướng. |
 | 7 | Bảng màu, biểu trưng, cách xưng hô | Khoa và đơn vị truyền thông của Học viện duyệt. |

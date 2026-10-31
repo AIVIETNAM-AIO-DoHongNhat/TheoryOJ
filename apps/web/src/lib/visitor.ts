@@ -18,6 +18,18 @@ export async function getVisitorId(): Promise<string | null> {
   return valid(v) ? v : null;
 }
 
+/** Trong Server Action: lấy mã khách, chưa có thì tạo mới và ghi cookie (trắc nghiệm, bài tập làm trước khi hỏi trợ lý). */
+export async function ensureVisitorId(): Promise<string> {
+  const store = await cookies();
+  const v = store.get(VISITOR_COOKIE)?.value;
+  if (valid(v)) return v;
+  const id = crypto.randomUUID();
+  store.set(VISITOR_COOKIE, id, {
+    path: "/", maxAge: ONE_YEAR, httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production",
+  });
+  return id;
+}
+
 /** Trong route handler: lấy mã khách từ request, hoặc tạo mới kèm header Set-Cookie để trả về. */
 export function visitorFromRequest(req: Request): { id: string; setCookie?: string } {
   const raw = req.headers.get("cookie") ?? "";

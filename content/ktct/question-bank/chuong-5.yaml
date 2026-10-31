@@ -1,0 +1,290 @@
+# Trắc nghiệm chương 5: Kinh tế thị trường định hướng xã hội chủ nghĩa và các quan hệ lợi ích kinh tế ở Việt Nam.
+subject: ktct
+chapter: 5
+status: nhap
+questions:
+  - id: c5-01
+    q: Theo giáo trình, kinh tế thị trường định hướng xã hội chủ nghĩa là gì?
+    options:
+      - Nền kinh tế kế hoạch hóa tập trung có sử dụng thị trường
+      - Nền kinh tế vận hành theo các quy luật của thị trường, đồng thời hướng tới từng bước xác lập xã hội dân giàu, nước mạnh, dân chủ, công bằng, văn minh; có sự điều tiết của Nhà nước do Đảng Cộng sản Việt Nam lãnh đạo
+      - Nền kinh tế thị trường tự do không có sự can thiệp của nhà nước
+      - Nền kinh tế chỉ có thành phần kinh tế nhà nước
+    answer: B
+    explain: Đây là định nghĩa trong giáo trình; định hướng xã hội chủ nghĩa thực chất là hướng tới các giá trị cốt lõi dân giàu, nước mạnh, dân chủ, công bằng, văn minh.
+    page: 104
+
+  - id: c5-02
+    q: Đâu không phải là lý do tất yếu của việc phát triển kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam?
+    options:
+      - Phù hợp với xu hướng phát triển khách quan của Việt Nam trong bối cảnh thế giới
+      - Tính ưu việt của kinh tế thị trường trong thúc đẩy phát triển
+      - Phù hợp với nguyện vọng dân giàu, nước mạnh, dân chủ, công bằng, văn minh của nhân dân
+      - Kinh tế thị trường tự khắc phục được mọi khuyết tật
+    answer: D
+    explain: Giáo trình nêu ba lý do là phù hợp xu hướng phát triển khách quan, tính ưu việt của kinh tế thị trường, phù hợp nguyện vọng của nhân dân. Kinh tế thị trường có khuyết tật, cần nhà nước pháp quyền xã hội chủ nghĩa can thiệp, điều tiết.
+    page: 104
+
+  - id: c5-03
+    q: Điểm khác biệt về mục tiêu giữa kinh tế thị trường định hướng xã hội chủ nghĩa và kinh tế thị trường tư bản chủ nghĩa là gì?
+    options:
+      - Hướng tới phát triển lực lượng sản xuất, xây dựng cơ sở vật chất – kỹ thuật của chủ nghĩa xã hội, thực hiện dân giàu, nước mạnh, dân chủ, công bằng, văn minh
+      - Tối đa hóa lợi nhuận cho doanh nghiệp
+      - Xóa bỏ hoàn toàn sở hữu tư nhân
+      - Chỉ tập trung tăng trưởng GDP
+    answer: A
+    explain: Về mục tiêu, kinh tế thị trường định hướng xã hội chủ nghĩa hướng tới phát triển lực lượng sản xuất, xây dựng cơ sở vật chất – kỹ thuật của chủ nghĩa xã hội, nâng cao đời sống nhân dân.
+    page: 107
+
+  - id: c5-04
+    q: Sở hữu bao hàm những nội dung nào?
+    options:
+      - Nội dung kinh tế và nội dung pháp lý
+      - Nội dung chính trị và nội dung văn hóa
+      - Nội dung kỹ thuật và nội dung quản lý
+      - Chỉ có nội dung pháp lý
+    answer: A
+    explain: Sở hữu bao hàm nội dung kinh tế (lợi ích chủ thể được thụ hưởng) và nội dung pháp lý (quy định quyền hạn, nghĩa vụ); hai nội dung thống nhất biện chứng.
+    page: 109
+
+  - id: c5-05
+    q: Trong nền kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam, thành phần kinh tế nào giữ vai trò chủ đạo?
+    options:
+      - Kinh tế tư nhân
+      - Kinh tế nhà nước
+      - Kinh tế có vốn đầu tư nước ngoài
+      - Kinh tế tập thể
+    answer: B
+    explain: Nền kinh tế có nhiều hình thức sở hữu, nhiều thành phần kinh tế, trong đó kinh tế nhà nước giữ vai trò chủ đạo, kinh tế tư nhân là một động lực quan trọng.
+    page: 109
+
+  - id: c5-06
+    q: Theo giáo trình, kinh tế tư nhân có vai trò gì trong nền kinh tế thị trường định hướng xã hội chủ nghĩa?
+    options:
+      - Giữ vai trò chủ đạo
+      - Là một động lực quan trọng
+      - Là nền tảng duy nhất
+      - Chỉ được tồn tại tạm thời
+    answer: B
+    explain: Giáo trình xác định kinh tế tư nhân là một động lực quan trọng; các thành phần kinh tế bình đẳng, hợp tác, cạnh tranh cùng phát triển theo pháp luật.
+    page: 109
+
+  - id: c5-07
+    q: Doanh nghiệp nhà nước nên đầu tư vào những lĩnh vực nào?
+    options:
+      - Mọi lĩnh vực có lợi nhuận cao
+      - Những ngành kinh tế then chốt, vừa chi phối nền kinh tế vừa bảo đảm an ninh, quốc phòng, phục vụ lợi ích công cộng
+      - Chỉ lĩnh vực bán lẻ
+      - Những lĩnh vực tư nhân đã đầu tư nhiều
+    answer: B
+    explain: Doanh nghiệp nhà nước chỉ đầu tư vào những ngành kinh tế then chốt, vừa chi phối được nền kinh tế vừa bảo đảm an ninh, quốc phòng và phục vụ lợi ích công cộng.
+    page: 110
+
+  - id: c5-08
+    q: Đảng lãnh đạo nền kinh tế thị trường định hướng xã hội chủ nghĩa thông qua đâu?
+    options:
+      - Trực tiếp điều hành doanh nghiệp
+      - Cương lĩnh, đường lối phát triển kinh tế – xã hội và các chủ trương, quyết sách lớn
+      - Quy định giá cả hàng hóa
+      - Phân bổ chỉ tiêu sản xuất cho từng doanh nghiệp
+    answer: B
+    explain: Đảng lãnh đạo thông qua cương lĩnh, đường lối phát triển kinh tế – xã hội và các chủ trương, quyết sách lớn; Nhà nước quản lý thông qua pháp luật, chiến lược, kế hoạch, quy hoạch, chính sách.
+    page: 110
+
+  - id: c5-09
+    q: Kết quả làm ra (đầu ra) trong kinh tế thị trường định hướng xã hội chủ nghĩa được phân phối chủ yếu theo những căn cứ nào?
+    options:
+      - Chia đều cho mọi người
+      - Theo kết quả lao động, hiệu quả kinh tế, mức đóng góp vốn cùng các nguồn lực khác và thông qua hệ thống an sinh, phúc lợi xã hội
+      - Chỉ theo vốn góp
+      - Theo thâm niên công tác
+    answer: B
+    explain: Phân phối đầu ra chủ yếu theo kết quả lao động, hiệu quả kinh tế, mức đóng góp vốn và nguồn lực khác, và qua hệ thống an sinh, phúc lợi xã hội.
+    page: 111
+
+  - id: c5-10
+    q: Những hình thức phân phối nào phản ánh định hướng xã hội chủ nghĩa của nền kinh tế thị trường?
+    options:
+      - Phân phối theo vốn và theo tài sản
+      - Phân phối theo lao động và hiệu quả kinh tế, phân phối theo phúc lợi
+      - Phân phối bình quân
+      - Phân phối theo quan hệ thân quen
+    answer: B
+    explain: Trong các hình thức phân phối, phân phối theo lao động và hiệu quả kinh tế, phân phối theo phúc lợi phản ánh định hướng xã hội chủ nghĩa.
+    page: 112
+
+  - id: c5-11
+    q: Quan điểm đúng về thực hiện công bằng xã hội trong kinh tế thị trường định hướng xã hội chủ nghĩa là gì?
+    options:
+      - Đợi kinh tế phát triển cao mới thực hiện công bằng xã hội
+      - Hy sinh công bằng xã hội để chạy theo tăng trưởng
+      - Thực hiện tiến bộ và công bằng xã hội ngay trong từng chính sách, chiến lược và từng giai đoạn phát triển, nhưng không cào bằng
+      - Chia đều của cải bất kể đóng góp
+    answer: C
+    explain: Gắn tăng trưởng với công bằng xã hội ngay trong từng chính sách và giai đoạn; không đợi kinh tế phát triển cao, không hy sinh công bằng, nhưng cũng không cào bằng, bình quân.
+    page: 112
+
+  - id: c5-12
+    q: Thể chế kinh tế là gì?
+    options:
+      - Bộ máy nhà nước
+      - Hệ thống quy tắc, luật pháp, bộ máy quản lý và cơ chế vận hành nhằm điều chỉnh hành vi của các chủ thể kinh tế, hành vi sản xuất kinh doanh và các quan hệ kinh tế
+      - Hệ thống doanh nghiệp nhà nước
+      - Các kế hoạch 5 năm
+    answer: B
+    explain: Thể chế kinh tế là hệ thống quy tắc, luật pháp, bộ máy quản lý và cơ chế vận hành điều chỉnh hành vi của các chủ thể kinh tế và các quan hệ kinh tế.
+    page: 113
+
+  - id: c5-13
+    q: Đâu không phải là lý do phải hoàn thiện thể chế kinh tế thị trường định hướng xã hội chủ nghĩa?
+    options:
+      - Thể chế còn chưa đồng bộ
+      - Hệ thống thể chế chưa đầy đủ
+      - Hệ thống thể chế còn kém hiệu lực, hiệu quả, thiếu yếu tố và loại thị trường
+      - Thể chế đã hoàn chỉnh nên cần giữ nguyên
+    answer: D
+    explain: Giáo trình nêu ba lý do là thể chế chưa đồng bộ, chưa đầy đủ, còn kém hiệu lực, hiệu quả; thể chế mới hình thành nên việc hoàn thiện là yêu cầu khách quan.
+    page: 114
+
+  - id: c5-14
+    q: Quyền tài sản cần được thể chế hóa đầy đủ gồm những quyền nào?
+    options:
+      - Quyền sở hữu, quyền sử dụng, quyền định đoạt và hưởng lợi từ tài sản
+      - Chỉ quyền sở hữu
+      - Quyền mua và quyền bán
+      - Quyền thừa kế
+    answer: A
+    explain: Hoàn thiện thể chế về sở hữu trước hết là thể chế hóa đầy đủ quyền tài sản gồm quyền sở hữu, quyền sử dụng, quyền định đoạt và hưởng lợi từ tài sản của nhà nước, tổ chức, cá nhân.
+    page: 115
+
+  - id: c5-15
+    q: Lợi ích kinh tế là gì?
+    options:
+      - Lợi ích tinh thần
+      - Lợi ích vật chất, lợi ích thu được khi thực hiện các hoạt động kinh tế của con người
+      - Lợi ích chính trị
+      - Lợi ích của nhà nước
+    answer: B
+    explain: Lợi ích kinh tế là lợi ích vật chất, thu được khi thực hiện các hoạt động kinh tế; xuyên suốt đời sống xã hội, lợi ích vật chất đóng vai trò quyết định.
+    page: 118
+
+  - id: c5-16
+    q: Ph. Ăngghen viết những quan hệ kinh tế của một xã hội nhất định biểu hiện trước hết dưới hình thái nào?
+    options:
+      - Hình thái pháp luật
+      - Hình thái lợi ích
+      - Hình thái giá cả
+      - Hình thái tiền tệ
+    answer: B
+    explain: Ph. Ăngghen viết những quan hệ kinh tế của một xã hội nhất định nào đó biểu hiện trước hết dưới hình thái lợi ích.
+    page: 119
+
+  - id: c5-17
+    q: Vai trò của lợi ích kinh tế đối với các chủ thể kinh tế – xã hội là gì?
+    options:
+      - Là động lực trực tiếp của các chủ thể và hoạt động kinh tế – xã hội, là cơ sở thúc đẩy sự phát triển các lợi ích khác
+      - Là yếu tố thứ yếu sau lợi ích tinh thần
+      - Chỉ quan trọng với doanh nghiệp
+      - Cản trở phát triển xã hội
+    answer: A
+    explain: Lợi ích kinh tế là động lực trực tiếp của các chủ thể và hoạt động kinh tế – xã hội, đồng thời là cơ sở thúc đẩy sự phát triển các lợi ích khác.
+    page: 120
+
+  - id: c5-18
+    q: Trong các hình thức lợi ích kinh tế, lợi ích nào là cơ sở, nền tảng của các lợi ích khác?
+    options:
+      - Lợi ích xã hội
+      - Lợi ích nhóm
+      - Lợi ích cá nhân
+      - Lợi ích tập thể
+    answer: C
+    explain: Lợi ích cá nhân là cơ sở, nền tảng vì nhu cầu cơ bản thuộc về cá nhân và cá nhân cấu thành tập thể, xã hội; lợi ích cá nhân chính đáng cần được pháp luật tôn trọng, bảo vệ.
+    page: 123
+
+  - id: c5-19
+    q: Đâu không phải là nhân tố ảnh hưởng đến quan hệ lợi ích kinh tế theo giáo trình?
+    options:
+      - Trình độ phát triển của lực lượng sản xuất
+      - Địa vị của chủ thể trong hệ thống quan hệ sản xuất xã hội
+      - Chính sách phân phối thu nhập của nhà nước và hội nhập kinh tế quốc tế
+      - Sở thích cá nhân của nhà quản lý
+    answer: D
+    explain: Bốn nhân tố là trình độ lực lượng sản xuất, địa vị của chủ thể trong quan hệ sản xuất, chính sách phân phối thu nhập của nhà nước và hội nhập kinh tế quốc tế.
+    page: 123
+
+  - id: c5-20
+    q: Ví dụ nào thể hiện mâu thuẫn giữa lợi ích của doanh nghiệp và lợi ích xã hội?
+    options:
+      - Doanh nghiệp cải tiến kỹ thuật, nâng cao chất lượng sản phẩm
+      - Doanh nghiệp làm hàng giả, buôn lậu, trốn thuế để tăng lợi nhuận
+      - Doanh nghiệp đóng thuế đầy đủ
+      - Doanh nghiệp tạo thêm việc làm
+    answer: B
+    explain: Khi cá nhân, doanh nghiệp làm hàng giả, buôn lậu, trốn thuế, họ càng thu nhiều lợi nhuận thì lợi ích của người tiêu dùng và xã hội càng bị tổn hại.
+    page: 123
+
+  - id: c5-21
+    q: Tổ chức quan trọng nhất bảo vệ quyền lợi người lao động là gì?
+    options:
+      - Hiệp hội doanh nghiệp
+      - Công đoàn
+      - Nghiệp đoàn giới chủ
+      - Phòng thương mại
+    answer: B
+    explain: Công đoàn là tổ chức quan trọng nhất bảo vệ quyền lợi người lao động; người sử dụng lao động có các nghiệp đoàn, hội nghề nghiệp.
+    page: 126
+
+  - id: c5-22
+    q: Mô hình liên kết "4 nhà" trong nông nghiệp (nhà nông – nhà doanh nghiệp – nhà khoa học – nhà nước) là ví dụ về điều gì?
+    options:
+      - Lợi ích nhóm
+      - Nhóm lợi ích
+      - Lợi ích cá nhân
+      - Độc quyền nhà nước
+    answer: B
+    explain: Các chủ thể ở các ngành, lĩnh vực khác nhau nhưng liên kết để thực hiện tốt hơn lợi ích riêng hình thành "nhóm lợi ích"; cùng ngành, lĩnh vực liên kết thì hình thành "lợi ích nhóm".
+    page: 128
+
+  - id: c5-23
+    q: Hai phương thức cơ bản để thực hiện lợi ích kinh tế trong kinh tế thị trường định hướng xã hội chủ nghĩa là gì?
+    options:
+      - Theo kế hoạch và theo mệnh lệnh hành chính
+      - Theo nguyên tắc thị trường; theo chính sách của nhà nước và vai trò của các tổ chức xã hội
+      - Theo thỏa thuận riêng và theo tập quán
+      - Theo vốn góp và theo thâm niên
+    answer: B
+    explain: Hai phương thức là thực hiện lợi ích theo nguyên tắc thị trường, và theo chính sách của nhà nước cùng vai trò của các tổ chức xã hội để khắc phục hạn chế xã hội của thị trường.
+    page: 128
+
+  - id: c5-24
+    q: Đâu không phải là vai trò của nhà nước trong bảo đảm hài hòa các quan hệ lợi ích?
+    options:
+      - Bảo vệ lợi ích hợp pháp, tạo môi trường thuận lợi cho hoạt động tìm kiếm lợi ích
+      - Điều hòa lợi ích giữa cá nhân – doanh nghiệp – xã hội
+      - Kiểm soát, ngăn ngừa các quan hệ lợi ích tiêu cực và giải quyết mâu thuẫn lợi ích
+      - Trực tiếp quyết định tiền lương của mọi doanh nghiệp
+    answer: D
+    explain: Giáo trình nêu bốn vai trò là bảo vệ lợi ích hợp pháp, tạo môi trường thuận lợi; điều hòa lợi ích; kiểm soát, ngăn ngừa quan hệ lợi ích tiêu cực; giải quyết mâu thuẫn lợi ích.
+    page: 129
+
+  - id: c5-25
+    q: Nguyên tắc giải quyết mâu thuẫn giữa các lợi ích kinh tế là gì?
+    options:
+      - Ưu tiên tuyệt đối lợi ích của doanh nghiệp
+      - Có sự tham gia của các bên liên quan, có nhân nhượng và đặt lợi ích đất nước lên trên hết
+      - Để thị trường tự giải quyết
+      - Ưu tiên lợi ích của bên mạnh hơn
+    answer: B
+    explain: Nguyên tắc là phải có sự tham gia của các bên liên quan, có nhân nhượng và đặt lợi ích đất nước lên trên hết; ngăn ngừa là chính.
+    page: 132
+
+  - id: c5-26
+    q: Về nguyên tắc, người dân được làm gì trong hoạt động làm giàu?
+    options:
+      - Chỉ được làm những gì pháp luật cho phép
+      - Được làm tất cả những gì pháp luật không cấm
+      - Phải xin phép nhà nước trước mọi hoạt động
+      - Không được làm giàu
+    answer: B
+    explain: Nhà nước khuyến khích người dân làm giàu hợp pháp; về nguyên tắc người dân được làm tất cả những gì luật pháp không cấm.
+    page: 131
