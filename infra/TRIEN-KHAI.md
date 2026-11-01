@@ -115,7 +115,8 @@ Trang chủ tự chuyển hàng số liệu sang số sử dụng thật (câu h
 | Xem nhật ký | `dc logs -f web rag` |
 | Cập nhật mã nguồn | `git pull && git lfs pull && dc up -d --build` |
 | Thêm bài viết, tài liệu thư viện | Thêm file vào `content/` rồi `dc up -d --build web` (trang được build sẵn); tài liệu mới cần nạp lại: `dc exec rag python scripts/ingest_all.py` |
-| Sửa ngân hàng câu hỏi | Sửa `content/<môn>/question-bank/*.yaml`, khởi động lại `dc restart web` |
+| Sửa ngân hàng câu hỏi, câu hỏi gợi ý | Sửa `content/<môn>/question-bank/*.yaml` hoặc `content/<môn>/tro-ly.yaml`, khởi động lại `dc restart web` |
+| Mở thêm môn | Theo `content/THEM-MON.md`, rồi `dc up -d --build web` và `dc exec rag python scripts/ingest_all.py <môn>` |
 | Sao lưu | Tự động mỗi ngày vào `infra/backups/`, giữ `BACKUP_KEEP_DAYS` ngày. Nên chép thêm ra máy khác |
 | Khôi phục | `dc exec -T db pg_restore -U theoryoj -d theoryoj --clean --if-exists < infra/backups/theoryoj-<ngày>.dump` |
 | Đổi mô hình ngôn ngữ | Sửa `LLM_*` trong `infra/.env`, `dc up -d web`, chạy lại `make eval-chat` |

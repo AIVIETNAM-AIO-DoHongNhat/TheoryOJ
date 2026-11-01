@@ -11,7 +11,7 @@ import { getSubject } from "@/config/subjects";
 import { MODE_IDS } from "@/features/chat/modes";
 import { ensureConversation, saveAssistantMessage, saveUserMessage, type AssistantRecord } from "@/features/chat/server/persist";
 import { answerSettings, prepare } from "@/features/chat/server/pipeline";
-import { REFUSALS } from "@/features/chat/server/prompts";
+import { refusalText } from "@/features/chat/server/prompts";
 import type { Turn } from "@/features/chat/server/rewrite-query";
 import type { ChatMessage } from "@/features/chat/types";
 import { env } from "@/lib/env";
@@ -130,7 +130,7 @@ export async function POST(req: Request) {
       if (decision.type === "refuse") {
         const id = "refusal";
         writer.write({ type: "text-start", id });
-        writer.write({ type: "text-delta", id, delta: REFUSALS[decision.reason] });
+        writer.write({ type: "text-delta", id, delta: refusalText(decision.reason, getSubject(subject)!) });
         writer.write({ type: "text-end", id });
         writer.write({ type: "finish" });
         return;

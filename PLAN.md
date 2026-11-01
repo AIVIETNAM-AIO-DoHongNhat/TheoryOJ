@@ -171,9 +171,9 @@ Mọi chế độ đều có streaming, trích dẫn bấm được (hiện đo�
 
 Trang web là cổng học tập; trợ lý là một tính năng trong đó.
 
-Giao diện không gắn với một môn: menu Học liệu, trang `/mon`, trang chủ, thư viện, bài viết và trợ lý đều đọc danh sách môn từ `config/subjects.ts`. Môn chưa mở vẫn hiện với nhãn "Sắp triển khai". Mở một môn mới cần: học liệu và `manifest.yaml` trong `content/<môn>/`, đặt `active: true` kèm chương, mô tả và các chế độ hỗ trợ trong `subjects.ts`, câu hỏi gợi ý trong `features/learning/content.ts`, và prompt riêng của môn trong `features/chat/server/prompts.ts` (hiện prompt và bộ phân loại còn viết cho KTCT, công cụ tính chỉ dùng cho KTCT).
+Giao diện không gắn với một môn: menu Học liệu, trang `/mon`, trang chủ, thư viện, bài viết và trợ lý đều đọc danh sách môn từ `config/subjects.ts`. Môn chưa mở vẫn hiện với nhãn "Sắp triển khai". Mở một môn mới chỉ cần nội dung trong `content/<môn>/` (học liệu, `manifest.yaml`, `tro-ly.yaml`, ngân hàng trắc nghiệm), bộ câu chuẩn `eval/<môn>/golden.jsonl` và một mục trong `subjects.ts`; hướng dẫn ở `content/THEM-MON.md`, mẫu ở `content/_mau-mon/`. Prompt của trợ lý và bộ phân loại dựng theo tên môn, phần riêng (phạm vi câu hỏi hợp lệ, ví dụ phân loại, nhiệm vụ cần liên hệ, câu hỏi gợi ý) đọc từ `tro-ly.yaml`. Chỉ chế độ Giải bài tập cần code riêng (công cụ tính), hiện chỉ KTCT có.
 
-- **Học liệu theo chương** (`/mon/[mon]`, `/mon/[mon]/chuong/[so]`): mỗi chương có nút đọc chương trong giáo trình, văn kiện liên quan (theo `related_chapters`), bài viết ôn tập và câu hỏi gợi ý mở sẵn trong trợ lý (`features/learning/content.ts`). Sẽ bổ sung mục tiêu, khái niệm chính, công thức.
+- **Học liệu theo chương** (`/mon/[mon]`, `/mon/[mon]/chuong/[so]`): mỗi chương có nút đọc chương trong giáo trình, văn kiện liên quan (theo `related_chapters`), bài viết ôn tập và câu hỏi gợi ý mở sẵn trong trợ lý (`content/<môn>/tro-ly.yaml`). Sẽ bổ sung mục tiêu, khái niệm chính, công thức.
 - **Thư viện** (`/thu-vien`, `/thu-vien/[slug]`): danh mục đọc trực tiếp từ `manifest.yaml`, lọc theo loại, tìm không dấu. PDF mở trong trình đọc pdf.js (`react-pdf`) có mục lục chương, số trang in, phóng to, tải về; `?trang=n` mở đúng trang PDF. Văn kiện `.md` và `.docx` (qua `mammoth`) hiển thị dạng văn bản. File gốc phục vụ qua `/api/tai-lieu/[slug]` có hỗ trợ Range. Trích dẫn của trợ lý có liên kết "Mở trong thư viện" tới đúng trang.
 - **Bài viết** (`/bai-viet`): mỗi bài là một file Markdown trong `content/bai-viet/` (mẫu ở `_mau.md`), giảng viên gửi bài, người phát triển đăng. Khi có giai đoạn 3 có thể chuyển sang trang quản trị.
 - **Ôn tập** (`/on-tap`, `/mon/[mon]/chuong/[so]/trac-nghiem`, `/mon/[mon]/chuong/[so]/bai-tap`, `/tien-do`): xem mục 4.3.
@@ -249,7 +249,7 @@ TheoryOJ/
 │   │   │   ├── landing/               # components/, content.ts, queries.ts
 │   │   │   ├── library/               # Danh mục từ manifest, trình đọc PDF, render MD/DOCX
 │   │   │   ├── blog/                  # Đọc content/bai-viet/*.md
-│   │   │   ├── learning/              # Câu hỏi gợi ý theo chương
+│   │   │   ├── learning/              # Đọc tro-ly.yaml: lời dặn riêng của môn, câu hỏi gợi ý
 │   │   │   ├── chat/
 │   │   │   │   ├── components/        # ChatWindow, CitationChip, ModeSelector…
 │   │   │   │   ├── server/            # prompts, modes, rewrite-query, build-context,
@@ -271,11 +271,14 @@ TheoryOJ/
 │   ├── scripts/                       # ingest_all.py, evaluate.py
 │   └── tests/, pyproject.toml, Dockerfile
 ├── content/bai-viet/                  # Bài viết Markdown, _mau.md là mẫu
+├── content/THEM-MON.md                # Hướng dẫn mở thêm môn
+├── content/_mau-mon/                  # Mẫu manifest.yaml, tro-ly.yaml cho môn mới
 ├── content/ktct/                      # Học liệu
 │   ├── manifest.yaml
+│   ├── tro-ly.yaml                    # Lời dặn riêng cho trợ lý, câu hỏi gợi ý
 │   ├── giao-trinh/  van-kien/  tham-khao/  cand/  so-lieu/
 │   └── question-bank/                 # chuong-<n>.yaml, _mau.yaml
-├── eval/ktct/golden.jsonl             # Bộ câu hỏi chuẩn
+├── eval/ktct/golden.jsonl             # Bộ câu hỏi chuẩn (mẫu ở eval/_mau/)
 ├── legacy/streamlit/                  # Code cũ, xóa sau giai đoạn 3
 ├── infra/                             # docker-compose.yml, db/init.sql
 ├── PLAN.md
@@ -349,7 +352,7 @@ Lộ trình giả định một người phát triển chính trong khoảng 12 
 | 3. Lưu dữ liệu và giới hạn | 6–7 | Đã xong: lưu hội thoại và lịch sử theo mã khách, đánh giá 👍/👎 kèm lý do, giới hạn tần suất `/api/chat` (mục 2.6). Đăng nhập và trang quản trị để sau bản sáng kiến. Còn lại: gỡ `legacy/` sau khi đo lại điểm nền trên bộ câu đã duyệt. | Mọi lượt hỏi đáp và đánh giá được lưu, truy vấn được |
 | 4. Học liệu và ôn tập | 8–10 | Đã xong: trang 6 chương, 164 câu trắc nghiệm (23–31 câu mỗi chương) có giải thích và trang giáo trình, bài tập sinh số chương 2 và 3 (10 dạng), trang tiến độ, bảng `practice_attempts` (mục 4.3). Còn lại: giảng viên duyệt ngân hàng câu hỏi và đổi `status` thành `da-duyet`. | Mỗi chương có tối thiểu 20 câu trắc nghiệm |
 | 5. Thử nghiệm và triển khai | 11–12 | Đã xong phần mã nguồn: `infra/docker-compose.prod.yml` (Caddy tự cấp HTTPS, web, migrate, rag, db, sao lưu `pg_dump` hằng ngày, Ollama tùy chọn, ghép GPU bằng `docker-compose.gpu.yml`), `apps/web/Dockerfile` (standalone), header CSP và HSTS, `/api/health`, IP lấy từ phần tử cuối `X-Forwarded-For`, trang `/khao-sat` (thang 5 điểm, đợt mở bằng `SURVEY_PHASE`, bảng `survey_responses`), số liệu thật trên trang chủ khi có từ 100 câu trả lời, `scripts/report.mts` xuất số liệu cho hồ sơ. Hướng dẫn và danh mục kiểm thử bảo mật, nội dung ở `infra/TRIEN-KHAI.md`. Còn lại: chốt máy chủ, GPU, tên miền và mô hình (mục 11), triển khai, kiểm thử xâm nhập, chạy `make eval-chat` với mô hình thật, thử với một lớp khoảng 50 học viên trong 2 tuần. | Đạt các chỉ số ở mục 9 |
-| 6. Mở rộng môn | Sau 12 | Thêm `content/<mon>/`, một dòng trong `subjects.ts`, bộ câu chuẩn riêng | Không phải sửa code lõi |
+| 6. Mở rộng môn | Sau 12 | Đã xong phần mã nguồn: phần riêng của môn trong prompt, bộ phân loại và câu hỏi gợi ý chuyển sang `content/<môn>/tro-ly.yaml`; tên giáo trình trên thẻ trích dẫn lấy theo môn; mẫu môn ở `content/_mau-mon/` và `eval/_mau/`, hướng dẫn `content/THEM-MON.md`; `subjects.test.ts` kiểm tra môn đang mở có đủ manifest khớp chương, `tro-ly.yaml`, ngân hàng trắc nghiệm, bộ câu chuẩn; `make eval SUBJECT=<môn>`. Đã thử mở Triết học từ mẫu: trang chương, trắc nghiệm, thư viện, trợ lý chạy mà chỉ sửa `subjects.ts`. Còn lại: Khoa gửi giáo trình và nội dung của môn tiếp theo. | Không phải sửa code lõi |
 
 ---
 

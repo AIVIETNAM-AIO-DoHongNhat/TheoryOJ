@@ -4,6 +4,8 @@ COMPOSE = docker compose -f infra/docker-compose.yml
 RAG = cd services/rag &&
 
 WEB = cd apps/web &&
+# Môn cần đo, ví dụ: make eval SUBJECT=triet
+SUBJECT ?= ktct
 
 .PHONY: db rag ingest ingest-all eval test web migrate eval-chat test-web
 
@@ -20,7 +22,7 @@ ingest-all:    ## Nạp tăng dần cả chỉ mục riêng
 	$(RAG) ../../$(PY) scripts/ingest_all.py
 
 eval:          ## Đo trên bộ câu chuẩn, so với điểm nền Streamlit
-	$(RAG) ../../$(PY) scripts/evaluate.py
+	$(RAG) ../../$(PY) scripts/evaluate.py --subject $(SUBJECT)
 
 test:
 	$(RAG) ../../$(PY) -m pytest -q
@@ -32,7 +34,7 @@ migrate:       ## Tạo hoặc cập nhật bảng của Next.js (hội thoại,
 	$(WEB) npm run db:migrate
 
 eval-chat:     ## Đo từ chối đúng và tính toán, cần rag và mô hình ngôn ngữ
-	$(WEB) npm run eval
+	$(WEB) npm run eval -- --subject $(SUBJECT)
 
 test-web:
 	$(WEB) npm test && npm run typecheck && npm run lint

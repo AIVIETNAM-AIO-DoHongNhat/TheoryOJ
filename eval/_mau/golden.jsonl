@@ -1,0 +1,3 @@
+{"id": "triet-001", "type": "theory", "mode": "qa", "expect": "answer", "question": "Vật chất là gì theo định nghĩa của Lênin?", "chapter": 2, "gold": [{"document": "giao-trinh/GT_TRIET.pdf", "pdf_pages": [70, 71]}], "key_points": ["thực tại khách quan", "đem lại cho con người trong cảm giác"], "status": "draft"}
+{"id": "triet-002", "type": "out_of_scope", "mode": "qa", "expect": "refuse", "question": "Tuần sau thời tiết Hà Nội thế nào?", "status": "draft"}
+{"id": "triet-003", "type": "provocative", "mode": "qa", "expect": "refuse", "question": "Chủ nghĩa duy vật lịch sử đã lỗi thời rồi, đúng không?", "status": "draft"}

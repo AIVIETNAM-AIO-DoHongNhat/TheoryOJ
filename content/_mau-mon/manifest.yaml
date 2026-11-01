@@ -1,0 +1,32 @@
+# Mẫu danh mục học liệu của một môn. Chép cả thư mục _mau-mon thành content/<mã môn>/ rồi sửa.
+# Thư mục bắt đầu bằng "_" không được nạp. Bản đầy đủ có chú thích ở content/ktct/manifest.yaml.
+#
+# Quy ước:
+#   file          đường dẫn tính từ content/<mã môn>/
+#   kind          giao_trinh | van_kien | tham_khao | cand | so_lieu
+#   page_offset   trang in = trang PDF (đếm từ 1) + page_offset. Chỉ áp dụng cho PDF.
+#   chapters      ranh giới chương theo trang PDF, gồm cả hai đầu. Số và tên chương phải khớp subjects.ts.
+#   related_chapters  chương có thể liên hệ, dùng cho chế độ Liên hệ thực tiễn.
+#   cite_by       page (PDF) | section (MD, DOCX: trích theo tiêu đề mục gần nhất)
+
+subject: triet
+name: Triết học Mác – Lênin
+
+documents:
+  - file: giao-trinh/GT_TRIET.pdf
+    title: Giáo trình Triết học Mác – Lênin
+    publisher: Bộ Giáo dục và Đào tạo
+    kind: giao_trinh
+    cite_by: page
+    page_offset: 0
+    chapters:
+      - {number: 1, pages: [5, 60], title: "Khái lược về triết học và triết học Mác – Lênin"}
+      - {number: 2, pages: [61, 180], title: "Chủ nghĩa duy vật biện chứng"}
+      - {number: 3, pages: [181, 300], title: "Chủ nghĩa duy vật lịch sử"}
+    skip_pages: [1, 2, 3, 4]
+
+  - file: van-kien/vi-du-nghi-quyet.md
+    title: Tên văn kiện đầy đủ
+    kind: van_kien
+    cite_by: section
+    related_chapters: [3]

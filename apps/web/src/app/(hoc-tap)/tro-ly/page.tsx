@@ -5,6 +5,7 @@ import { DEFAULT_SUBJECT, getSubject } from "@/config/subjects";
 import { ChatApp } from "@/features/chat/components/ChatApp";
 import { ChatShell, ChatSkeleton } from "@/features/chat/components/ChatShell";
 import { MODE_IDS, type ModeId } from "@/features/chat/modes";
+import { suggestionsBySubject } from "@/features/learning/server/profile";
 
 export const metadata: Metadata = { title: "Trợ lý" };
 
@@ -30,6 +31,7 @@ async function Chat({ searchParams }: { searchParams: SearchParams }) {
   return (
     <ChatApp
       initialSubject={subject.id}
+      suggestions={suggestionsBySubject()}
       initialMode={mode}
       initialChapters={chapters}
       initialQuestion={(first(params.q) ?? "").slice(0, 1500)}

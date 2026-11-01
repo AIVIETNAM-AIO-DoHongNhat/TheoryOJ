@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/message-scroller";
 import { Trace, TraceIcon, TraceLine, TraceTitle } from "@/components/ui/trace";
 import { type Chapter, getSubject } from "@/config/subjects";
-import { subjectSuggestions } from "@/features/learning/content";
+import type { Suggestion } from "@/features/learning/types";
 import { cn } from "@/lib/utils";
 
 import { MODE_ICONS } from "../mode-icons";
@@ -32,6 +32,8 @@ export interface ChatAppProps {
   initialMode: ModeId;
   initialChapters: number[];
   initialQuestion: string;
+  /** Câu gợi ý ở màn hình trống, theo từng môn đang mở (content/<môn>/tro-ly.yaml). */
+  suggestions: Record<string, Suggestion[]>;
   /** Có khi mở lại hội thoại đã lưu (/tro-ly/[id]). */
   conversation?: {
     id: string;
@@ -57,6 +59,7 @@ export function ChatApp(props: ChatAppProps) {
       initialMode={props.initialMode}
       initialChapters={run.fresh ? [] : props.initialChapters}
       initialQuestion={run.fresh ? "" : props.initialQuestion}
+      suggestions={props.suggestions}
       conversation={run.fresh ? undefined : props.conversation}
       onNewChat={newChat}
     />
@@ -85,7 +88,7 @@ function ChatWindow(props: ChatWindowProps) {
   const busy = status === "submitted" || status === "streaming";
   const body = { subject: subjectId, mode, chapters };
   const empty = messages.length === 0;
-  const suggestions = (subjectSuggestions[subjectId] ?? []).filter((s) => subject.modes.includes(s.mode)).slice(0, 4);
+  const suggestions = props.suggestions[subjectId] ?? [];
   const feedback = props.conversation?.feedback ?? {};
 
   // Hội thoại gắn với một môn: đổi môn khi đã có tin nhắn thì mở hội thoại mới.

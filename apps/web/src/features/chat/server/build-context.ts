@@ -1,21 +1,19 @@
+import type { Subject } from "@/config/subjects";
 import type { Hit } from "@/lib/rag-client";
 
 import { locator } from "../citation";
 import type { Citation } from "../types";
 
-const SHORT_TITLES: Record<string, string> = {
-  giao_trinh: "Giáo trình KTCT",
-};
-
 /** Tên ngắn để hiện trên thẻ trích dẫn, ví dụ "Giáo trình KTCT" hay "Nghị quyết 68-NQ/TW (2025)". */
-export function shortTitle(hit: Pick<Hit, "kind" | "document_title">): string {
-  return SHORT_TITLES[hit.kind] ?? hit.document_title.replace(/\s+(về|dành cho)\s.*$/i, "");
+export function shortTitle(hit: Pick<Hit, "kind" | "document_title">, subject: Pick<Subject, "shortName">): string {
+  if (hit.kind === "giao_trinh") return `Giáo trình ${subject.shortName}`;
+  return hit.document_title.replace(/\s+(về|dành cho)\s.*$/i, "");
 }
 
-export function toCitations(hits: Hit[]): Citation[] {
+export function toCitations(hits: Hit[], subject: Pick<Subject, "shortName">): Citation[] {
   return hits.map((h, i) => ({
     n: i + 1,
-    title: shortTitle(h),
+    title: shortTitle(h, subject),
     document: h.document,
     kind: h.kind,
     chapter: h.chapter,

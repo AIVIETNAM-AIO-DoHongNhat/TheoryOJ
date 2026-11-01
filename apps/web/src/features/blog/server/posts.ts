@@ -3,6 +3,7 @@ import path from "node:path";
 
 import { parse } from "yaml";
 
+import { DEFAULT_SUBJECT } from "@/config/subjects";
 import { CONTENT_ROOT } from "@/features/library/server/catalog";
 
 import type { Post } from "../types";
@@ -37,7 +38,7 @@ function readPost(file: string): Post | null {
     date: (fm.date instanceof Date ? fm.date : new Date(fm.date)).toISOString().slice(0, 10),
     author: fm.author,
     category: fm.category,
-    subject: fm.subject ?? "ktct",
+    subject: fm.subject ?? DEFAULT_SUBJECT,
     chapters: fm.chapters ?? [],
     cover: fm.cover ?? null,
     readingMinutes: Math.max(1, Math.round(words / 220)),

@@ -6,6 +6,7 @@ import { getSubject } from "@/config/subjects";
 import { ChatApp } from "@/features/chat/components/ChatApp";
 import { ChatShell, ChatSkeleton } from "@/features/chat/components/ChatShell";
 import { loadConversation } from "@/features/chat/server/persist";
+import { suggestionsBySubject } from "@/features/learning/server/profile";
 import { getVisitorId } from "@/lib/visitor";
 
 // Trang hoàn toàn theo trình duyệt và id, không có phần nào dựng sẵn được: cho phép chặn khi điều hướng.
@@ -27,6 +28,7 @@ async function SavedChat({ params }: { params: PageProps<"/tro-ly/[id]">["params
     <ChatApp
       key={id}
       initialSubject={subject.id}
+      suggestions={suggestionsBySubject()}
       initialMode={conversation.lastMode ?? subject.modes[0]}
       initialChapters={conversation.lastChapters}
       initialQuestion=""

@@ -4,7 +4,7 @@ import {
   AssistantShowcase, BentoSection, CtaPanel, FacultyGallery, HomeHero, LatestPosts,
 } from "@/features/landing/components/Home";
 import { getUsageStats, MIN_ANSWERS } from "@/features/landing/server/usage";
-import { subjectSuggestions } from "@/features/learning/content";
+import { getProfile } from "@/features/learning/server/profile";
 import { getLibrary } from "@/features/library/server/catalog";
 
 // Trang chủ dạng cổng thông tin: học liệu, thư viện, bài viết; trợ lý là một tính năng trong đó.
@@ -34,7 +34,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <HomeHero facts={facts} suggestions={(subjectSuggestions[DEFAULT_SUBJECT] ?? []).slice(0, 3)} />
+      <HomeHero facts={facts} suggestions={getProfile(DEFAULT_SUBJECT).suggestions.slice(0, 3)} />
       <BentoSection library={library} postCount={posts.length} />
       <AssistantShowcase />
       <LatestPosts posts={posts.slice(0, 3)} />

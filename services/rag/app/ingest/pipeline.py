@@ -18,8 +18,9 @@ from .readers import READERS
 # Tăng số này khi đổi cách đọc, làm sạch hoặc cắt đoạn để buộc nạp lại toàn bộ.
 PIPELINE_VERSION = 1
 
-_IGNORED_DIRS = {"_goc"}            # file gốc đã được chuyển định dạng, xem converted_from
-_IGNORED_FILES = {"manifest.yaml"}
+# _goc: file gốc đã được chuyển định dạng, xem converted_from. question-bank: trắc nghiệm, chỉ trang web đọc.
+_IGNORED_DIRS = {"_goc", "question-bank"}
+_IGNORED_FILES = {"manifest.yaml", "tro-ly.yaml"}
 
 
 @dataclass

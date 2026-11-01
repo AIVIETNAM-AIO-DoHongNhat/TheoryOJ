@@ -1,6 +1,7 @@
 /**
  * Danh sách môn và chương. Ranh giới trang của từng chương nằm trong content/<môn>/manifest.yaml.
- * Mở thêm môn: thêm học liệu vào content/<môn>/, điền chương ở đây, đặt `active: true` (PLAN.md mục 8, giai đoạn 6).
+ * Mở thêm môn: làm theo content/THEM-MON.md (PLAN.md mục 8, giai đoạn 6); ở file này chỉ điền chương và đặt `active: true`.
+ * subjects.test.ts kiểm tra môn đang mở có đủ manifest, tro-ly.yaml, ngân hàng trắc nghiệm và bộ câu chuẩn.
  */
 import type { ModeId } from "@/features/chat/modes";
 

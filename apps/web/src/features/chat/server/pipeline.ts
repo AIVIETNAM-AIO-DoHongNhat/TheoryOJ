@@ -1,5 +1,7 @@
 import { isStepCount, type ModelMessage } from "ai";
 
+import { getSubject } from "@/config/subjects";
+import { getProfile } from "@/features/learning/server/profile";
 import { env } from "@/lib/env";
 import { chatModel, fastModel } from "@/lib/llm";
 import { search } from "@/lib/rag-client";
@@ -9,7 +11,7 @@ import { ktctCalculator } from "../tools/ktct-calculator";
 import type { Citation, Label, RefusalReason } from "../types";
 import { buildUserMessage, toCitations } from "./build-context";
 import { classify } from "./guardrails";
-import { FLAGGED, systemPrompt } from "./prompts";
+import { classifierPrompt, FLAGGED, systemPrompt } from "./prompts";
 import { rewriteQuery, type Turn } from "./rewrite-query";
 
 export interface ChatInput {
@@ -35,6 +37,7 @@ const since = (t0: number) => Math.round(performance.now() - t0);
 /** Bước 2–5 của PLAN.md mục 3: viết lại câu hỏi, phân loại, tìm kiếm, so ngưỡng. */
 export async function prepare(input: ChatInput, abortSignal?: AbortSignal): Promise<Decision> {
   const mode = MODES[input.mode];
+  const subject = getSubject(input.subject)!;
   const timings: Timings = { rewriteMs: 0, classifyMs: 0, searchMs: 0 };
 
   let t0 = performance.now();
@@ -44,7 +47,7 @@ export async function prepare(input: ChatInput, abortSignal?: AbortSignal): Prom
   // Phân loại và tìm kiếm chạy song song; kết quả tìm kiếm bị bỏ nếu câu hỏi bị chặn.
   t0 = performance.now();
   const [classification, result] = await Promise.all([
-    classify(fastModel, input.question, query, abortSignal).finally(() => (timings.classifyMs = since(t0))),
+    classify(fastModel, classifierPrompt(subject, getProfile(subject.id)), input.question, query, abortSignal).finally(() => (timings.classifyMs = since(t0))),
     search(
       { query, subject: input.subject, chapters: input.chapters?.length ? input.chapters : undefined, kinds: mode.kinds, top_k: mode.topK },
       abortSignal,
@@ -52,7 +55,7 @@ export async function prepare(input: ChatInput, abortSignal?: AbortSignal): Prom
   ]);
 
   const { label } = classification;
-  const citations = toCitations(result.hits);
+  const citations = toCitations(result.hits, subject);
   if (label !== "hop_le") {
     return { type: "refuse", reason: label, label, flagged: FLAGGED.has(label), query, maxScore: result.max_score, citations: [], timings };
   }
@@ -72,13 +75,14 @@ function stripCitations(text: string): string {
 /** Tham số cho streamText (route) hoặc generateText (đánh giá) ở bước 6. */
 export function answerSettings(input: ChatInput, citations: Citation[]) {
   const mode = MODES[input.mode];
+  const subject = getSubject(input.subject)!;
   const messages: ModelMessage[] = [
     ...input.history.slice(-MAX_HISTORY).map((t) => ({ role: t.role, content: stripCitations(t.text) }) as ModelMessage),
     { role: "user", content: buildUserMessage(citations, input.question) },
   ];
   return {
     model: chatModel,
-    instructions: systemPrompt(input.mode),
+    instructions: systemPrompt(input.mode, subject, getProfile(subject.id)),
     messages,
     temperature: 0.2,
     maxOutputTokens: 1500,

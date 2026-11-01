@@ -1,7 +1,6 @@
 import { generateText, type LanguageModel } from "ai";
 
 import { LABELS, type Label } from "../types";
-import { CLASSIFIER_PROMPT } from "./prompts";
 
 // Lớp chặn bằng luật, chạy trước mô hình: bắt các mẫu chèn lệnh rõ ràng mà không tốn một lệnh gọi.
 const INJECTION_PATTERNS = [
@@ -35,6 +34,8 @@ export interface Classification {
 
 export async function classify(
   model: LanguageModel,
+  /** Prompt phân loại của môn đang hỏi, dựng bằng classifierPrompt. */
+  instructions: string,
   question: string,
   standalone: string,
   abortSignal?: AbortSignal,
@@ -46,7 +47,7 @@ export async function classify(
     : `Tin nhắn: ${question}\nNghĩa đầy đủ theo ngữ cảnh: ${standalone}`;
   const { text } = await generateText({
     model,
-    instructions: CLASSIFIER_PROMPT,
+    instructions,
     prompt: `"""${content.replaceAll('"""', '"')}"""\nNhãn:`,
     temperature: 0,
     maxOutputTokens: 10,

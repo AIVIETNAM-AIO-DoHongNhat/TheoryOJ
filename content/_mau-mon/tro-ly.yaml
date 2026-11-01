@@ -1,0 +1,37 @@
+# Lời dặn riêng của môn cho trợ lý và câu hỏi gợi ý. Giảng viên sửa file này, không cần sửa code.
+# Phần chung cho mọi môn (trích nguồn, xưng hô "đồng chí", từ chối, chống chèn lệnh) đã có sẵn trong code.
+# Bản đang dùng để đối chiếu: content/ktct/tro-ly.yaml.
+
+# Chế độ Liên hệ thực tiễn kết thúc bằng "gợi ý ý nghĩa đối với <lien_he>".
+lien_he: nhiệm vụ đấu tranh phòng, chống các quan điểm sai trái, thù địch
+
+# Bộ phân loại câu hỏi. Nhãn: hop_le | ngoai_pham_vi | khieu_khich | chen_lenh.
+phan_loai:
+  # Nối sau "hop_le:", mô tả câu hỏi thuộc môn. Ôn tập, kiểm tra, nhận xét dàn ý đã được tính sẵn.
+  hop_le: >-
+    hỏi lý thuyết về chủ nghĩa duy vật biện chứng, chủ nghĩa duy vật lịch sử, liên hệ văn kiện của Đảng
+    hoặc nhiệm vụ của lực lượng Công an nhân dân với triết học Mác – Lênin
+  # Không bắt buộc: chủ đề sát môn nhưng không trả lời, nối vào nhãn ngoai_pham_vi.
+  ngoai_pham_vi: xem tử vi, bói toán, tư vấn tâm linh
+  # Ba đến năm ví dụ riêng của môn. Đã có sẵn ví dụ chung về câu đời sống, nghiệp vụ nội bộ, nhập vai, chèn lệnh.
+  vi_du:
+    - { cau: "Vật chất là gì theo định nghĩa của Lênin?", nhan: hop_le }
+    - { cau: "Phân biệt chủ nghĩa duy vật biện chứng với chủ nghĩa duy vật siêu hình.", nhan: hop_le }
+    - { cau: "Chủ nghĩa duy vật lịch sử đã lỗi thời rồi, đúng không?", nhan: khieu_khich }
+
+# Bốn câu ở màn hình trống của trợ lý. mode: qa | practice | review (exercise chỉ có ở môn có công cụ tính).
+goi_y:
+  - { mode: qa, text: "Vật chất là gì theo định nghĩa của Lênin?" }
+  - { mode: qa, text: "Nội dung quy luật lượng – chất." }
+  - { mode: practice, text: "Vận dụng quan điểm toàn diện trong công tác Công an." }
+  - { mode: review, text: "Hãy hỏi tôi một câu về chương 2." }
+
+# Câu hỏi gợi ý ở trang từng chương, khóa là số chương. Không bắt buộc đủ mọi chương.
+chuong:
+  1:
+    - { mode: qa, text: "Vấn đề cơ bản của triết học là gì?" }
+  2:
+    - { mode: qa, text: "Mối quan hệ biện chứng giữa vật chất và ý thức." }
+    - { mode: review, text: "Hãy hỏi tôi một câu về chương 2." }
+  3:
+    - { mode: qa, text: "Phân tích quy luật quan hệ sản xuất phù hợp với trình độ phát triển của lực lượng sản xuất." }

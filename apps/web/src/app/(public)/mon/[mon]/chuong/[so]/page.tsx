@@ -16,7 +16,7 @@ import { PostCard } from "@/features/blog/components/PostCard";
 import { getPosts } from "@/features/blog/server/posts";
 import { MODE_ICONS } from "@/features/chat/mode-icons";
 import { MODES } from "@/features/chat/modes";
-import { chapterQuestions } from "@/features/learning/content";
+import { getProfile } from "@/features/learning/server/profile";
 import { KIND_ICONS } from "@/features/library/components/DocIcon";
 import { docsForChapter } from "@/features/library/server/catalog";
 import { KIND_LABELS, printedPage, readerHref } from "@/features/library/types";
@@ -54,7 +54,7 @@ async function ChapterPageContent({ params }: PageProps<"/mon/[mon]/chuong/[so]"
   const range = textbook?.chapters.find((c) => c.number === n);
   const related = docs.filter((d) => d !== textbook);
   const posts = getPosts().filter((p) => p.subject === subject.id && p.chapters.includes(n));
-  const questions = chapterQuestions[subject.id]?.[n] ?? [];
+  const questions = getProfile(subject.id).chapterQuestions[n] ?? [];
   const quizSize = getQuizBank(subject.id, n)?.questions.length ?? 0;
   const hasExercises = !!EXERCISES[subject.id]?.[n];
   const prev = subject.chapters.find((c) => c.number === n - 1);

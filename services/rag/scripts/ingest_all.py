@@ -25,7 +25,9 @@ def main():
     args = ap.parse_args()
 
     root = get_settings().content_dir
-    subjects = args.subjects or sorted(p.parent.name for p in root.glob("*/manifest.yaml"))
+    # Thư mục bắt đầu bằng "_" là mẫu (content/_mau-mon/), không nạp.
+    subjects = args.subjects or sorted(
+        p.parent.name for p in root.glob("*/manifest.yaml") if not p.parent.name.startswith("_"))
     if not subjects:
         raise SystemExit(f"Không thấy manifest.yaml nào trong {root}")
 

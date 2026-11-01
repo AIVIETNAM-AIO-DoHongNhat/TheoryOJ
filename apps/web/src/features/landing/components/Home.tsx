@@ -13,7 +13,7 @@ import { PostCard } from "@/features/blog/components/PostCard";
 import type { Post } from "@/features/blog/types";
 import { MODE_ICONS } from "@/features/chat/mode-icons";
 import { MODE_IDS, MODES } from "@/features/chat/modes";
-import type { Suggestion } from "@/features/learning/content";
+import type { Suggestion } from "@/features/learning/types";
 import { DOC_KINDS, KIND_LABELS, type LibraryDoc } from "@/features/library/types";
 import { cn } from "@/lib/utils";
 
