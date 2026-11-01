@@ -44,6 +44,7 @@ async function usage() {
     select
       (select count(distinct visitor_id) from conversations where created_at >= ${from} and created_at < ${to})::int as chat_visitors,
       (select count(distinct visitor_id) from practice_attempts where created_at >= ${from} and created_at < ${to})::int as practice_visitors,
+      (select count(*) from users where created_at >= ${from} and created_at < ${to})::int as accounts,
       count(*)::int as turns,
       count(*) filter (where refused is null and not incomplete)::int as answered,
       count(*) filter (where refused is not null)::int as refused,
@@ -60,8 +61,9 @@ async function usage() {
   line("## 1. Mức độ sử dụng");
   line();
   table(["Chỉ số", "Giá trị"], [
-    ["Trình duyệt đã hỏi trợ lý", n(u.chat_visitors)],
-    ["Trình duyệt đã ôn tập (trắc nghiệm, bài tập)", n(u.practice_visitors)],
+    ["Tài khoản học viên đăng ký mới", n(u.accounts)],
+    ["Người dùng đã hỏi trợ lý (tài khoản hoặc trình duyệt)", n(u.chat_visitors)],
+    ["Người dùng đã ôn tập (trắc nghiệm, bài tập)", n(u.practice_visitors)],
     ["Lượt hỏi trợ lý", n(u.turns)],
     ["Được trả lời", `${n(u.answered)} (${pct(u.answered, u.turns)})`],
     ["Bị từ chối (ngoài phạm vi, khiêu khích, chèn lệnh, không đủ căn cứ)", `${n(u.refused)} (${pct(u.refused, u.turns)})`],
@@ -169,7 +171,7 @@ try {
   const range = args.from || args.to ? `từ ${args.from ?? "đầu"} đến ${args.to ?? "nay"}` : "toàn bộ dữ liệu";
   line(`# Báo cáo số liệu TheoryOJ (${range})`);
   line();
-  line(`Xuất lúc ${new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })}. Mỗi trình duyệt tương ứng một người dùng ẩn danh.`);
+  line(`Xuất lúc ${new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })}. Người dùng là một tài khoản, hoặc một trình duyệt chưa đăng nhập. Báo cáo không chứa họ tên.`);
   line();
   await usage();
   await learning();

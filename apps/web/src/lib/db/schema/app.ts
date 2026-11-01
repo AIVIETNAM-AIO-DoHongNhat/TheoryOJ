@@ -3,7 +3,31 @@ import {
 } from "drizzle-orm/pg-core";
 
 // Bảng của ứng dụng (PLAN.md mục 7). Bảng documents, chunks do services/rag sở hữu.
-// Không có tài khoản: hội thoại và đánh giá gắn với mã khách ẩn danh lưu trong cookie (lib/visitor.ts).
+// Mọi dữ liệu học tập gắn với mã khách (`visitor_id`, lib/visitor.ts). Người chưa đăng nhập dùng mã ngẫu nhiên trong cookie;
+// tài khoản có mã khách riêng (`users.visitor_id`), khi đăng nhập dữ liệu của trình duyệt được gộp vào mã đó.
+
+/** Tài khoản học viên tự đăng ký (lib/auth). Chưa có vai trò giảng viên. */
+export const users = pgTable("users", {
+  id: text("id").primaryKey(),
+  /** Mã học viên, viết hoa, dùng để đăng nhập. */
+  studentCode: text("student_code").notNull().unique(),
+  fullName: text("full_name").notNull(),
+  className: text("class_name").notNull(),
+  /** scrypt, định dạng ở lib/auth/password.ts. */
+  passwordHash: text("password_hash").notNull(),
+  /** Mã khách của tài khoản: tiến độ, hội thoại, khảo sát lưu theo mã này. */
+  visitorId: text("visitor_id").notNull().unique(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+});
+
+/** Phiên đăng nhập. Chỉ lưu SHA-256 của mã phiên, mã gốc nằm trong cookie httpOnly. */
+export const sessions = pgTable("sessions", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [index("sessions_user_idx").on(t.userId)]);
 
 export const conversations = pgTable("conversations", {
   /** Id do client sinh (useChat), gửi lên trong trường `id` của mỗi yêu cầu. */

@@ -73,7 +73,8 @@ Trên trình duyệt (cả điện thoại):
 | Giả mạo IP | IP lấy từ phần tử cuối của `X-Forwarded-For` do Caddy ghi, không tin phần tử do trình duyệt gửi | Gửi kèm `X-Forwarded-For` giả, giới hạn vẫn tính theo IP thật |
 | Dữ liệu vào | Mọi route API và Server Action kiểm tra bằng Zod; bài tập và trắc nghiệm chấm trên máy chủ | Gửi dữ liệu sai kiểu, nhận lỗi 400 hoặc lỗi chung |
 | Chèn lệnh vào mô hình | Bước phân loại gắn nhãn `chen_lenh`; câu hỏi và tài liệu đặt trong khối phân tách | Thử "bỏ qua mọi chỉ dẫn trước…", nhận câu từ chối, tin nhắn được gắn cờ |
-| Dữ liệu cá nhân | Không đăng nhập, không thu thập họ tên; mã khách ngẫu nhiên trong cookie httpOnly, SameSite=Lax, Secure | Xem cookie trong DevTools |
+| Dữ liệu cá nhân | Đăng nhập không bắt buộc; tài khoản chỉ lưu mã học viên, họ tên, lớp. Mật khẩu băm scrypt; cookie phiên và mã khách httpOnly, SameSite=Lax, Secure; DB chỉ lưu SHA-256 của mã phiên | Xem cookie trong DevTools, `select * from users` không có mật khẩu rõ |
+| Dò mật khẩu | Mỗi mã học viên 10 lần đăng nhập trong 10 phút; sai mã hay sai mật khẩu cùng một thông báo | Đăng nhập sai liên tục, nhận thông báo chờ |
 | Nạp tài liệu | `POST /ingest` của `rag` yêu cầu `RAG_API_KEY` và không mở ra ngoài | Gọi từ ngoài không tới được |
 
 ## 5. Kiểm thử nội dung
@@ -116,6 +117,7 @@ Trang chủ tự chuyển hàng số liệu sang số sử dụng thật (câu h
 | Cập nhật mã nguồn | `git pull && git lfs pull && dc up -d --build` |
 | Thêm bài viết, tài liệu thư viện | Thêm file vào `content/` rồi `dc up -d --build web` (trang được build sẵn); tài liệu mới cần nạp lại: `dc exec rag python scripts/ingest_all.py` |
 | Sửa ngân hàng câu hỏi, câu hỏi gợi ý | Sửa `content/<môn>/question-bank/*.yaml` hoặc `content/<môn>/tro-ly.yaml`, khởi động lại `dc restart web` |
+| Học viên quên mật khẩu | `dc run --rm migrate npx tsx scripts/dat-lai-mat-khau.mts <mã học viên>`, báo mật khẩu tạm cho học viên |
 | Mở thêm môn | Theo `content/THEM-MON.md`, rồi `dc up -d --build web` và `dc exec rag python scripts/ingest_all.py <môn>` |
 | Sao lưu | Tự động mỗi ngày vào `infra/backups/`, giữ `BACKUP_KEEP_DAYS` ngày. Nên chép thêm ra máy khác |
 | Khôi phục | `dc exec -T db pg_restore -U theoryoj -d theoryoj --clean --if-exists < infra/backups/theoryoj-<ngày>.dump` |

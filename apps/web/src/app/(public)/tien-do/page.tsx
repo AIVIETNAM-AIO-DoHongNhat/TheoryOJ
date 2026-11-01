@@ -1,9 +1,10 @@
-import { ArrowRight, Calculator, ListChecks, MessageSquareText, Trophy } from "lucide-react";
+import { ArrowRight, Calculator, CloudUpload, ListChecks, MessageSquareText, Trophy } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
 import { PageHeader } from "@/components/layout/PageHeader";
+import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +17,7 @@ import { EXERCISES } from "@/domain/ktct/exercises";
 import { type ChapterProgress, getProgress } from "@/features/progress/server/progress";
 import { quizCounts } from "@/features/quiz/server/bank";
 import { PASS_RATIO, QUIZ_SIZE } from "@/features/quiz/types";
+import { getCurrentUser } from "@/lib/auth/session";
 import { getVisitorId } from "@/lib/visitor";
 
 export const metadata: Metadata = { title: "Tiến độ ôn tập" };
@@ -178,10 +180,36 @@ async function SubjectProgress({ subject, visitorId }: { subject: Subject; visit
   );
 }
 
+/** Chưa đăng nhập: mời tạo tài khoản để tiến độ không mất khi đổi máy hay xóa dữ liệu trình duyệt. */
+function SignInPrompt() {
+  return (
+    <Alert className="bg-primary-soft">
+      <CloudUpload />
+      <AlertTitle>Lưu tiến độ theo tài khoản</AlertTitle>
+      <AlertDescription>
+        Tiến độ dưới đây đang lưu trên trình duyệt này. Đăng ký hoặc đăng nhập để giữ kết quả và học tiếp trên máy khác;
+        những gì đã làm sẽ được chuyển vào tài khoản.
+      </AlertDescription>
+      <AlertAction>
+        <Button size="sm" render={<Link href="/dang-ky?tiep=/tien-do" />} nativeButton={false}>
+          Đăng ký
+        </Button>
+      </AlertAction>
+    </Alert>
+  );
+}
+
 async function ProgressContent() {
-  const visitorId = await getVisitorId();
+  const [user, visitorId] = await Promise.all([getCurrentUser(), getVisitorId()]);
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-12 sm:py-16">
+      {user ? (
+        <p className="-mb-6 text-sm text-muted-foreground">
+          Học viên <span className="font-medium text-foreground">{user.fullName}</span> · {user.studentCode} · Lớp {user.className}
+        </p>
+      ) : (
+        <SignInPrompt />
+      )}
       {ACTIVE_SUBJECTS.map((subject) => (
         <section key={subject.id} className="flex flex-col gap-6">
           {ACTIVE_SUBJECTS.length > 1 && <h2 className="text-2xl font-bold">{subject.name}</h2>}
@@ -202,7 +230,7 @@ export default function ProgressPage() {
       <PageHeader
         crumbs={[{ label: "Ôn tập", href: "/on-tap" }, { label: "Tiến độ" }]}
         title="Tiến độ ôn tập"
-        lead="Kết quả trắc nghiệm, bài tập và số câu đã hỏi trợ lý theo từng chương. Tiến độ lưu theo trình duyệt này, không cần đăng nhập; xóa dữ liệu trình duyệt thì tiến độ bắt đầu lại."
+        lead="Kết quả trắc nghiệm, bài tập và số câu đã hỏi trợ lý theo từng chương. Đăng nhập thì tiến độ lưu theo tài khoản, học trên máy nào cũng thấy; chưa đăng nhập thì lưu theo trình duyệt này."
       />
       <Suspense
         fallback={

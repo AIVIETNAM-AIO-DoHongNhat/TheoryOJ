@@ -17,7 +17,7 @@ import type { ChatMessage } from "@/features/chat/types";
 import { env } from "@/lib/env";
 import { clientIp, hitRateLimits } from "@/lib/rate-limit";
 import { RagError } from "@/lib/rag-client";
-import { visitorFromRequest } from "@/lib/visitor";
+import { ensureVisitorId } from "@/lib/visitor";
 
 export const maxDuration = 60;
 
@@ -49,9 +49,8 @@ function textOf(parts: { type: string; text?: string }[]): string {
 const plain = (message: string, status: number, headers?: HeadersInit) => new Response(message, { status, headers });
 
 export async function POST(req: Request) {
-  // Không cần đăng nhập: mã khách trong cookie giữ lịch sử và giới hạn tần suất (lib/visitor.ts).
-  const visitor = visitorFromRequest(req);
-  const visitorId = visitor.id;
+  // Không bắt buộc đăng nhập: mã khách (của tài khoản hoặc của trình duyệt) giữ lịch sử và giới hạn tần suất (lib/visitor.ts).
+  const visitorId = await ensureVisitorId();
 
   const parsed = bodySchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) {
@@ -169,8 +168,5 @@ export async function POST(req: Request) {
     },
   });
 
-  return createUIMessageStreamResponse({
-    stream,
-    headers: visitor.setCookie ? { "Set-Cookie": visitor.setCookie } : undefined,
-  });
+  return createUIMessageStreamResponse({ stream });
 }

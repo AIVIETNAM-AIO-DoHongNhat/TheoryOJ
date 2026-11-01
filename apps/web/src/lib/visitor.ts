@@ -2,9 +2,12 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
-// Trợ lý không cần đăng nhập. Mỗi trình duyệt nhận một mã khách ngẫu nhiên trong cookie httpOnly,
-// dùng để giữ lịch sử hội thoại, chỉ cho người tạo xem lại hội thoại, và giới hạn tần suất.
-// Xóa cookie thì mất lịch sử; dữ liệu trong DB vẫn còn để giảng viên xem lại.
+import { getCurrentUser } from "@/lib/auth/session";
+
+// Mọi dữ liệu học tập (hội thoại, đánh giá, tiến độ, khảo sát) gắn với một mã khách.
+// Đã đăng nhập: dùng mã khách của tài khoản, nên học trên máy nào cũng thấy cùng dữ liệu.
+// Chưa đăng nhập: mỗi trình duyệt nhận một mã ngẫu nhiên trong cookie httpOnly; xóa cookie thì mất lịch sử,
+// dữ liệu trong DB vẫn còn. Khi đăng nhập hoặc đăng ký, dữ liệu của mã này được gộp vào tài khoản (features/auth).
 
 export const VISITOR_COOKIE = "theoryoj_khach";
 const ONE_YEAR = 60 * 60 * 24 * 365;
@@ -12,30 +15,28 @@ const PATTERN = /^[0-9a-f-]{36}$/;
 
 const valid = (v: string | undefined): v is string => !!v && PATTERN.test(v);
 
-/** Đọc mã khách trong Server Component hoặc Server Action. Null nếu trình duyệt chưa hỏi lần nào. */
-export async function getVisitorId(): Promise<string | null> {
+/** Mã khách ẩn danh trong cookie của trình duyệt, không tính tài khoản. */
+export async function anonymousVisitorId(): Promise<string | null> {
   const v = (await cookies()).get(VISITOR_COOKIE)?.value;
   return valid(v) ? v : null;
 }
 
-/** Trong Server Action: lấy mã khách, chưa có thì tạo mới và ghi cookie (trắc nghiệm, bài tập làm trước khi hỏi trợ lý). */
+/** Mã khách đang dùng. Null nếu chưa đăng nhập và trình duyệt chưa làm gì cần lưu. */
+export async function getVisitorId(): Promise<string | null> {
+  const user = await getCurrentUser();
+  return user ? user.visitorId : anonymousVisitorId();
+}
+
+/**
+ * Trong Server Action hoặc route handler: lấy mã khách, chưa có thì tạo mới và ghi cookie
+ * (trắc nghiệm, bài tập làm trước khi hỏi trợ lý).
+ */
 export async function ensureVisitorId(): Promise<string> {
-  const store = await cookies();
-  const v = store.get(VISITOR_COOKIE)?.value;
-  if (valid(v)) return v;
+  const current = await getVisitorId();
+  if (current) return current;
   const id = crypto.randomUUID();
-  store.set(VISITOR_COOKIE, id, {
+  (await cookies()).set(VISITOR_COOKIE, id, {
     path: "/", maxAge: ONE_YEAR, httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production",
   });
   return id;
-}
-
-/** Trong route handler: lấy mã khách từ request, hoặc tạo mới kèm header Set-Cookie để trả về. */
-export function visitorFromRequest(req: Request): { id: string; setCookie?: string } {
-  const raw = req.headers.get("cookie") ?? "";
-  const v = raw.split(/;\s*/).find((c) => c.startsWith(`${VISITOR_COOKIE}=`))?.slice(VISITOR_COOKIE.length + 1);
-  if (valid(v)) return { id: v };
-  const id = crypto.randomUUID();
-  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
-  return { id, setCookie: `${VISITOR_COOKIE}=${id}; Path=/; Max-Age=${ONE_YEAR}; HttpOnly; SameSite=Lax${secure}` };
 }

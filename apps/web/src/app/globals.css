@@ -258,3 +258,18 @@
 .prose-doc code { font-family: var(--font-mono); font-size: 0.85em; background: var(--muted); padding: 0.1em 0.35em; border-radius: 5px; }
 .prose-doc img { border-radius: 0.75rem; }
 .prose-doc .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.3em 0; }
+
+/*
+ * Ô được trình duyệt tự điền (mã học viên, mật khẩu): giữ nền trắng thay vì nền xanh nhạt của Chrome.
+ * Đặt ngoài các tầng của Tailwind và dùng !important, vì lớp shadow-none của ô nhập sẽ đè lớp phủ.
+ * Transition rất dài hoãn màu nền tự điền, phòng khi lớp phủ không đủ.
+ */
+input:-webkit-autofill {
+  -webkit-text-fill-color: var(--foreground);
+  caret-color: var(--foreground);
+  box-shadow: 0 0 0 100px var(--background) inset !important;
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
+input:autofill {
+  box-shadow: 0 0 0 100px var(--background) inset !important;
+}

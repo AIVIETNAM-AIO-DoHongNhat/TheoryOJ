@@ -42,7 +42,7 @@ export default function SurveyPage() {
       <PageHeader
         crumbs={[{ label: "Khảo sát" }]}
         title="Khảo sát ý kiến"
-        lead="Phiếu khảo sát ẩn danh, khoảng 3 phút, giúp Khoa đánh giá hiệu quả của trợ lý học tập và hoàn thiện trang web. Mỗi trình duyệt gửi một phiếu cho mỗi đợt."
+        lead="Phiếu khảo sát khoảng 3 phút, giúp Khoa đánh giá hiệu quả của trợ lý học tập và hoàn thiện trang web. Kết quả chỉ dùng để thống kê, không kèm họ tên. Mỗi tài khoản (hoặc trình duyệt chưa đăng nhập) gửi một phiếu cho mỗi đợt."
       />
       <div className="mx-auto max-w-3xl px-4 py-12 sm:py-16">
         <Suspense fallback={<Skeleton className="h-96 rounded-xl" />}>

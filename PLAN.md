@@ -105,12 +105,22 @@ Làm ngày 29/10/2026. Chưa có số đo vì máy phát triển chưa có Ollam
 
 Làm ngày 30/10/2026, thử đầu–cuối trên máy phát triển với mô hình giả lập. Bản sáng kiến chưa cần đăng nhập và trang quản trị: bản đầu của giai đoạn 3 có Better Auth, nhập tài khoản từ Excel và `/quan-tri`, nhưng đã gỡ cùng ngày để giữ sản phẩm gọn. Khi cần quản lý theo lớp có thể làm lại trên cùng bảng dữ liệu.
 
-- **Không đăng nhập.** Ai cũng dùng được trợ lý. Mỗi trình duyệt nhận một mã khách ngẫu nhiên trong cookie httpOnly `theoryoj_khach` (`lib/visitor.ts`), cấp ở câu hỏi đầu tiên. Mã này giữ lịch sử hội thoại và chỉ cho trình duyệt đã tạo hội thoại mở lại hay ghi tiếp; trình duyệt khác nhận 404. Xóa cookie thì mất lịch sử ở phía người dùng, dữ liệu trong DB vẫn còn.
+- **Không bắt buộc đăng nhập.** Ai cũng dùng được trợ lý; học viên có thể tạo tài khoản (mục 2.7). Mỗi trình duyệt nhận một mã khách ngẫu nhiên trong cookie httpOnly `theoryoj_khach` (`lib/visitor.ts`), cấp ở câu hỏi đầu tiên. Mã này giữ lịch sử hội thoại và chỉ cho trình duyệt đã tạo hội thoại mở lại hay ghi tiếp; trình duyệt khác nhận 404. Xóa cookie thì mất lịch sử ở phía người dùng, dữ liệu trong DB vẫn còn.
 - **Giới hạn tần suất.** `/api/chat`: 20 câu trong 10 phút và 200 câu mỗi ngày theo mã khách, 120 câu trong 10 phút theo IP. Mã khách có thể bị xóa nên giới hạn theo IP mới là chốt chặn chính. Đếm trong bảng `chat_rate_limits` nên vẫn đúng khi chạy nhiều tiến trình. Ngưỡng đổi bằng biến môi trường `CHAT_LIMIT_*`.
 - **Lưu hội thoại.** Mỗi câu trả lời lưu cả `parts` (để mở lại có trích dẫn), câu hỏi, chế độ, chương, nhãn phân loại, lý do từ chối, cờ, câu tìm kiếm đã viết lại, điểm cao nhất, trích dẫn, thời gian từng bước. Câu bị dừng giữa chừng hoặc lỗi được đánh dấu `incomplete`. Người dùng xem lại và xóa hội thoại ở bảng Lịch sử; địa chỉ `/tro-ly/[id]` mở đúng hội thoại.
 - **Đánh giá.** 👍/👎 dưới mỗi câu trả lời; 👎 chọn một trong sáu lý do (`features/chat/feedback.ts`) và ghi chú tùy ý.
 - **Xem lại.** Chưa có giao diện. Giảng viên xem câu bị 👎, câu gắn cờ và câu bị từ chối bằng truy vấn trên bảng `messages`, `feedback`, ví dụ `select question, content, refused, flagged from messages where role = 'assistant' and (flagged or refused is not null)`.
 - **Chưa làm.** Chưa gỡ `legacy/`: bản Streamlit vẫn cần để đo điểm nền trên bộ câu chuẩn sau khi giảng viên duyệt (giai đoạn 0 và tiêu chí giai đoạn 1); gỡ sau lần đo đó.
+
+### 2.7. Tài khoản học viên
+
+Làm ngày 01/11/2026 theo yêu cầu cho học viên học trên nhiều thiết bị và tự theo dõi tiến độ. Đăng nhập không bắt buộc: mọi trang và trợ lý vẫn dùng được khi chưa đăng nhập.
+
+- **Đăng ký** (`/dang-ky`): học viên tự tạo tài khoản bằng mã học viên (viết hoa, dùng để đăng nhập), họ tên, lớp, mật khẩu từ 8 ký tự. Không cần máy chủ email. Đăng nhập ở `/dang-nhap`, sửa họ tên, lớp và đổi mật khẩu ở `/tai-khoan`; đầu trang có nút Đăng nhập hoặc menu tài khoản.
+- **Dữ liệu theo tài khoản.** Mỗi tài khoản có một mã khách riêng (`users.visitor_id`); các bảng hội thoại, đánh giá, tiến độ, khảo sát không đổi, vẫn lưu theo `visitor_id`. Khi đăng ký hoặc đăng nhập, dữ liệu đã làm trên trình duyệt đó được gộp vào tài khoản; đăng xuất thì trình duyệt trở về khách mới.
+- **Bảo mật.** Mật khẩu băm bằng scrypt (`lib/auth/password.ts`). Phiên lưu trong bảng `sessions` 30 ngày, cookie httpOnly `theoryoj_phien` chỉ giữ mã ngẫu nhiên, DB lưu SHA-256 của mã. Đăng nhập giới hạn 10 lần trong 10 phút cho mỗi mã học viên (300 lần cho mỗi IP vì cả lớp chung mạng). Sai mã hay sai mật khẩu đều báo chung một câu. Đổi mật khẩu thì đăng xuất các thiết bị khác.
+- **Quên mật khẩu.** Chưa có trang quản trị: người phát triển chạy `npm run dat-lai-mat-khau -- <mã học viên>`, script in mật khẩu tạm và đăng xuất mọi phiên của tài khoản.
+- **Chưa làm.** Vai trò giảng viên (xem tiến độ theo lớp, tin nhắn gắn cờ, đặt lại mật khẩu trên web), xác minh mã học viên với danh sách lớp.
 
 ---
 
@@ -147,7 +157,7 @@ Một câu hỏi đi qua `/api/chat` theo bảy bước.
 | Web | Next.js 16 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui. Route được bảo vệ bằng `proxy.ts` (Next.js 15 gọi là `middleware.ts`). |
 | Chat | Vercel AI SDK (`ai`, `@ai-sdk/react`, `@ai-sdk/openai-compatible`), `react-markdown` + `remark-math` + `rehype-katex` |
 | Cơ sở dữ liệu | PostgreSQL 16 + pgvector, Drizzle ORM |
-| Đăng nhập | Chưa có ở bản sáng kiến. Mã khách ẩn danh trong cookie thay cho tài khoản (mục 2.6). |
+| Đăng nhập | Tự viết, không thư viện ngoài: scrypt của Node, phiên trong Postgres (mục 2.7). Không bắt buộc đăng nhập. |
 | Tìm kiếm | FastAPI, `sentence-transformers` (bge-m3, bge-reranker-v2-m3), PyMuPDF, python-docx, `uv` |
 | Mô hình ngôn ngữ | Ollama qua API tương thích OpenAI. Đổi mô hình bằng biến môi trường. |
 | Triển khai | Docker Compose gồm `caddy`, `web`, `rag`, `db`, `ollama`. Chỉ cổng 443 mở ra Internet. |
@@ -321,7 +331,7 @@ documents:
 
 | Nhóm | Bảng |
 |---|---|
-| Người dùng | Chưa có; hội thoại và đánh giá gắn với `visitor_id` |
+| Người dùng | `users` (mã học viên, họ tên, lớp, mật khẩu băm, `visitor_id` của tài khoản), `sessions`; dữ liệu học tập gắn với `visitor_id` |
 | Nội dung | `subjects`, `chapters`, `documents` (kind, page_offset, sha256), `chunks` (chapter_id, page, section, `embedding vector(1024)`, tsv) |
 | Hội thoại | `conversations` (visitor_id), `messages` (citations jsonb, rewritten_query, latency_ms), `feedback` (rating, reason) |
 | Học tập | `practice_attempts` (trắc nghiệm và bài tập, theo mã khách); câu hỏi nằm trong file YAML, không lưu DB |
@@ -405,8 +415,8 @@ Nghị quyết 57-NQ/TW về đột phá phát triển khoa học, công nghệ,
 |---|---|---|
 | 1 | Mô hình ngôn ngữ chạy tại Học viện hay qua API bên ngoài | Ưu tiên chạy tại Học viện. Trước giai đoạn 5, so sánh `qwen2.5:7b` với vài mô hình mở lớn hơn bằng `make eval` và chọn mô hình nhỏ nhất đạt mục 9. Chỉ dùng API ngoài khi Học viện cho phép. Riêng việc đo trên bộ câu chuẩn (không chứa dữ liệu học viên) tạm dùng `qwen/qwen-2.5-7b-instruct` qua OpenRouter, cấu hình trong `.env`. |
 | 2 | Máy chủ, GPU, dung lượng VRAM, tên miền | Hỏi đơn vị CNTT của Học viện trong tuần 1. Quyết định 1 phụ thuộc vào câu trả lời này. |
-| 3 | Đối tượng truy cập | Đã chốt 30/10/2026: bản sáng kiến mở trợ lý cho mọi người, không cần đăng nhập, chặn lạm dụng bằng giới hạn tần suất theo IP. |
-| 4 | Tài khoản riêng hay tích hợp hệ thống sẵn có | Chưa cần ở bản sáng kiến. Khi cần, dùng tài khoản riêng do quản trị cấp. |
+| 3 | Đối tượng truy cập | Đã chốt 30/10/2026: bản sáng kiến mở trợ lý cho mọi người, không cần đăng nhập, chặn lạm dụng bằng giới hạn tần suất theo IP. Từ 01/11/2026 có thêm tài khoản không bắt buộc. |
+| 4 | Tài khoản riêng hay tích hợp hệ thống sẵn có | Đã chốt 01/11/2026: tài khoản riêng, học viên tự đăng ký bằng mã học viên; vai trò giảng viên làm sau. Mã học viên chưa đối chiếu với danh sách lớp. |
 | 5 | Người soạn bộ câu chuẩn và ngân hàng trắc nghiệm | Cần ít nhất một giảng viên KTCT tham gia từ tuần 1. |
 | 6 | Hiển thị toàn văn giáo trình | Đã chốt 29/10/2026: mọi tài liệu trong Thư viện đọc toàn văn công khai. Trước khi mở công khai, Khoa cần xác nhận quyền phát hành giáo trình, sách của NXB Chính trị quốc gia Sự thật và bài tạp chí; văn kiện của Đảng không vướng. |
 | 7 | Bảng màu, biểu trưng, cách xưng hô | Khoa và đơn vị truyền thông của Học viện duyệt. |

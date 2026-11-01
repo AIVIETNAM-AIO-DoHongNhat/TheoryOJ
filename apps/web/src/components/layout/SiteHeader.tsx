@@ -1,13 +1,16 @@
 import Link from "next/link";
+import { Suspense } from "react";
 
 import { AcademyLogo } from "@/components/brand";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AccountButton } from "@/features/auth/components/AccountButton";
 import { site } from "@/features/landing/content";
 
 import { MainNav } from "./MainNav";
 import { MobileMenu } from "./MobileMenu";
 
 /**
- * Đầu trang một dòng, dính ở đầu màn hình: logo và tên đơn vị, menu.
+ * Đầu trang một dòng, dính ở đầu màn hình: logo và tên đơn vị, menu, tài khoản.
  * Nút Trợ lý học tập nằm ở cụm nút nổi góc phải (FloatingActions).
  */
 export function SiteHeader() {
@@ -23,6 +26,9 @@ export function SiteHeader() {
         </Link>
         <MainNav />
         <div className="flex items-center gap-2">
+          <Suspense fallback={<Skeleton className="h-8 w-28 rounded-lg" />}>
+            <AccountButton />
+          </Suspense>
           <MobileMenu />
         </div>
       </div>
