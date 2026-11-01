@@ -76,7 +76,7 @@ async function QuizPageContent({ params }: { params: Params }) {
       >
         {!bank.reviewed && <Badge variant="outline" className="self-start bg-white">Bộ câu hỏi đang chờ giảng viên duyệt</Badge>}
       </PageHeader>
-      <div className="mx-auto max-w-3xl px-4 py-10 sm:py-12">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:py-12">
         <QuizRunner
           subject={subject.id}
           chapter={chapter.number}
