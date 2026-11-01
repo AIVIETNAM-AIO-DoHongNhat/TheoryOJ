@@ -1,0 +1,15 @@
+# Ngữ cảnh build của apps/web/Dockerfile là gốc repo (cần cả content/ khi build).
+**/node_modules
+**/.next
+**/__pycache__
+**/*.tsbuildinfo
+.git
+.venv
+.idea
+.vscode
+legacy
+eval/**/results
+.env
+.env.*
+infra/.env
+infra/backups

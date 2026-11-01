@@ -1,0 +1,22 @@
+# Ghép thêm khi máy chủ có GPU NVIDIA và đã cài NVIDIA Container Toolkit:
+#
+#   docker compose -f infra/docker-compose.prod.yml -f infra/docker-compose.gpu.yml --profile ollama up -d
+#
+# Tìm kiếm (bge-m3 + reranker) cần khoảng 3 GB VRAM; qwen2.5:7b bản lượng tử hóa cần thêm khoảng 6 GB.
+
+x-gpu: &gpu
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]
+
+services:
+  rag:
+    <<: *gpu
+    environment:
+      DEVICE: cuda
+  ollama:
+    <<: *gpu

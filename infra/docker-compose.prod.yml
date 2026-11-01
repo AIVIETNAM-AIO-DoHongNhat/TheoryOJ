@@ -1,0 +1,150 @@
+# Bản triển khai đầy đủ (PLAN.md mục 3, giai đoạn 5). Hướng dẫn ở infra/TRIEN-KHAI.md.
+#
+#   cp infra/.env.prod.example infra/.env        # rồi điền DOMAIN, mật khẩu, mô hình
+#   docker compose -f infra/docker-compose.prod.yml up -d --build
+#   docker compose -f infra/docker-compose.prod.yml --profile ollama up -d --build   # chạy mô hình tại chỗ
+#
+# Chỉ caddy mở cổng 80, 443. web, rag, db, ollama nằm trong mạng nội bộ của Docker.
+
+name: theoryoj
+
+x-db-url: &db-url postgresql://theoryoj:${POSTGRES_PASSWORD:?đặt POSTGRES_PASSWORD trong infra/.env}@db:5432/theoryoj
+
+services:
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?đặt DOMAIN trong infra/.env}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+
+  web:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+      target: runner
+    image: theoryoj-web
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: *db-url
+      RAG_URL: http://rag:8001
+      LLM_BASE_URL: ${LLM_BASE_URL:-http://ollama:11434/v1}
+      LLM_API_KEY: ${LLM_API_KEY:-ollama}
+      LLM_MODEL: ${LLM_MODEL:-qwen2.5:7b}
+      LLM_FAST_MODEL: ${LLM_FAST_MODEL:-}
+      REFUSAL_THRESHOLD: ${REFUSAL_THRESHOLD:-0.3}
+      CHAT_LIMIT_VISITOR_10M: ${CHAT_LIMIT_VISITOR_10M:-20}
+      CHAT_LIMIT_VISITOR_DAY: ${CHAT_LIMIT_VISITOR_DAY:-200}
+      CHAT_LIMIT_IP_10M: ${CHAT_LIMIT_IP_10M:-120}
+      SURVEY_PHASE: ${SURVEY_PHASE:-truoc}
+    volumes:
+      # Ngân hàng câu hỏi, PDF thư viện đọc lúc chạy. Bài viết và danh mục thư viện được build sẵn vào image.
+      - ../content:/content:ro
+    expose:
+      - "3000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      rag:
+        condition: service_started
+
+  # Tạo hoặc cập nhật bảng của Next.js rồi thoát. Cũng dùng để chạy báo cáo số liệu (scripts/report.mts).
+  migrate:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+      target: migrator
+    image: theoryoj-migrate
+    restart: "no"
+    environment:
+      DATABASE_URL: *db-url
+    depends_on:
+      db:
+        condition: service_healthy
+
+  rag:
+    build: ../services/rag
+    image: theoryoj-rag
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: *db-url
+      CONTENT_DIR: /content
+      RAG_API_KEY: ${RAG_API_KEY:?đặt RAG_API_KEY trong infra/.env}
+      DEVICE: ${RAG_DEVICE:-}
+    volumes:
+      - ../content:/content:ro
+      - hfcache:/root/.cache/huggingface
+    expose:
+      - "8001"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: theoryoj
+      POSTGRES_USER: theoryoj
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U theoryoj -d theoryoj"]
+      interval: 5s
+      retries: 10
+
+  # Sao lưu hằng ngày bằng pg_dump (định dạng nén -Fc), giữ BACKUP_KEEP_DAYS ngày, ghi vào infra/backups/.
+  backup:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
+    volumes:
+      - ./backups:/backups
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        while true; do
+          f=/backups/theoryoj-$$(date +%Y%m%d-%H%M).dump
+          if pg_dump -Fc -h db -U theoryoj -d theoryoj -f "$$f.tmp"; then
+            mv "$$f.tmp" "$$f" && echo "Đã sao lưu $$f"
+          else
+            rm -f "$$f.tmp"; echo "Sao lưu thất bại" >&2
+          fi
+          find /backups -name 'theoryoj-*.dump' -mtime +$$KEEP_DAYS -delete
+          sleep 86400
+        done
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Mô hình ngôn ngữ chạy tại chỗ, bật bằng --profile ollama. Tải mô hình lần đầu:
+  #   docker compose -f infra/docker-compose.prod.yml exec ollama ollama pull qwen2.5:7b
+  ollama:
+    image: ollama/ollama:0.12.6
+    profiles: ["ollama"]
+    restart: unless-stopped
+    volumes:
+      - ollama:/root/.ollama
+    expose:
+      - "11434"
+
+volumes:
+  pgdata:
+  hfcache:
+  caddy_data:
+  caddy_config:
+  ollama:

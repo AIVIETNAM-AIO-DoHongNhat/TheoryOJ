@@ -10,7 +10,7 @@ Dự án Web học tập cho Khoa Lý luận chính trị. Kế hoạch chi ti�
 | `eval/ktct/` | Bộ câu chuẩn `golden.jsonl` và kết quả đo trong `results/` |
 | `apps/web/` | Next.js: cổng học tập, trợ lý `/tro-ly` (lưu hội thoại, đánh giá); migration Drizzle trong `drizzle/` |
 | `services/rag/` | Dịch vụ tìm kiếm FastAPI: nạp tài liệu, tìm kết hợp vector + từ khóa, reranker |
-| `infra/` | `docker-compose.yml` (Postgres + pgvector, rag) và `db/init.sql` |
+| `infra/` | `docker-compose.yml` (Postgres + pgvector, rag) khi phát triển; `docker-compose.prod.yml`, `Caddyfile` và hướng dẫn `TRIEN-KHAI.md` cho bản triển khai; `db/init.sql` |
 | `legacy/streamlit/` | Bản chatbot Streamlit cũ, giữ lại để đo điểm nền |
 
 File PDF, DOC, DOCX trong `content/` được lưu bằng Git LFS. Cần chạy `git lfs install` một lần trước khi clone.

@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!.env.prod.example
 
 # Python
 .venv/
@@ -12,6 +13,7 @@ __pycache__/
 legacy/streamlit/db/
 legacy/streamlit/logs.csv
 eval/**/results/
+infra/backups/
 
 # Node
 node_modules/

@@ -1,4 +1,4 @@
-import { BookOpenCheck, Compass, FileText, type LucideIcon, Newspaper, ScrollText } from "lucide-react";
+import { BookOpenCheck, Compass, FileText, Lightbulb, type LucideIcon, Newspaper, ScrollText } from "lucide-react";
 
 import { getSubject } from "@/config/subjects";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
   "Ôn tập": BookOpenCheck,
   "Văn kiện": ScrollText,
   "Tin tức": Newspaper,
+  "Góc nhìn": Lightbulb,
 };
 
 /**

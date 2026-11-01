@@ -7,8 +7,10 @@ import { SUBJECTS } from "@/config/subjects";
 
 import { DOC_KINDS, type DocFormat, type DocKind, type LibraryDoc, slugOf } from "../types";
 
-/** Học liệu nằm ngoài code, ở content/<môn>/ của repo (PLAN.md mục 6). */
-export const CONTENT_ROOT = path.resolve(process.cwd(), "../../content");
+/** Học liệu nằm ngoài code, ở content/<môn>/ của repo (PLAN.md mục 6). Trong container đặt CONTENT_DIR=/content. */
+export const CONTENT_ROOT = process.env.CONTENT_DIR
+  ? path.resolve(process.env.CONTENT_DIR)
+  : path.resolve(process.cwd(), "../../content");
 
 interface ManifestDoc {
   file: string;

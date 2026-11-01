@@ -78,3 +78,17 @@ export const chatRateLimits = pgTable("chat_rate_limits", {
   windowStart: timestamp("window_start", { withTimezone: true }).notNull(),
   count: integer("count").notNull(),
 });
+
+/** Khảo sát thang 5 điểm trước và sau đợt thử nghiệm (PLAN.md mục 10). Mỗi trình duyệt một phiếu cho mỗi đợt, gửi lại thì ghi đè. */
+export const surveyResponses = pgTable("survey_responses", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  visitorId: text("visitor_id").notNull(),
+  /** "truoc" hoặc "sau" đợt thử nghiệm. */
+  phase: text("phase", { enum: ["truoc", "sau"] }).notNull(),
+  role: text("role", { enum: ["hoc-vien", "giang-vien"] }).notNull(),
+  /** { mã câu: điểm 1–5 }, mã câu ở features/survey/questions.ts. */
+  answers: jsonb("answers").notNull(),
+  comment: text("comment"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [uniqueIndex("survey_visitor_phase_idx").on(t.visitorId, t.phase)]);

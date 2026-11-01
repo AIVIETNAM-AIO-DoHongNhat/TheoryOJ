@@ -4,7 +4,7 @@ title: Tiêu đề bài viết
 description: Một đến hai câu tóm tắt, hiện ở danh sách bài và khi chia sẻ.
 date: 2026-10-29
 author: Họ tên giảng viên
-category: Ôn tập          # Hướng dẫn | Ôn tập | Văn kiện | Tin tức
+category: Ôn tập          # Hướng dẫn | Ôn tập | Góc nhìn | Văn kiện | Tin tức
 subject: ktct
 chapters: [3]             # chương liên quan, để trống nếu không có
 cover: /anh-khoa/ten-anh.jpg   # ảnh bìa trong apps/web/public, có thể bỏ

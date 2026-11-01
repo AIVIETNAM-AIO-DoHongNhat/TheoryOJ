@@ -1,0 +1,30 @@
+# Cổng duy nhất mở ra ngoài (PLAN.md mục 9). Caddy tự xin và gia hạn chứng chỉ HTTPS cho DOMAIN.
+# Máy chủ chỉ trong mạng nội bộ, không có DNS công khai: thêm dòng `tls internal` vào khối {$DOMAIN}
+# (trình duyệt sẽ cần tin chứng chỉ gốc của Caddy), hoặc dùng chứng chỉ do đơn vị CNTT cấp: `tls /certs/cert.pem /certs/key.pem`.
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	# Câu hỏi giới hạn 1.500 ký tự, hội thoại tối đa 40 tin; 2 MB là dư.
+	request_body {
+		max_size 2MB
+	}
+
+	reverse_proxy web:3000 {
+		# Câu trả lời của trợ lý truyền dần (streaming), không gom bộ đệm.
+		flush_interval -1
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

@@ -33,7 +33,10 @@ export async function hitRateLimits(rules: RateRule[]): Promise<number> {
   return wait;
 }
 
-/** IP của người dùng. Caddy đặt X-Forwarded-For; khi phát triển không có thì dùng "local". */
+/**
+ * IP của người dùng. Caddy là proxy duy nhất và ghi IP thật vào cuối X-Forwarded-For, nên lấy phần tử cuối:
+ * phần tử đầu do trình duyệt tự gửi được, dùng nó thì ai cũng đổi IP để lách giới hạn. Khi phát triển dùng "local".
+ */
 export function clientIp(headers: Headers): string {
-  return headers.get("x-forwarded-for")?.split(",")[0]?.trim() || headers.get("x-real-ip") || "local";
+  return headers.get("x-forwarded-for")?.split(",").at(-1)?.trim() || headers.get("x-real-ip") || "local";
 }

@@ -23,6 +23,8 @@ const schema = z.object({
   CHAT_LIMIT_VISITOR_10M: z.coerce.number().int().positive().default(20),
   CHAT_LIMIT_VISITOR_DAY: z.coerce.number().int().positive().default(200),
   CHAT_LIMIT_IP_10M: z.coerce.number().int().positive().default(120),
+  /** Đợt khảo sát đang mở ở /khao-sat: "truoc" khi bắt đầu thử nghiệm, "sau" khi kết thúc, "dong" để đóng. */
+  SURVEY_PHASE: z.enum(["truoc", "sau", "dong"]).default("truoc"),
 });
 
 export const env = schema.parse(process.env);

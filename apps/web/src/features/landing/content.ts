@@ -193,6 +193,8 @@ export const footer = {
         { label: "Bài viết", href: "/bai-viet" },
         { label: "Giới thiệu", href: "/gioi-thieu" },
         { label: "Câu hỏi thường gặp", href: "/gioi-thieu#hoi-dap" },
+        { label: "Ôn tập và tiến độ", href: "/tien-do" },
+        { label: "Khảo sát ý kiến", href: "/khao-sat" },
       ],
     },
   ],
