@@ -3,7 +3,7 @@
 import { ShieldAlert } from "lucide-react";
 import { useState } from "react";
 
-import { AcademyLogo } from "@/components/brand";
+import { MinhMascot } from "@/components/brand/MinhMascot";
 import { Markdown } from "@/components/markdown/Markdown";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Bubble, BubbleContent } from "@/components/ui/bubble";
@@ -50,7 +50,7 @@ export function MessageView({ message, animate = false, ...rest }: MessageViewPr
   return <AssistantMessage message={message} {...rest} />;
 }
 
-/** Ảnh đại diện của trợ lý. Khi đang trả lời có vòng sáng lan ra để báo hệ thống còn làm việc. */
+/** Ảnh đại diện của trợ lý: linh vật Minh. Khi đang trả lời có vòng sáng lan ra để báo hệ thống còn làm việc. */
 export function AssistantAvatar({ active = false }: { active?: boolean }) {
   return (
     <div className="relative size-8 shrink-0 self-start">
@@ -63,7 +63,7 @@ export function AssistantAvatar({ active = false }: { active?: boolean }) {
           active && "border-primary/40 shadow-[0_0_0_3px_color-mix(in_oklch,var(--primary)_12%,transparent)]",
         )}
       >
-        <AcademyLogo className="size-6 drop-shadow-none" />
+        <MinhMascot compact className="size-7" />
       </div>
     </div>
   );
