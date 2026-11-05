@@ -61,7 +61,7 @@ Kiểm tra: `psql "<chuỗi direct>" -c "select index_name, count(*) from chunks
 
 1. *Add New > Project*, chọn repo GitHub.
 2. **Root Directory**: `apps/web`. Framework Next.js tự nhận.
-3. Vào *Settings > Git* bật **Git Large File Storage (LFS)**. Thiếu bước này build sẽ dừng với thông báo "chỉ là con trỏ Git LFS" thay vì cho ra PDF hỏng.
+3. Git LFS: không cần bật gì. Nếu file `content/**/*.pdf` chỉ là con trỏ LFS, bước `prebuild` (`apps/web/scripts/copy-pdfs.mjs`) tự tải bản thật từ GitHub và kiểm tra sha256. Repo riêng thì thêm biến `GITHUB_TOKEN` (quyền đọc nội dung). Bật Git LFS trong *Settings > Git* cũng được, không ảnh hưởng.
 4. Ở *Settings > General*, bật **Include source files outside of the Root Directory in the Build Step** (thư mục `content/` nằm ngoài `apps/web`).
 5. *Settings > Environment Variables* (áp dụng cho Production và Preview):
 
