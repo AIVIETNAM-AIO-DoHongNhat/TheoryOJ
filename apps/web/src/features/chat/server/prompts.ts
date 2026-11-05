@@ -56,7 +56,7 @@ const REFUSALS: Record<RefusalReason, (s: Subject) => string> = {
   ngoai_pham_vi: (s) =>
     `Câu hỏi này nằm ngoài phạm vi môn ${s.name} nên trợ lý không trả lời. Đồng chí vui lòng đặt câu hỏi về nội dung giáo trình hoặc văn kiện liên quan.`,
   khieu_khich: () =>
-    "Trợ lý không trả lời nội dung này. Đồng chí có thể trao đổi trực tiếp với giảng viên của Khoa Lý luận chính trị.",
+    "Trợ lý không trả lời nội dung này. Đồng chí có thể trao đổi trực tiếp với giảng viên của Khoa LLCT&KHXHNV.",
   chen_lenh: () =>
     "Trợ lý không thực hiện yêu cầu này. Đồng chí vui lòng đặt câu hỏi về nội dung môn học.",
   thap_diem: () =>

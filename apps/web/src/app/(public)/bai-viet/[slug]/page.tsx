@@ -14,6 +14,7 @@ import { getSubject } from "@/config/subjects";
 import { PostCard } from "@/features/blog/components/PostCard";
 import { getPost, getPosts } from "@/features/blog/server/posts";
 import { formatDate } from "@/features/blog/types";
+import { ReadingMode } from "@/features/reader/ReadingMode";
 
 export function generateStaticParams() {
   return getPosts().map((p) => ({ slug: p.slug }));
@@ -44,13 +45,29 @@ async function PostPageContent({ params }: PageProps<"/bai-viet/[slug]">) {
       </PageHeader>
 
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 lg:grid-cols-[1fr_260px] lg:gap-16">
-        <article className="flex min-w-0 max-w-3xl flex-col gap-8">
-          {post.cover && (
-            <div className="relative aspect-[16/9] overflow-hidden rounded-xl border">
-              <Image src={post.cover} alt="" fill priority sizes="(min-width: 1024px) 768px, 100vw" className="object-cover" />
+        <article className="min-w-0 max-w-3xl">
+          <ReadingMode
+            title={post.title}
+            meta={
+              <>
+                <span>{post.author}</span>
+                <span>·</span>
+                <time dateTime={post.date}>{formatDate(post.date)}</time>
+                <span>· {post.readingMinutes} phút đọc</span>
+              </>
+            }
+            notes={{ source: "bai-viet", slug: post.slug, subject: post.subject, chapter: post.chapters[0] ?? null }}
+            className="flex flex-col"
+          >
+            <div className="flex flex-col gap-8">
+              {post.cover && (
+                <div className="relative aspect-[16/9] overflow-hidden rounded-xl border">
+                  <Image src={post.cover} alt="" fill priority sizes="(min-width: 1024px) 768px, 100vw" className="object-cover" />
+                </div>
+              )}
+              <Prose>{post.body}</Prose>
             </div>
-          )}
-          <Prose>{post.body}</Prose>
+          </ReadingMode>
         </article>
 
         <aside className="flex flex-col gap-4">

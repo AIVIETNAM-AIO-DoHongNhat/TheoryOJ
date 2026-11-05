@@ -1,0 +1,20 @@
+# Mẫu thẻ ghi nhớ. Mỗi chương một file chuong-<số>.yaml, cùng thư mục với file này.
+#
+# Quy ước:
+# - id: mã thẻ không trùng trong chương, ví dụ t3-07. Đã có người ôn thì không đổi mã (lịch ôn lưu theo mã).
+# - loai: khai_niem (mặc định) hoặc cong_thuc. Trang web hiện nhãn tương ứng.
+# - front: mặt trước, ngắn gọn: tên khái niệm hoặc câu hỏi.
+# - back: mặt sau, bám lời văn giáo trình. Viết được Markdown; công thức đặt trong $...$.
+# - page: trang in ở chân trang giáo trình (không phải trang PDF). Trang web mở đúng trang khi bấm.
+# - status: nhap khi chưa duyệt; giảng viên duyệt xong cả chương thì đổi thành da-duyet.
+subject: ktct
+chapter: 3
+status: nhap
+cards:
+  - id: t3-99
+    loai: cong_thuc
+    front: Tỷ suất giá trị thặng dư
+    back: |
+      Tỷ lệ phần trăm giữa giá trị thặng dư và tư bản khả biến:
+      $m' = \frac{m}{v} \times 100\%$
+    page: 59

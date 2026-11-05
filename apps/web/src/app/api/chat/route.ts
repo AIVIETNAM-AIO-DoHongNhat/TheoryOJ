@@ -14,10 +14,10 @@ import { answerSettings, prepare } from "@/features/chat/server/pipeline";
 import { refusalText } from "@/features/chat/server/prompts";
 import type { Turn } from "@/features/chat/server/rewrite-query";
 import type { ChatMessage } from "@/features/chat/types";
+import { getCurrentUser, isStudent } from "@/lib/auth/session";
 import { env } from "@/lib/env";
 import { clientIp, hitRateLimits } from "@/lib/rate-limit";
 import { RagError } from "@/lib/rag-client";
-import { ensureVisitorId } from "@/lib/visitor";
 
 export const maxDuration = 60;
 
@@ -49,8 +49,12 @@ function textOf(parts: { type: string; text?: string }[]): string {
 const plain = (message: string, status: number, headers?: HeadersInit) => new Response(message, { status, headers });
 
 export async function POST(req: Request) {
-  // Không bắt buộc đăng nhập: mã khách (của tài khoản hoặc của trình duyệt) giữ lịch sử và giới hạn tần suất (lib/visitor.ts).
-  const visitorId = await ensureVisitorId();
+  // Chỉ học viên đã đăng nhập: hội thoại và giới hạn tần suất theo mã khách của tài khoản.
+  const user = await getCurrentUser();
+  if (!isStudent(user)) {
+    return plain(user ? "Tài khoản giảng viên không dùng trợ lý học tập." : "Đồng chí cần đăng nhập để hỏi trợ lý.", user ? 403 : 401);
+  }
+  const { visitorId } = user;
 
   const parsed = bodySchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) {

@@ -7,7 +7,7 @@ import { getPosts } from "@/features/blog/server/posts";
 
 export const metadata: Metadata = {
   title: "Bài viết",
-  description: "Bài hướng dẫn, ôn tập và giới thiệu văn kiện của Khoa Lý luận chính trị.",
+  description: "Bài hướng dẫn, ôn tập và giới thiệu văn kiện của Khoa LLCT&KHXHNV.",
 };
 
 export default function PostsPage() {

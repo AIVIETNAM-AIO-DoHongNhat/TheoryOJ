@@ -1,0 +1,122 @@
+subject: ktct
+chapter: 3
+status: nhap
+cards:
+  - id: t3-01
+    front: Sức lao động
+    back: |
+      "Toàn bộ những năng lực thể chất và tinh thần tồn tại trong cơ thể, trong một con người đang sống, và được người đó
+      đem ra vận dụng mỗi khi sản xuất ra một giá trị sử dụng nào đó" (C.Mác).
+    page: 50
+  - id: t3-02
+    front: Hai điều kiện để sức lao động trở thành hàng hóa
+    back: |
+      Một, người lao động được tự do về thân thể.
+      Hai, người lao động không có đủ tư liệu sản xuất cần thiết để tự kết hợp với sức lao động của mình, nên phải bán sức lao động.
+    page: 50
+  - id: t3-03
+    front: Giá trị thặng dư
+    back: |
+      Bộ phận giá trị mới dôi ra ngoài giá trị sức lao động do công nhân tạo ra, là kết quả của lao động không công
+      của công nhân cho nhà tư bản. Ký hiệu là $m$.
+    page: 53
+  - id: t3-04
+    front: Tư bản bất biến và tư bản khả biến
+    back: |
+      Tư bản bất biến ($c$): bộ phận tồn tại dưới hình thái tư liệu sản xuất, giá trị được lao động cụ thể bảo tồn và chuyển
+      nguyên vẹn vào sản phẩm. Tư bản khả biến ($v$): bộ phận tồn tại dưới hình thái sức lao động, qua lao động trừu tượng
+      tăng lên về lượng trong quá trình sản xuất.
+    page: 54
+  - id: t3-05
+    loai: cong_thuc
+    front: Công thức giá trị hàng hóa
+    back: |
+      $G = c + (v + m)$, trong đó $(v + m)$ là giá trị mới do hao phí lao động tạo ra, $c$ là giá trị tư liệu sản xuất đã tiêu dùng.
+    page: 55
+  - id: t3-06
+    loai: cong_thuc
+    front: Tốc độ chu chuyển của tư bản
+    back: |
+      $n = \frac{CH}{ch}$, với $CH$ là thời gian một năm, $ch$ là thời gian một vòng chu chuyển.
+    page: 58
+  - id: t3-07
+    front: Tư bản cố định và tư bản lưu động
+    back: |
+      Tư bản cố định: dưới hình thái tư liệu lao động, tham gia toàn bộ vào sản xuất nhưng giá trị chuyển dần từng phần vào sản phẩm
+      theo mức độ hao mòn. Tư bản lưu động: dưới hình thái sức lao động, nguyên nhiên vật liệu, giá trị chuyển một lần, toàn phần
+      vào sản phẩm sau mỗi quá trình sản xuất.
+    page: 58
+  - id: t3-08
+    loai: cong_thuc
+    front: Tỷ suất giá trị thặng dư
+    back: |
+      Tỷ lệ phần trăm giữa giá trị thặng dư và tư bản khả biến: $m' = \frac{m}{v} \times 100\%$.
+      Cũng tính bằng thời gian lao động thặng dư ($t'$) trên thời gian lao động tất yếu ($t$). Phản ánh trình độ khai thác sức lao động làm thuê.
+    page: 59
+  - id: t3-09
+    loai: cong_thuc
+    front: Khối lượng giá trị thặng dư
+    back: |
+      Lượng giá trị thặng dư bằng tiền mà nhà tư bản thu được: $M = m' \cdot V$ ($V$ là tổng tư bản khả biến).
+      Phản ánh quy mô giá trị thặng dư.
+    page: 60
+  - id: t3-10
+    front: Giá trị thặng dư tuyệt đối
+    back: |
+      Giá trị thặng dư thu được do kéo dài ngày lao động vượt quá thời gian lao động tất yếu, trong khi năng suất lao động,
+      giá trị sức lao động và thời gian lao động tất yếu không thay đổi.
+    page: 60
+  - id: t3-11
+    front: Giá trị thặng dư tương đối
+    back: |
+      Giá trị thặng dư thu được nhờ rút ngắn thời gian lao động tất yếu, do đó kéo dài thời gian lao động thặng dư
+      trong khi độ dài ngày lao động không đổi hoặc thậm chí rút ngắn.
+    page: 61
+  - id: t3-12
+    front: Giá trị thặng dư siêu ngạch
+    back: |
+      Với từng doanh nghiệp là hiện tượng tạm thời, nhưng xét toàn xã hội tư bản là hiện tượng thường xuyên.
+      Là động lực mạnh nhất thúc đẩy nhà tư bản cải tiến kỹ thuật, tăng năng suất lao động.
+    page: 61
+  - id: t3-13
+    front: Bản chất của tích lũy tư bản
+    back: Quá trình tái sản xuất mở rộng tư bản chủ nghĩa thông qua việc chuyển hóa giá trị thặng dư thành tư bản phụ thêm.
+    page: 62
+  - id: t3-14
+    front: Tích tụ tư bản và tập trung tư bản
+    back: |
+      Tích tụ: tăng quy mô tư bản cá biệt bằng cách tư bản hóa giá trị thặng dư, làm tăng cả quy mô tư bản xã hội.
+      Tập trung: tăng quy mô tư bản cá biệt bằng cách hợp nhất các tư bản cá biệt, không làm tăng quy mô tư bản xã hội.
+    page: 64
+  - id: t3-15
+    loai: cong_thuc
+    front: Chi phí sản xuất tư bản chủ nghĩa
+    back: |
+      Phần giá trị hàng hóa bù lại giá cả tư liệu sản xuất đã tiêu dùng và giá cả sức lao động đã sử dụng: $k = c + v$.
+      Khi đó $G = k + m$.
+    page: 66
+  - id: t3-16
+    loai: cong_thuc
+    front: Tỷ suất lợi nhuận
+    back: |
+      Tỷ lệ phần trăm giữa lợi nhuận và toàn bộ tư bản ứng trước: $p' = \frac{p}{c + v} \times 100\%$.
+    page: 67
+  - id: t3-17
+    loai: cong_thuc
+    front: Tỷ suất lợi nhuận bình quân
+    back: |
+      Số bình quân gia quyền của các tỷ suất lợi nhuận: $\bar{p}' = \frac{\sum p}{\sum (c + v)} \times 100\%$.
+      Hình thành do cạnh tranh giữa các ngành.
+    page: 69
+  - id: t3-18
+    loai: cong_thuc
+    front: Giá cả sản xuất
+    back: |
+      $GCSX = k + \bar{p}$. Điều kiện hình thành: tư bản và sức lao động tự do di chuyển giữa các ngành.
+    page: 70
+  - id: t3-19
+    front: Lợi tức
+    back: |
+      Một phần của lợi nhuận bình quân mà người đi vay phải trả cho người cho vay vì đã sử dụng lượng tiền nhàn rỗi của người cho vay.
+      Thực chất là một phần giá trị thặng dư người đi vay thu được.
+    page: 71

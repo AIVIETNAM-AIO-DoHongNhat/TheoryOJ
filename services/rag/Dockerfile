@@ -5,7 +5,10 @@ ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy PYTHONUNBUFFERED=1
 
 WORKDIR /srv
 COPY pyproject.toml ./
-RUN uv pip install --system -r pyproject.toml
+# LOCAL_MODELS=1 cài thêm torch và sentence-transformers để chạy bge-m3 trên máy (hàng GB). Mặc định gọi OpenRouter.
+ARG LOCAL_MODELS=0
+RUN if [ "$LOCAL_MODELS" = "1" ]; then uv pip install --system -r pyproject.toml --extra local; \
+    else uv pip install --system -r pyproject.toml; fi
 
 COPY app ./app
 COPY scripts ./scripts

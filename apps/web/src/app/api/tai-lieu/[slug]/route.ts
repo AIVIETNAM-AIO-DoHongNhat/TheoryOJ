@@ -18,6 +18,13 @@ export async function GET(req: Request, ctx: RouteContext<"/api/tai-lieu/[slug]"
   const doc = getDoc(slug);
   if (!doc) return new Response("Không tìm thấy tài liệu.", { status: 404 });
 
+  // Trên Vercel, PDF được chép sang public/tai-lieu-goc/ lúc build (scripts/copy-pdfs.mjs) và phục vụ qua CDN,
+  // vì hàm serverless bị giới hạn kích thước phản hồi.
+  if (process.env.VERCEL && doc.format === "pdf") {
+    const url = `/tai-lieu-goc/${[doc.subject, ...doc.file.split("/")].map(encodeURIComponent).join("/")}`;
+    return new Response(null, { status: 307, headers: { Location: url, "Cache-Control": "public, max-age=3600" } });
+  }
+
   const file = docPath(doc);
   const size = fs.statSync(file).size;
   const filename = encodeURIComponent(doc.file.split("/").pop()!);

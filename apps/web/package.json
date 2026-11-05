@@ -4,13 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/copy-pdfs.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "eval": "tsx scripts/eval-chat.mts",
+    "eval": "tsx --conditions=react-server scripts/eval-chat.mts",
+    "so-sanh-tim-kiem": "tsx --conditions=react-server scripts/so-sanh-tim-kiem.mts",
     "dat-lai-mat-khau": "tsx scripts/dat-lai-mat-khau.mts",
+    "cap-quyen": "tsx scripts/cap-quyen.mts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },

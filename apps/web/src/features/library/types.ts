@@ -29,6 +29,8 @@ export interface LibraryDoc {
   /** Đường dẫn tính từ content/<môn>/, giống trường `document` của dịch vụ tìm kiếm. */
   file: string;
   title: string;
+  /** Chữ lớn trên bìa, từ trường `code` của manifest. Bỏ trống thì lấy số hiệu văn bản trong tên (xem coverCode). */
+  code: string | null;
   kind: DocKind;
   format: DocFormat;
   publisher: string | null;
@@ -58,6 +60,22 @@ export function printedPage(doc: Pick<LibraryDoc, "pageOffset">, pdfPage: number
 
 export function formatSize(bytes: number): string {
   return bytes >= 1_000_000 ? `${(bytes / 1_000_000).toFixed(1).replace(".", ",")} MB` : `${Math.max(1, Math.round(bytes / 1000))} KB`;
+}
+
+/** "Nghị quyết 68-NQ/TW (2025) ..." → "68-NQ/TW". */
+const DOC_NUMBER = /\b\d+[a-z]?-[A-ZĐ]+\/[A-ZĐ]+\b/;
+
+/** Năm cuối cùng xuất hiện trong tên, ví dụ "Niên giám thống kê 2025" → "2025". */
+export function docYear(d: Pick<LibraryDoc, "title">): string | null {
+  return d.title.match(/\b(?:19|20)\d{2}\b/g)?.pop() ?? null;
+}
+
+/**
+ * Chữ lớn trên bìa để phân biệt tài liệu cùng loại: trường `code` của manifest, số hiệu văn bản trong tên,
+ * tên tắt của môn với giáo trình, hoặc năm.
+ */
+export function coverCode(d: Pick<LibraryDoc, "title" | "code" | "kind">, subjectShortName?: string): string {
+  return d.code ?? d.title.match(DOC_NUMBER)?.[0] ?? (d.kind === "giao_trinh" ? subjectShortName : null) ?? docYear(d) ?? KIND_LABELS[d.kind];
 }
 
 export function docMeta(d: LibraryDoc): string {

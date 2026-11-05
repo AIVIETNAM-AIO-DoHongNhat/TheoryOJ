@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { LoginInput, RegisterInput, safeNext } from "./schemas";
+import { homeFor, LoginInput, RegisterInput, safeNext } from "./schemas";
 
 describe("đăng ký, đăng nhập", () => {
   const ok = { studentCode: " b2k60-001 ", fullName: "Nguyễn Văn An", className: "B2K60", password: "12345678", confirm: "12345678" };
@@ -18,9 +18,20 @@ describe("đăng ký, đăng nhập", () => {
 
   it("chỉ chuyển tiếp trong trang", () => {
     expect(safeNext("/tien-do?x=1")).toBe("/tien-do?x=1");
-    expect(safeNext("//evil.com")).toBe("/tien-do");
-    expect(safeNext("/\\evil.com")).toBe("/tien-do");
-    expect(safeNext("https://evil.com")).toBe("/tien-do");
-    expect(safeNext(undefined)).toBe("/tien-do");
+    expect(safeNext("//evil.com")).toBe("/hoc");
+    expect(safeNext("/\\evil.com")).toBe("/hoc");
+    expect(safeNext("https://evil.com")).toBe("/hoc");
+    expect(safeNext(undefined)).toBe("/hoc");
+  });
+});
+
+describe("trang sau khi đăng nhập", () => {
+  it("giảng viên vào trang quản trị, học viên về trang đang mở", () => {
+    expect(homeFor("giang-vien", "/tien-do")).toBe("/quan-tri");
+    expect(homeFor("giang-vien", undefined)).toBe("/quan-tri");
+    expect(homeFor("giang-vien", "/quan-tri/hoi-dap")).toBe("/quan-tri/hoi-dap");
+    expect(homeFor("giang-vien", "/quan-trix")).toBe("/quan-tri");
+    expect(homeFor("hoc-vien", "/tien-do")).toBe("/tien-do");
+    expect(homeFor("hoc-vien", "/quan-tri")).toBe("/quan-tri");
   });
 });

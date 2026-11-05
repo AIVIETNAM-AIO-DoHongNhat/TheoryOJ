@@ -57,7 +57,17 @@ export function fieldErrors(error: z.ZodError): Record<string, string> {
   return out;
 }
 
+/**
+ * Trang sau khi đăng nhập. Giảng viên luôn vào trang quản trị (giao diện học tập dành cho khách và học viên),
+ * trừ khi đang mở một trang con của /quan-tri.
+ */
+export function homeFor(role: "hoc-vien" | "giang-vien", next: unknown): string {
+  const target = safeNext(next);
+  if (role !== "giang-vien") return target;
+  return target === "/quan-tri" || target.startsWith("/quan-tri/") || target.startsWith("/quan-tri?") ? target : "/quan-tri";
+}
+
 /** Chỉ cho chuyển tiếp tới đường dẫn trong trang, chặn "//evil.com" hay "https://…". */
 export function safeNext(value: unknown): string {
-  return typeof value === "string" && /^\/(?![/\\])/.test(value) ? value : "/tien-do";
+  return typeof value === "string" && /^\/(?![/\\])/.test(value) ? value : "/hoc";
 }

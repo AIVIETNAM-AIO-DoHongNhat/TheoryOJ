@@ -1,0 +1,32 @@
+subject: ktct
+chapter: 6
+status: nhap
+cards:
+  - id: t6-01
+    front: Cách mạng công nghiệp
+    back: |
+      Những bước phát triển nhảy vọt về chất trình độ của tư liệu lao động trên cơ sở những phát minh đột phá về kỹ thuật và công nghệ,
+      kéo theo thay đổi căn bản về phân công lao động xã hội và tạo bước phát triển năng suất lao động cao hơn hẳn.
+    page: 135
+  - id: t6-02
+    front: Công nghiệp hóa
+    back: |
+      Quá trình chuyển đổi nền sản xuất xã hội từ dựa trên lao động thủ công là chính sang nền sản xuất xã hội dựa chủ yếu
+      trên lao động bằng máy móc nhằm tạo ra năng suất lao động xã hội cao.
+    page: 145
+  - id: t6-03
+    front: Mô hình công nghiệp hóa cổ điển
+    back: Công nghiệp hóa của các nước tư bản cổ điển, tiêu biểu là nước Anh, gắn liền với cách mạng công nghiệp lần thứ nhất nổ ra giữa thế kỷ XVIII.
+    page: 146
+  - id: t6-04
+    front: Kinh tế tri thức (theo OECD, 1995)
+    back: |
+      Nền kinh tế trong đó sự sản sinh ra, phổ cập và sử dụng tri thức giữ vai trò quyết định nhất đối với sự phát triển kinh tế,
+      tạo ra của cải, nâng cao chất lượng cuộc sống.
+    page: 152
+  - id: t6-05
+    front: Hội nhập kinh tế quốc tế
+    back: |
+      Quá trình một quốc gia thực hiện gắn kết nền kinh tế của mình với nền kinh tế thế giới dựa trên sự chia sẻ lợi ích
+      đồng thời tuân thủ các chuẩn mực quốc tế chung.
+    page: 157

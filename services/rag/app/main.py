@@ -9,14 +9,16 @@ from fastapi import FastAPI
 from fastapi.concurrency import run_in_threadpool
 
 from .api import health, ingest, search
-from .retrieval import embedder, reranker, store
+from .retrieval import embedder, openrouter, reranker, store
 from .settings import get_settings
 
 
 def _warm_up():
+    s = get_settings()
     store.pool()
-    embedder.model()
-    if get_settings().rerank_enabled:
+    if s.embed_provider == "local":
+        embedder.model()
+    if s.rerank_enabled and s.rerank_provider == "local":
         reranker.model()
 
 
@@ -27,6 +29,7 @@ async def lifespan(app: FastAPI):
         await run_in_threadpool(_warm_up)
     yield
     store.close()
+    openrouter.close()
 
 
 app = FastAPI(title="TheoryOJ RAG", version="0.1.0", lifespan=lifespan)

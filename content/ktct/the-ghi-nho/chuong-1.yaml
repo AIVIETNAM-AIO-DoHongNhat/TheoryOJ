@@ -1,0 +1,40 @@
+subject: ktct
+chapter: 1
+status: nhap
+cards:
+  - id: t1-01
+    front: Thuật ngữ "kinh tế chính trị" xuất hiện khi nào, trong tác phẩm nào?
+    back: Năm 1615, trong tác phẩm *Chuyên luận về kinh tế chính trị* của nhà kinh tế người Pháp A. Montchretien.
+    page: 4
+  - id: t1-02
+    front: Đối tượng nghiên cứu của kinh tế chính trị Mác – Lênin
+    back: |
+      Các quan hệ xã hội của sản xuất và trao đổi, đặt trong sự liên hệ biện chứng với trình độ phát triển của lực lượng sản xuất
+      và kiến trúc thượng tầng tương ứng của phương thức sản xuất nhất định.
+    page: 11
+  - id: t1-03
+    front: Quan hệ xã hội của sản xuất và trao đổi biểu hiện ở những bộ phận nào?
+    back: Quan hệ sở hữu; quan hệ quản lý; quan hệ phân phối, phân bổ nguồn lực; quan hệ xã hội trong lưu thông…
+    page: 11
+  - id: t1-04
+    front: Phương pháp trừu tượng hóa khoa học
+    back: |
+      Phương pháp nhận ra và gạt bỏ khỏi quá trình nghiên cứu những yếu tố ngẫu nhiên, hiện tượng tạm thời, gián tiếp;
+      trên cơ sở đó tách ra những dấu hiệu điển hình, bền vững, ổn định, trực tiếp của đối tượng nghiên cứu.
+    page: 14
+  - id: t1-05
+    front: Bốn chức năng của kinh tế chính trị Mác – Lênin
+    back: Chức năng nhận thức, chức năng thực tiễn, chức năng tư tưởng, chức năng phương pháp luận.
+    page: 14
+  - id: t1-06
+    front: Chức năng tư tưởng của kinh tế chính trị Mác – Lênin
+    back: |
+      Góp phần xây dựng nền tảng tư tưởng mới cho những người lao động tiến bộ, biết quý trọng thành quả lao động,
+      yêu chuộng tự do, hòa bình, củng cố niềm tin phấn đấu vì mục tiêu dân giàu, nước mạnh, dân chủ, công bằng, văn minh.
+    page: 16
+  - id: t1-07
+    front: Chức năng phương pháp luận của kinh tế chính trị Mác – Lênin
+    back: |
+      Là nền tảng lý luận để hiểu sâu sắc, bản chất các phạm trù, khái niệm của các môn khoa học kinh tế khác,
+      thấy được sự gắn kết biện chứng giữa kinh tế với chính trị.
+    page: 16

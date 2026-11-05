@@ -54,7 +54,7 @@ export function ScrollToTop() {
               aria-label="Về đầu trang"
               tabIndex={visible ? 0 : -1}
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="relative size-12 rounded-full bg-white shadow-md"
+              className="relative size-12 rounded-full bg-card shadow-md"
             />
           }
         >

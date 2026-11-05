@@ -9,7 +9,7 @@ import { clientIp, hitRateLimits } from "@/lib/rate-limit";
 import { anonymousVisitorId, VISITOR_COOKIE } from "@/lib/visitor";
 
 import {
-  ChangePasswordInput, fieldErrors, type FormState, LoginInput, ProfileInput, RegisterInput, safeNext,
+  ChangePasswordInput, fieldErrors, type FormState, homeFor, LoginInput, ProfileInput, RegisterInput,
 } from "./schemas";
 import { createUser, findUserByCode, mergeVisitor, touchLogin, updatePassword, updateProfile } from "./server/users";
 
@@ -43,7 +43,7 @@ export async function register(_: FormState, form: FormData): Promise<FormState>
     return { errors: { studentCode: "Mã học viên này đã được đăng ký. Nếu là của đồng chí, hãy đăng nhập." }, values };
   }
   await signIn(user);
-  redirect(safeNext(raw.next));
+  redirect(homeFor(user.role, raw.next));
 }
 
 export async function login(_: FormState, form: FormData): Promise<FormState> {
@@ -64,7 +64,7 @@ export async function login(_: FormState, form: FormData): Promise<FormState> {
   if (!user || !ok) return { message: "Mã học viên hoặc mật khẩu không đúng.", values };
 
   await signIn(user);
-  redirect(safeNext(raw.next));
+  redirect(homeFor(user.role, raw.next));
 }
 
 export async function logout(): Promise<void> {

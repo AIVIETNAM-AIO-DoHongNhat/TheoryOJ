@@ -10,13 +10,14 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 
 import { ScrollToTop } from "./ScrollToTop";
 
-/** Cụm nút nổi góc phải: Trợ lý học tập ở trên, về đầu trang ở dưới. Trang trợ lý không cần nút mở trợ lý. */
+/** Cụm nút nổi góc phải: Trợ lý học tập ở trên, về đầu trang ở dưới. Trang trợ lý không cần nút mở trợ lý; trang quản trị, đăng nhập, đăng ký không cần cả cụm. */
 export function FloatingActions() {
   const pathname = usePathname();
   const onAssistant = pathname.startsWith(ASSISTANT.href);
+  if (["/quan-tri", "/dang-nhap", "/dang-ky"].some((p) => pathname.startsWith(p))) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3 sm:bottom-8 sm:right-8">
+    <div className="fixed bottom-5 right-5 z-40 flex [html[data-pdf-reader]_&]:hidden flex-col items-end gap-3 sm:bottom-8 sm:right-8">
       {!onAssistant && (
         <Tooltip>
           <TooltipTrigger

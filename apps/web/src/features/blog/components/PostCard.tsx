@@ -14,7 +14,7 @@ export function PostCard({ post, featured }: { post: Post; featured?: boolean })
     <Link
       href={`/bai-viet/${post.slug}`}
       className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-xl border bg-white transition-colors hover:border-primary/40",
+        "group flex h-full flex-col overflow-hidden rounded-xl border bg-card transition-colors hover:border-primary/40",
         featured && "md:grid md:grid-cols-2",
       )}
     >

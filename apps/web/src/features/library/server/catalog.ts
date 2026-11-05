@@ -15,6 +15,7 @@ export const CONTENT_ROOT = process.env.CONTENT_DIR
 interface ManifestDoc {
   file: string;
   title: string;
+  code?: string;
   kind: DocKind;
   publisher?: string;
   pdf_pages?: number;
@@ -47,6 +48,7 @@ export function getLibrary(): LibraryDoc[] {
         subject: subject.id,
         file: d.file,
         title: d.title,
+        code: d.code ?? null,
         kind: d.kind,
         format,
         publisher: d.publisher ?? null,

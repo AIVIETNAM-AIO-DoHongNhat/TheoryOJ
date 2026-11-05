@@ -1,52 +1,26 @@
-import { z } from "zod";
-
 import { env } from "./env";
+import { searchInProcess } from "./search/hybrid";
+import { RagError, type SearchRequest, type SearchResponse, responseSchema } from "./search/types";
 
-// Khớp với services/rag/app/schemas.py.
-export const KINDS = ["giao_trinh", "van_kien", "tham_khao", "cand", "so_lieu"] as const;
-export type Kind = (typeof KINDS)[number];
+export { type Hit, KINDS, type Kind, RagError, type SearchRequest, type SearchResponse } from "./search/types";
 
-const hitSchema = z.object({
-  text: z.string(),
-  document: z.string(),
-  document_title: z.string(),
-  kind: z.string(),
-  chapter: z.number().nullable(),
-  page: z.number().nullable(),
-  pdf_page: z.number().nullable(),
-  section: z.string().nullable(),
-  score: z.number(),
-  vector_score: z.number().nullish(),
-});
-
-const responseSchema = z.object({
-  hits: z.array(hitSchema),
-  max_score: z.number(),
-  mode: z.string(),
-});
-
-export type Hit = z.infer<typeof hitSchema>;
-export type SearchResponse = z.infer<typeof responseSchema>;
-
-export interface SearchRequest {
-  query: string;
-  subject: string;
-  chapters?: number[];
-  kinds?: Kind[];
-  top_k?: number;
-}
-
-export class RagError extends Error {}
-
+/**
+ * Tìm kiếm trong học liệu. Đặt RAG_URL thì gọi dịch vụ services/rag qua HTTP (Docker Compose);
+ * không đặt thì tìm ngay trong tiến trình Next.js (Vercel): embedding và rerank gọi OpenRouter,
+ * truy vấn vector và từ khóa chạy thẳng trên cùng PostgreSQL.
+ */
 export async function search(req: SearchRequest, signal?: AbortSignal): Promise<SearchResponse> {
   const timeout = AbortSignal.timeout(env.RAG_TIMEOUT_MS);
+  const combined = signal ? AbortSignal.any([signal, timeout]) : timeout;
+  if (!env.RAG_URL) return searchInProcess({ top_k: 5, ...req }, combined);
+
   let res: Response;
   try {
     res = await fetch(`${env.RAG_URL}/search`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ top_k: 5, ...req }),
-      signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
+      signal: combined,
       cache: "no-store",
     });
   } catch (err) {

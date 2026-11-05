@@ -42,7 +42,7 @@ export function FeedbackBar({ messageId, text, initial }: { messageId: string; t
   return (
     <div className="-ml-1.5 flex items-center gap-0.5 text-muted-foreground">
       <Button variant="ghost" size="icon-sm" onClick={copy} aria-label="Sao chép câu trả lời" disabled={!text}>
-        {copied ? <Check /> : <Copy />}
+        {copied ? <Check className="text-primary motion-safe:animate-in motion-safe:zoom-in-50 motion-safe:duration-200" /> : <Copy />}
       </Button>
       <Button
         variant="ghost"
@@ -53,7 +53,7 @@ export function FeedbackBar({ messageId, text, initial }: { messageId: string; t
         aria-pressed={rating === 1}
         className={cn(rating === 1 && "text-primary")}
       >
-        <ThumbsUp className={cn(rating === 1 && "fill-current")} />
+        <ThumbsUp key={String(rating === 1)} className={cn(rating === 1 && "fill-current motion-safe:animate-flame-pop")} />
       </Button>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
@@ -103,7 +103,9 @@ export function FeedbackBar({ messageId, text, initial }: { messageId: string; t
           </FieldGroup>
         </PopoverContent>
       </Popover>
-      {rating !== null && !open && <span className="ml-1 text-xs">Đã ghi nhận đánh giá</span>}
+      {rating !== null && !open && (
+        <span className="ml-1 text-xs motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-left-1">Đã ghi nhận đánh giá</span>
+      )}
     </div>
   );
 }

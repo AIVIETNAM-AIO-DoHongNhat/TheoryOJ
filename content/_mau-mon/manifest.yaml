@@ -8,6 +8,7 @@
 #   chapters      ranh giới chương theo trang PDF, gồm cả hai đầu. Số và tên chương phải khớp subjects.ts.
 #   related_chapters  chương có thể liên hệ, dùng cho chế độ Liên hệ thực tiễn.
 #   cite_by       page (PDF) | section (MD, DOCX: trích theo tiêu đề mục gần nhất)
+#   code          chữ lớn trên bìa ở Thư viện, không bắt buộc. Bỏ trống thì lấy số hiệu văn bản trong tên hoặc năm.
 
 subject: triet
 name: Triết học Mác – Lênin

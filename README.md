@@ -1,6 +1,6 @@
 # TheoryOJ
 
-Dự án Web học tập cho Khoa Lý luận chính trị. Kế hoạch chi tiết ở [PLAN.md](PLAN.md).
+Dự án Web học tập cho Khoa LLCT&KHXHNV. Kế hoạch chi tiết ở [PLAN.md](PLAN.md).
 
 ## Cấu trúc hiện tại
 

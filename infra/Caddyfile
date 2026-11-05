@@ -1,10 +1,7 @@
 # Cổng duy nhất mở ra ngoài (PLAN.md mục 9). Caddy tự xin và gia hạn chứng chỉ HTTPS cho DOMAIN.
+# DOMAIN=:80 thì chỉ chạy HTTP, dùng khi đã có lớp HTTPS phía trước (Cloudflare Tunnel).
 # Máy chủ chỉ trong mạng nội bộ, không có DNS công khai: thêm dòng `tls internal` vào khối {$DOMAIN}
 # (trình duyệt sẽ cần tin chứng chỉ gốc của Caddy), hoặc dùng chứng chỉ do đơn vị CNTT cấp: `tls /certs/cert.pem /certs/key.pem`.
-{
-	email {$ACME_EMAIL}
-}
-
 {$DOMAIN} {
 	encode zstd gzip
 

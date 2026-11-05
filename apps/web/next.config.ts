@@ -1,6 +1,10 @@
+import path from "node:path";
+
 import type { NextConfig } from "next";
 
 const dev = process.env.NODE_ENV !== "production";
+// Vercel đặt VERCEL=1 khi build. Bản Docker dùng output "standalone" và đọc content/ qua CONTENT_DIR.
+const onVercel = Boolean(process.env.VERCEL);
 
 // Header bảo mật (PLAN.md mục 9). HSTS do Caddy đặt vì chỉ có nghĩa trên HTTPS.
 // Next.js chèn script nội tuyến khi hydrate nên cần 'unsafe-inline'; pdf.js cần worker blob và WebAssembly.
@@ -29,8 +33,17 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   /* config options here */
-  // Bản triển khai chạy `node server.js` trong container (apps/web/Dockerfile).
-  output: "standalone",
+  // Bản Docker chạy `node server.js` trong container (apps/web/Dockerfile). Vercel tự đóng gói nên không đặt.
+  output: onVercel ? undefined : "standalone",
+  // Học liệu nằm ở content/ ngoài thư mục apps/web, phải đưa vào bundle thì hàm serverless mới đọc được lúc chạy
+  // (manifest, ngân hàng câu hỏi, thẻ ghi nhớ, bài viết, DOCX). Bỏ content/*/_goc (bản gốc .doc, không dùng).
+  ...(onVercel && {
+    outputFileTracingRoot: path.resolve(process.cwd(), "../.."),
+    outputFileTracingIncludes: { "/**": ["../../content/**/*"] },
+    outputFileTracingExcludes: { "/**": ["../../content/**/_goc/**", "../../content/**/.gitkeep"] },
+  }),
+  // Cho phép build thử ra thư mục khác để không đè lên .next của `next dev` đang chạy.
+  distDir: process.env.NEXT_DIST_DIR ?? ".next",
   poweredByHeader: false,
   cacheComponents: true,
   partialPrefetching: true,
@@ -44,6 +57,16 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
+  },
+  // Hoạt động luyện chuyển từ nhánh Học liệu sang nhánh Ôn tập (src/features/review/paths.ts); giữ link cũ còn chạy.
+  async redirects() {
+    return [
+      {
+        source: "/mon/:mon/chuong/:so/:hoatDong(the-ghi-nho|trac-nghiem|bai-tap)",
+        destination: "/on-tap/:mon/chuong/:so/:hoatDong",
+        permanent: true,
+      },
+    ];
   },
 };
 

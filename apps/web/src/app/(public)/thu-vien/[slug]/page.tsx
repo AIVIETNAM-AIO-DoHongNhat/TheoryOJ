@@ -10,10 +10,15 @@ import { Prose, ProseHtml } from "@/components/markdown/Prose";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getSubject } from "@/config/subjects";
+import { getDeck } from "@/features/flashcards/server/deck";
+import { ReadingMode } from "@/features/reader/ReadingMode";
+import { DocCover, KIND_COLORS } from "@/features/library/components/DocCover";
 import { PdfReaderLoader } from "@/features/library/components/PdfReaderLoader";
 import { getDoc, getLibrary } from "@/features/library/server/catalog";
 import { readMarkdownDoc, renderDocx } from "@/features/library/server/render";
 import { docMeta, KIND_LABELS, type LibraryDoc } from "@/features/library/types";
+import { getQuizBank } from "@/features/quiz/server/bank";
+import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
   return getLibrary().map((d) => ({ slug: d.slug }));
@@ -32,7 +37,7 @@ function askHref(doc: LibraryDoc): string {
 function Actions({ doc }: { doc: LibraryDoc }) {
   return (
     <>
-      <Button variant="outline" render={<a href={`/api/tai-lieu/${doc.slug}?tai=1`} />} nativeButton={false} className="bg-white">
+      <Button variant="outline" render={<a href={`/api/tai-lieu/${doc.slug}?tai=1`} download />} nativeButton={false} className="bg-card">
         <Download data-icon="inline-start" />
         Tải về
       </Button>
@@ -53,11 +58,12 @@ async function DocumentPageContent({ params }: PageProps<"/thu-vien/[slug]">) {
       crumbs={[{ label: "Thư viện", href: "/thu-vien" }, { label: doc.title }]}
       title={doc.title}
       actions={<Actions doc={doc} />}
+      media={<DocCover doc={doc} className="hidden w-24 sm:block" />}
       className="[&_h1]:text-2xl sm:[&_h1]:text-3xl"
     >
       <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-        <Badge>{KIND_LABELS[doc.kind]}</Badge>
-        <Badge variant="outline" render={<Link href={`/mon/${doc.subject}`} />} className="bg-white">
+        <Badge className={cn(KIND_COLORS[doc.kind].bg, "text-white")}>{KIND_LABELS[doc.kind]}</Badge>
+        <Badge variant="outline" render={<Link href={`/mon/${doc.subject}`} />} className="bg-card">
           {getSubject(doc.subject)?.name}
         </Badge>
         <span>{docMeta(doc)}</span>
@@ -70,7 +76,20 @@ async function DocumentPageContent({ params }: PageProps<"/thu-vien/[slug]">) {
       <>
         {header}
         <div className="mx-auto flex h-[calc(100dvh-4.5rem)] min-h-[560px] w-full max-w-7xl flex-col px-2 py-3 sm:px-4 sm:py-4">
-          <PdfReaderLoader slug={doc.slug} title={doc.title} pages={doc.pages} pageOffset={doc.pageOffset} chapters={doc.chapters} />
+          <PdfReaderLoader
+            slug={doc.slug}
+            title={doc.title}
+            subject={doc.subject}
+            pages={doc.pages}
+            pageOffset={doc.pageOffset}
+            chapters={doc.chapters}
+            practice={Object.fromEntries(
+              doc.chapters.map((c) => [
+                c.number,
+                { quiz: !!getQuizBank(doc.subject, c.number)?.questions.length, cards: !!getDeck(doc.subject, c.number)?.cards.length },
+              ]),
+            )}
+          />
         </div>
       </>
     );
@@ -83,7 +102,15 @@ async function DocumentPageContent({ params }: PageProps<"/thu-vien/[slug]">) {
     <>
       {header}
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 lg:grid-cols-[1fr_260px] lg:gap-16">
-        <article className="min-w-0 max-w-3xl">{md ? <Prose>{md.body}</Prose> : <ProseHtml html={html} />}</article>
+        <article className="min-w-0 max-w-3xl">
+          <ReadingMode
+            title={doc.title}
+            meta={<span>{KIND_LABELS[doc.kind]} · {docMeta(doc)}</span>}
+            notes={{ source: "thu-vien", slug: doc.slug, subject: doc.subject, chapter: doc.relatedChapters[0] ?? null }}
+          >
+            {md ? <Prose>{md.body}</Prose> : <ProseHtml html={html} />}
+          </ReadingMode>
+        </article>
         <aside className="order-first flex flex-col gap-4 lg:order-none">
           <div className="flex flex-col gap-3 rounded-xl border bg-subtle p-5 text-sm lg:sticky lg:top-24">
             <p className="font-sans text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Thông tin</p>
@@ -111,7 +138,7 @@ async function DocumentPageContent({ params }: PageProps<"/thu-vien/[slug]">) {
                   <dt className="text-muted-foreground">Liên quan</dt>
                   <dd className="flex flex-wrap gap-1.5 pt-1">
                     {doc.relatedChapters.map((n) => (
-                      <Badge key={n} variant="outline" render={<Link href={`/mon/${doc.subject}/chuong/${n}`} />} className="bg-white">
+                      <Badge key={n} variant="outline" render={<Link href={`/mon/${doc.subject}/chuong/${n}`} />} className="bg-card">
                         Chương {n}
                       </Badge>
                     ))}

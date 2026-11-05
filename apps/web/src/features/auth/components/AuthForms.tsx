@@ -34,7 +34,7 @@ function TextField({ name, label, state, icon: Icon, description, type, ...props
   return (
     <Field data-invalid={!!error || undefined}>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
-      <InputGroup className="h-11 bg-white">
+      <InputGroup className="h-11 bg-card">
         {Icon && (
           <InputGroupAddon>
             <Icon />
@@ -68,37 +68,100 @@ function TextField({ name, label, state, icon: Icon, description, type, ...props
   );
 }
 
-/** Hai nút chuyển qua lại giữa Đăng nhập và Đăng ký, giữ đích chuyển tiếp. */
-function AuthSwitch({ current, next }: { current: "dang-nhap" | "dang-ky"; next: string }) {
-  const tabs = [
-    { id: "dang-nhap", label: "Đăng nhập" },
-    { id: "dang-ky", label: "Đăng ký" },
-  ] as const;
+/**
+ * Ô nhập kính mờ của trang đăng nhập, đăng ký: viền và nền đổi sang màu xanh khi đang gõ, sang đỏ khi có lỗi.
+ * Ô mật khẩu có nút hiện/ẩn. Giá trị cũ điền lại khi máy chủ báo lỗi (trừ mật khẩu).
+ */
+function GlassField({ name, label, state, icon: Icon, description, type, className, ...props }: TextFieldProps) {
+  const [shown, setShown] = useState(false);
+  const error = state.errors?.[name];
+  const id = `tk-${name}`;
+  const hintId = `${id}-ghi-chu`;
+  const password = type === "password";
   return (
-    <nav aria-label="Đăng nhập hoặc đăng ký" className="grid grid-cols-2 gap-1 rounded-xl bg-muted p-1">
-      {tabs.map((t) => (
-        <Button
-          key={t.id}
-          variant="ghost"
-          render={<Link href={`/${t.id}?tiep=${encodeURIComponent(next)}`} />}
-          nativeButton={false}
-          aria-current={t.id === current ? "page" : undefined}
+    <div className={cn("flex flex-col gap-2", className)}>
+      <label htmlFor={id} className="text-sm font-medium text-muted-foreground">
+        {label}
+      </label>
+      <div
+        className={cn(
+          "group/glass relative flex items-center rounded-2xl border border-border bg-foreground/3 backdrop-blur-sm transition-colors",
+          "focus-within:border-primary/60 focus-within:bg-primary/5 focus-within:ring-3 focus-within:ring-primary/10",
+          error &&
+            "border-destructive/50 bg-destructive/5 focus-within:border-destructive/60 focus-within:bg-destructive/5 focus-within:ring-destructive/10",
+        )}
+      >
+        {Icon && (
+          <Icon
+            aria-hidden
+            className={cn(
+              // z-10: ô tự điền phủ nền trắng lên cả input, biểu tượng phải nằm trên lớp đó.
+              "pointer-events-none absolute left-4 z-10 size-4.5 text-muted-foreground transition-colors group-focus-within/glass:text-primary",
+              error && "text-destructive group-focus-within/glass:text-destructive",
+            )}
+          />
+        )}
+        <input
+          id={id}
+          name={name}
+          type={password && shown ? "text" : type}
+          aria-invalid={!!error || undefined}
+          aria-describedby={error || description ? hintId : undefined}
+          defaultValue={password ? undefined : state.values?.[name]}
           className={cn(
-            "h-9 rounded-lg text-muted-foreground",
-            t.id === current && "bg-white text-foreground shadow-sm hover:bg-white",
+            "h-14 w-full min-w-0 rounded-2xl bg-transparent px-4 text-[15px] outline-none placeholder:text-muted-foreground/70",
+            Icon && "pl-11",
+            password && "pr-14",
           )}
-        >
-          {t.label}
-        </Button>
-      ))}
-    </nav>
+          {...props}
+        />
+        {password && (
+          <button
+            type="button"
+            aria-label={shown ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+            aria-pressed={shown}
+            onClick={() => setShown((v) => !v)}
+            className="absolute right-2 z-10 grid size-10 place-items-center rounded-xl text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+          >
+            {shown ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+          </button>
+        )}
+      </div>
+      {error ? (
+        <p id={hintId} className="text-sm text-destructive">
+          {error}
+        </p>
+      ) : (
+        description && (
+          <p id={hintId} className="text-xs text-muted-foreground">
+            {description}
+          </p>
+        )
+      )}
+    </div>
   );
 }
 
-function FormMessage({ state }: { state: FormState }) {
+/** Dòng chuyển sang trang còn lại (đăng nhập hoặc đăng ký) ở cuối form, giữ đích chuyển tiếp. */
+function AuthSwitch({ current, next, className }: { current: "dang-nhap" | "dang-ky"; next: string; className?: string }) {
+  const login = current === "dang-nhap";
+  return (
+    <p className={cn("text-center text-sm text-muted-foreground", className)}>
+      {login ? "Chưa có tài khoản? " : "Đã có tài khoản? "}
+      <Link
+        href={`/${login ? "dang-ky" : "dang-nhap"}?tiep=${encodeURIComponent(next)}`}
+        className="font-medium text-primary underline-offset-4 hover:underline"
+      >
+        {login ? "Đăng ký ngay" : "Đăng nhập"}
+      </Link>
+    </p>
+  );
+}
+
+function FormMessage({ state, className }: { state: FormState; className?: string }) {
   if (!state.message) return null;
   return (
-    <Alert variant={state.ok ? "default" : "destructive"}>
+    <Alert variant={state.ok ? "default" : "destructive"} className={className}>
       {state.ok ? <CheckCircle2 /> : <CircleAlert />}
       <AlertDescription>{state.message}</AlertDescription>
     </Alert>
@@ -106,7 +169,17 @@ function FormMessage({ state }: { state: FormState }) {
 }
 
 /** Nút gửi. `primary`: nút chính của trang đăng nhập, đăng ký, rộng hết thẻ, có mũi tên. */
-function SubmitButton({ pending, primary, children }: { pending: boolean; primary?: boolean; children: React.ReactNode }) {
+function SubmitButton({
+  pending,
+  primary,
+  className,
+  children,
+}: {
+  pending: boolean;
+  primary?: boolean;
+  className?: string;
+  children: React.ReactNode;
+}) {
   if (!primary) {
     return (
       <Button type="submit" size="lg" disabled={pending} className="h-11 text-[15px]">
@@ -120,7 +193,10 @@ function SubmitButton({ pending, primary, children }: { pending: boolean; primar
       type="submit"
       size="lg"
       disabled={pending}
-      className="group/submit h-12 w-full rounded-xl text-base font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40"
+      className={cn(
+        "group/submit h-14 w-full rounded-2xl text-base font-medium shadow-lg shadow-primary/20 hover:shadow-primary/35",
+        className,
+      )}
     >
       {children}
       {pending ? (
@@ -137,25 +213,38 @@ const empty: FormState = {};
 export function LoginForm({ next }: { next: string }) {
   const [state, action, pending] = useActionState(login, empty);
   return (
-    <form action={action} className="flex flex-col gap-6">
-      <AuthSwitch current="dang-nhap" next={next} />
+    <form action={action} className="flex flex-col gap-5">
       <input type="hidden" name="next" value={next} />
-      <FormMessage state={state} />
-      <FieldGroup className="gap-5">
-        <TextField
-          name="studentCode"
-          label="Mã học viên"
-          icon={IdCard}
-          state={state}
-          placeholder="Ví dụ: B2K60-001"
-          autoComplete="username"
-          autoCapitalize="characters"
-          required
-        />
-        <TextField name="password" label="Mật khẩu" icon={KeyRound} state={state} type="password" autoComplete="current-password" required />
-      </FieldGroup>
-      <SubmitButton pending={pending} primary>Đăng nhập</SubmitButton>
-      <p className="text-center text-sm text-muted-foreground">Quên mật khẩu? Liên hệ giảng viên để được đặt lại.</p>
+      <FormMessage state={state} className="animate-rise rounded-2xl" />
+      <GlassField
+        name="studentCode"
+        label="Mã học viên"
+        icon={IdCard}
+        state={state}
+        placeholder="Ví dụ: B2K60-001"
+        autoComplete="username"
+        autoCapitalize="characters"
+        required
+        className="animate-rise anim-delay-300"
+      />
+      <GlassField
+        name="password"
+        label="Mật khẩu"
+        icon={KeyRound}
+        state={state}
+        type="password"
+        placeholder="Nhập mật khẩu"
+        autoComplete="current-password"
+        required
+        className="animate-rise anim-delay-400"
+      />
+      <p className="animate-rise anim-delay-500 -mt-1 text-right text-sm text-muted-foreground">
+        Quên mật khẩu? <span className="text-foreground/85">Liên hệ giảng viên để được đặt lại.</span>
+      </p>
+      <SubmitButton pending={pending} primary className="animate-rise anim-delay-600">
+        Đăng nhập
+      </SubmitButton>
+      <AuthSwitch current="dang-nhap" next={next} className="animate-rise anim-delay-700 pt-1" />
     </form>
   );
 }
@@ -163,42 +252,54 @@ export function LoginForm({ next }: { next: string }) {
 export function RegisterForm({ next }: { next: string }) {
   const [state, action, pending] = useActionState(register, empty);
   return (
-    <form action={action} className="flex flex-col gap-6">
-      <AuthSwitch current="dang-ky" next={next} />
+    <form action={action} className="flex flex-col gap-5">
       <input type="hidden" name="next" value={next} />
-      <FormMessage state={state} />
-      <FieldGroup className="gap-5">
-        <TextField
-          name="studentCode"
-          label="Mã học viên"
-          icon={IdCard}
-          state={state}
-          placeholder="Ví dụ: B2K60-001"
-          autoComplete="username"
-          autoCapitalize="characters"
-          required
-          description="Dùng để đăng nhập, không đổi được sau khi đăng ký."
-        />
-        <div className="grid gap-5 sm:grid-cols-[1.5fr_1fr]">
-          <TextField name="fullName" label="Họ và tên" icon={UserRound} state={state} autoComplete="name" required />
-          <TextField name="className" label="Lớp" icon={Users} state={state} placeholder="B2K60" required />
-        </div>
-        <TextField
-          name="password"
-          label="Mật khẩu"
-          icon={KeyRound}
-          state={state}
-          type="password"
-          autoComplete="new-password"
-          required
-          description="Tối thiểu 8 ký tự."
-        />
-        <TextField name="confirm" label="Nhập lại mật khẩu" icon={KeyRound} state={state} type="password" autoComplete="new-password" required />
-      </FieldGroup>
-      <SubmitButton pending={pending} primary>Tạo tài khoản</SubmitButton>
-      <p className="text-center text-xs leading-relaxed text-muted-foreground">
+      <FormMessage state={state} className="animate-rise rounded-2xl" />
+      <GlassField
+        name="studentCode"
+        label="Mã học viên"
+        icon={IdCard}
+        state={state}
+        placeholder="Ví dụ: B2K60-001"
+        autoComplete="username"
+        autoCapitalize="characters"
+        required
+        description="Dùng để đăng nhập, không đổi được sau khi đăng ký."
+        className="animate-rise anim-delay-300"
+      />
+      <div className="animate-rise anim-delay-400 grid gap-5 sm:grid-cols-[1.5fr_1fr]">
+        <GlassField name="fullName" label="Họ và tên" icon={UserRound} state={state} placeholder="Nguyễn Văn A" autoComplete="name" required />
+        <GlassField name="className" label="Lớp" icon={Users} state={state} placeholder="B2K60" required />
+      </div>
+      <GlassField
+        name="password"
+        label="Mật khẩu"
+        icon={KeyRound}
+        state={state}
+        type="password"
+        placeholder="Tối thiểu 8 ký tự"
+        autoComplete="new-password"
+        required
+        className="animate-rise anim-delay-500"
+      />
+      <GlassField
+        name="confirm"
+        label="Nhập lại mật khẩu"
+        icon={KeyRound}
+        state={state}
+        type="password"
+        placeholder="Gõ lại mật khẩu ở trên"
+        autoComplete="new-password"
+        required
+        className="animate-rise anim-delay-600"
+      />
+      <SubmitButton pending={pending} primary className="animate-rise anim-delay-700 mt-1">
+        Tạo tài khoản
+      </SubmitButton>
+      <p className="animate-rise anim-delay-800 text-center text-xs leading-relaxed text-muted-foreground">
         Tài khoản chỉ lưu mã học viên, họ tên và lớp để ghi nhận tiến độ học tập.
       </p>
+      <AuthSwitch current="dang-ky" next={next} className="animate-rise anim-delay-900" />
     </form>
   );
 }

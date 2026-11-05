@@ -1,10 +1,8 @@
-import {
-  ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Calculator, GraduationCap, ListChecks, MessageSquareText,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, MessageSquareText, Route } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { type ReactNode, Suspense } from "react";
 
 import { IconTile } from "@/components/brand";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -13,15 +11,17 @@ import { Button } from "@/components/ui/button";
 import { getSubject, SUBJECTS } from "@/config/subjects";
 import { EXERCISES } from "@/domain/ktct/exercises";
 import { PostCard } from "@/features/blog/components/PostCard";
-import { getPosts } from "@/features/blog/server/posts";
 import { MODE_ICONS } from "@/features/chat/mode-icons";
 import { MODES } from "@/features/chat/modes";
-import { getProfile } from "@/features/learning/server/profile";
-import { KIND_ICONS } from "@/features/library/components/DocIcon";
-import { docsForChapter } from "@/features/library/server/catalog";
-import { KIND_LABELS, printedPage, readerHref } from "@/features/library/types";
+import { chapterStudy } from "@/features/learning/server/chapter";
+import { LEARN_STEPS } from "@/features/learning/steps";
+import { DocCover, KIND_COLORS } from "@/features/library/components/DocCover";
+import { KIND_LABELS, readerHref } from "@/features/library/types";
+import { ChapterNotes } from "@/features/notes/components/ChapterNotes";
 import { getQuizBank } from "@/features/quiz/server/bank";
-import { QUIZ_SIZE } from "@/features/quiz/types";
+import { StepBadge } from "@/features/review/components/steps";
+import { learnHref, reviewHref } from "@/features/review/paths";
+import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
   return SUBJECTS.filter((s) => s.active).flatMap((s) => s.chapters.map((c) => ({ mon: s.id, so: String(c.number) })));
@@ -39,8 +39,34 @@ export async function generateMetadata({ params }: PageProps<"/mon/[mon]/chuong/
   return data ? { title: `Chương ${data.chapter.number}: ${data.chapter.title}` } : {};
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="font-sans text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">{children}</h2>;
+/**
+ * Một bước học trong trang chương: số bước và tên bước lấy từ LEARN_STEPS để khớp với hướng dẫn ở /mon.
+ * Các bước nối nhau bằng trục dọc bên trái giống lộ trình của môn.
+ */
+function LearnStep({ index, id, title, last, children }: { index: number; id: string; title: string; last?: boolean; children: ReactNode }) {
+  const step = LEARN_STEPS[index];
+  return (
+    <section id={id} aria-labelledby={`${id}-title`} className="relative grid scroll-mt-24 grid-cols-[2rem_minmax(0,1fr)] gap-4 sm:grid-cols-[2.5rem_minmax(0,1fr)] sm:gap-6">
+      {!last && <span aria-hidden className="absolute top-9 bottom-0 left-4 w-px bg-border sm:left-5" />}
+      <div className="flex justify-center pt-0.5">
+        <span className="flex size-8 items-center justify-center rounded-full bg-primary font-heading text-sm font-bold text-primary-foreground sm:size-10 sm:text-base">
+          {index + 1}
+        </span>
+      </div>
+      <div className={cn("flex min-w-0 flex-col gap-5", !last && "pb-14")}>
+        <div className="flex flex-col gap-1.5">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
+            Bước {index + 1} · {step.name}
+          </span>
+          <h2 id={`${id}-title`} className="text-xl font-bold sm:text-2xl">
+            {title}
+          </h2>
+          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">{step.text}</p>
+        </div>
+        {children}
+      </div>
+    </section>
+  );
 }
 
 async function ChapterPageContent({ params }: PageProps<"/mon/[mon]/chuong/[so]">) {
@@ -48,33 +74,24 @@ async function ChapterPageContent({ params }: PageProps<"/mon/[mon]/chuong/[so]"
   if (!data) notFound();
   const { subject, chapter } = data;
   const n = chapter.number;
-
-  const docs = docsForChapter(subject.id, n);
-  const textbook = docs.find((d) => d.kind === "giao_trinh");
-  const range = textbook?.chapters.find((c) => c.number === n);
-  const related = docs.filter((d) => d !== textbook);
-  const posts = getPosts().filter((p) => p.subject === subject.id && p.chapters.includes(n));
-  const questions = getProfile(subject.id).chapterQuestions[n] ?? [];
+  const { textbook, range, pages, concepts, questions, docs, posts } = chapterStudy(subject, n);
+  const index = subject.chapters.findIndex((c) => c.number === n);
+  const prev = subject.chapters[index - 1];
+  const next = subject.chapters[index + 1];
   const quizSize = getQuizBank(subject.id, n)?.questions.length ?? 0;
   const hasExercises = !!EXERCISES[subject.id]?.[n];
-  const prev = subject.chapters.find((c) => c.number === n - 1);
-  const next = subject.chapters.find((c) => c.number === n + 1);
 
   return (
     <>
       <PageHeader
-        crumbs={[{ label: "Học liệu", href: "/mon" }, { label: subject.shortName, href: `/mon/${subject.id}` }, { label: `Chương ${n}` }]}
+        crumbs={[{ label: "Bài học", href: "/mon" }, { label: subject.shortName, href: learnHref(subject.id) }, { label: `Chương ${n}` }]}
         title={
           <>
             <span className="mb-2 block font-sans text-sm font-semibold uppercase tracking-[0.14em] text-primary">Chương {n}</span>
             {chapter.title}
           </>
         }
-        lead={
-          textbook && range
-            ? `${subject.name} · Giáo trình, trang ${printedPage(textbook, range.from)}–${printedPage(textbook, range.to)}`
-            : subject.name
-        }
+        lead={pages ? `${subject.name} · Giáo trình tr. ${pages.from}–${pages.to}, ${pages.count} trang` : subject.name}
         actions={
           <>
             {textbook && range && (
@@ -83,125 +100,203 @@ async function ChapterPageContent({ params }: PageProps<"/mon/[mon]/chuong/[so]"
                 Đọc trong giáo trình
               </Button>
             )}
-            <Button variant="outline" render={<Link href={`/tro-ly?mon=${subject.id}&che-do=review&chuong=${n}`} />} nativeButton={false} className="bg-white">
-              <GraduationCap data-icon="inline-start" />
-              Ôn thi chương
+            <Button variant="outline" className="bg-card" render={<Link href={`/tro-ly?mon=${subject.id}&chuong=${n}`} />} nativeButton={false}>
+              <MessageSquareText data-icon="inline-start" />
+              Hỏi trợ lý chương {n}
             </Button>
           </>
         }
-      />
-
-      <div className="mx-auto grid max-w-6xl gap-12 px-4 py-12 sm:py-16 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
-        <section className="flex flex-col gap-4">
-          <SectionTitle>Câu hỏi gợi ý</SectionTitle>
-          <ul className="flex flex-col gap-3">
-            {questions.map((q) => (
-              <li key={q.text}>
+      >
+        {/* Vị trí của chương trên lộ trình môn: mỗi vạch một chương, bấm để chuyển. */}
+        <nav aria-label="Vị trí trên lộ trình" className="flex max-w-md flex-col gap-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-medium text-foreground/80">
+              Chặng {index + 1}/{subject.chapters.length} của lộ trình
+            </span>
+            <Link href={learnHref(subject.id)} className="flex items-center gap-1 font-medium text-primary hover:underline">
+              <Route className="size-3.5" aria-hidden />
+              Xem lộ trình
+            </Link>
+          </div>
+          <ol className="flex gap-1">
+            {subject.chapters.map((c) => (
+              <li key={c.number} className="flex-1">
                 <Link
-                  href={`/tro-ly?mon=${subject.id}&che-do=${q.mode}&chuong=${n}&q=${encodeURIComponent(q.text)}`}
-                  className="group flex items-center gap-4 rounded-xl border bg-white p-4 transition-colors hover:border-primary/40 hover:bg-primary-soft"
-                >
-                  <IconTile icon={MODE_ICONS[q.mode]} />
-                  <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                    <span className="text-[15px] font-medium leading-snug">{q.text}</span>
-                    <span className="text-xs text-muted-foreground">{MODES[q.mode].label}</span>
-                  </span>
-                  <ArrowUpRight className="size-4 shrink-0 text-muted-foreground group-hover:text-primary" />
-                </Link>
+                  href={learnHref(subject.id, c.number)}
+                  aria-label={`Chương ${c.number}: ${c.title}`}
+                  aria-current={c.number === n ? "page" : undefined}
+                  className={cn("block h-1.5 rounded-full transition-colors", c.number === n ? "bg-primary" : "bg-border hover:bg-primary/40")}
+                />
               </li>
             ))}
-          </ul>
-          <Button variant="link" render={<Link href={`/tro-ly?mon=${subject.id}&chuong=${n}`} />} nativeButton={false} className="self-start px-0">
-            <MessageSquareText data-icon="inline-start" />
-            Đặt câu hỏi khác về chương {n}
-          </Button>
-        </section>
+          </ol>
+        </nav>
+      </PageHeader>
 
-        <section className="flex flex-col gap-4">
-          <SectionTitle>Tài liệu liên quan</SectionTitle>
-          {related.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Chưa có văn kiện hay tài liệu tham khảo gắn với chương này.</p>
+      <div className="mx-auto max-w-4xl px-4 py-12 sm:py-16">
+        <LearnStep index={0} id="doc" title="Đọc chương trong giáo trình">
+          {textbook && range && pages ? (
+            <Link
+              href={readerHref(textbook.file, range.from)}
+              className="group flex items-center gap-4 rounded-xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-primary-soft"
+            >
+              <DocCover doc={textbook} className="w-12" />
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="text-sm font-medium leading-snug group-hover:text-primary">{textbook.title}</span>
+                <span className="text-xs text-muted-foreground">
+                  Chương {n}: trang {pages.from}–{pages.to}, {pages.count} trang
+                </span>
+              </span>
+              <ArrowUpRight className="size-4 shrink-0 text-muted-foreground group-hover:text-primary" aria-hidden />
+            </Link>
           ) : (
-            <ul className="overflow-hidden rounded-xl border bg-white">
-              {related.map((d) => (
-                <li key={d.slug} className="border-b last:border-b-0">
-                  <Link href={`/thu-vien/${d.slug}`} className="group flex items-start gap-3 p-4 transition-colors hover:bg-primary-soft">
-                    <IconTile icon={KIND_ICONS[d.kind]} className="size-9" />
-                    <span className="flex min-w-0 flex-col gap-0.5">
-                      <span className="text-sm font-medium leading-snug group-hover:text-primary">{d.title}</span>
-                      <span className="text-xs text-muted-foreground">{KIND_LABELS[d.kind]}</span>
+            <p className="text-sm text-muted-foreground">Giáo trình của chương đang được cập nhật.</p>
+          )}
+
+          {concepts.length > 0 && (
+            <div className="flex flex-col gap-3">
+              <h3 className="text-[15px] font-semibold">
+                Nội dung chính <span className="font-normal text-muted-foreground">· {concepts.length} mục, theo thứ tự trong giáo trình</span>
+              </h3>
+              <ol className="grid gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-2">
+                {concepts.map((k, i) => {
+                  const body = (
+                    <>
+                      <span className="w-5 shrink-0 font-heading text-sm font-bold tabular-nums text-primary/60">{i + 1}</span>
+                      <span className="min-w-0 flex-1 text-sm leading-snug">
+                        {k.name}
+                        {k.formula && <span className="ml-1.5 rounded bg-subtle px-1.5 py-0.5 text-[11px] text-muted-foreground">công thức</span>}
+                      </span>
+                      {textbook && k.pdfPage && (
+                        <span className="shrink-0 text-xs tabular-nums text-muted-foreground group-hover:text-primary">tr. {k.pdfPage + textbook.pageOffset}</span>
+                      )}
+                    </>
+                  );
+                  return (
+                    <li key={k.name} className="bg-card">
+                      {textbook && k.pdfPage ? (
+                        <Link href={readerHref(textbook.file, k.pdfPage)} className="group flex h-full items-start gap-3 px-4 py-3 transition-colors hover:bg-primary-soft">
+                          {body}
+                        </Link>
+                      ) : (
+                        <div className="flex h-full items-start gap-3 px-4 py-3">{body}</div>
+                      )}
+                    </li>
+                  );
+                })}
+                {/* Ô trống lấp hàng cuối khi số khái niệm lẻ, để lưới không hở nền viền. */}
+                {concepts.length % 2 === 1 && <li aria-hidden className="hidden bg-card sm:block" />}
+              </ol>
+            </div>
+          )}
+        </LearnStep>
+
+        <LearnStep index={1} id="hoi" title="Hỏi để hiểu sâu">
+          {questions.length > 0 && (
+            <ul className="flex flex-col gap-2.5">
+              {questions.map((q) => (
+                <li key={q.text}>
+                  <Link
+                    href={`/tro-ly?mon=${subject.id}&che-do=${q.mode}&chuong=${n}&q=${encodeURIComponent(q.text)}`}
+                    className="group flex items-center gap-4 rounded-xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-primary-soft"
+                  >
+                    <IconTile icon={MODE_ICONS[q.mode]} />
+                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                      <span className="text-[15px] font-medium leading-snug">{q.text}</span>
+                      <span className="text-xs text-muted-foreground">{MODES[q.mode].label}</span>
                     </span>
+                    <ArrowUpRight className="size-4 shrink-0 text-muted-foreground group-hover:text-primary" aria-hidden />
                   </Link>
                 </li>
               ))}
             </ul>
           )}
-        </section>
-      </div>
+          <Button variant="link" render={<Link href={`/tro-ly?mon=${subject.id}&chuong=${n}`} />} nativeButton={false} className="self-start px-0">
+            <MessageSquareText data-icon="inline-start" />
+            Đặt câu hỏi khác về chương {n}
+          </Button>
+        </LearnStep>
 
-      {(quizSize > 0 || hasExercises) && (
-        <section className="border-t">
-          <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-14">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <h2 className="text-2xl font-bold">Tự kiểm tra chương {n}</h2>
-              <Link href="/tien-do" className="text-sm font-medium text-primary hover:underline">Xem tiến độ của tôi →</Link>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              {quizSize > 0 && (
-                <Link
-                  href={`/mon/${subject.id}/chuong/${n}/trac-nghiem`}
-                  className="group flex items-start gap-4 rounded-xl border bg-white p-5 transition-colors hover:border-primary/40 hover:bg-primary-soft"
-                >
-                  <IconTile icon={ListChecks} />
-                  <span className="flex flex-col gap-1">
-                    <span className="font-medium group-hover:text-primary">Trắc nghiệm</span>
-                    <span className="text-sm text-muted-foreground">
-                      {Math.min(QUIZ_SIZE, quizSize)} câu ngẫu nhiên trong {quizSize} câu, có giải thích và trang giáo trình.
+        <LearnStep index={2} id="mo-rong" title="Văn kiện và bài viết liên quan">
+          {docs.length === 0 && posts.length === 0 && (
+            <p className="text-sm text-muted-foreground">Chưa có văn kiện, tài liệu tham khảo hay bài viết gắn với chương này.</p>
+          )}
+          {docs.length > 0 && (
+            <ul className="overflow-hidden rounded-xl border bg-card">
+              {docs.map((d) => (
+                <li key={d.slug} className="border-b last:border-b-0">
+                  <Link href={`/thu-vien/${d.slug}`} className="group flex items-center gap-4 p-4 transition-colors hover:bg-primary-soft">
+                    <DocCover doc={d} className="w-12" />
+                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                      <span className={cn("text-[11px] font-semibold uppercase tracking-[0.14em]", KIND_COLORS[d.kind].text)}>{KIND_LABELS[d.kind]}</span>
+                      <span className="text-sm font-medium leading-snug group-hover:text-primary">{d.title}</span>
                     </span>
-                  </span>
-                </Link>
-              )}
-              {hasExercises && (
-                <Link
-                  href={`/mon/${subject.id}/chuong/${n}/bai-tap`}
-                  className="group flex items-start gap-4 rounded-xl border bg-white p-5 transition-colors hover:border-primary/40 hover:bg-primary-soft"
-                >
-                  <IconTile icon={Calculator} />
-                  <span className="flex flex-col gap-1">
-                    <span className="font-medium group-hover:text-primary">Bài tập tính toán</span>
-                    <span className="text-sm text-muted-foreground">Số liệu đổi mỗi lần làm, chấm ngay và hiện lời giải từng bước.</span>
-                  </span>
-                </Link>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {posts.length > 0 && (
-        <section className="border-t bg-subtle">
-          <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-14">
-            <h2 className="text-2xl font-bold">Bài viết ôn tập</h2>
-            <div className="grid gap-6 md:grid-cols-3">
+                    <ArrowUpRight className="size-4 shrink-0 text-muted-foreground group-hover:text-primary" aria-hidden />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+          {posts.length > 0 && (
+            <div className="grid gap-5 sm:grid-cols-2">
               {posts.map((p) => (
                 <PostCard key={p.slug} post={p} />
               ))}
             </div>
+          )}
+        </LearnStep>
+
+        <LearnStep index={3} id="ghi-chep" title="Ghi chú và tạo thẻ của riêng mình" last>
+          <p className="text-sm leading-relaxed text-foreground/80">
+            Trong trình đọc, chọn <b>Ghi chú</b> hoặc <b>Tạo thẻ</b> sau khi bôi đen. Ghi chú hiện lại ở đây; thẻ tự tạo được ôn cùng bộ thẻ của
+            chương ở Ôn tập.
+          </p>
+          <Suspense fallback={null}>
+            <ChapterNotes subject={subject.id} chapter={n} hasDeck={concepts.length > 0} />
+          </Suspense>
+        </LearnStep>
+      </div>
+
+      {/* Bài học chỉ để học; mọi hoạt động luyện nằm ở nhánh Ôn tập. Dải cuối trang này là lối sang. */}
+      <section aria-labelledby="sang-on-tap" className="border-t bg-primary-soft">
+        <div className="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-12 md:flex-row md:items-center md:justify-between md:gap-12">
+          <div className="flex max-w-2xl flex-col gap-2">
+            <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
+              <StepBadge n={5} />
+              Bước tiếp theo
+            </span>
+            <h2 id="sang-on-tap" className="text-2xl font-bold">
+              Học xong chương {n}? Chuyển sang ôn tập
+            </h2>
+            <p className="text-sm text-foreground/80">
+              {[
+                concepts.length > 0 && `${concepts.length} thẻ ghi nhớ`,
+                quizSize > 0 && `${quizSize} câu trắc nghiệm`,
+                hasExercises && "bài tập tính toán",
+                "câu hỏi tự luận với trợ lý",
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
           </div>
-        </section>
-      )}
+          <Button size="lg" className="shrink-0 self-start md:self-auto" render={<Link href={reviewHref(subject.id, n)} />} nativeButton={false}>
+            Ôn tập chương {n}
+            <ArrowRight data-icon="inline-end" />
+          </Button>
+        </div>
+      </section>
 
       <nav aria-label="Chuyển chương" className="border-t">
-        <div className="mx-auto grid max-w-6xl gap-4 px-4 py-8 sm:grid-cols-2">
+        <div className="mx-auto grid max-w-4xl gap-4 px-4 py-8 sm:grid-cols-2">
           {prev ? (
-            <Link href={`/mon/${subject.id}/chuong/${prev.number}`} className="group flex flex-col gap-1 rounded-xl border p-4 hover:border-primary/40">
-              <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><ArrowLeft className="size-3.5" /> Chương {prev.number}</span>
+            <Link href={learnHref(subject.id, prev.number)} className="group flex flex-col gap-1 rounded-xl border p-4 hover:border-primary/40">
+              <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><ArrowLeft className="size-3.5" /> Chặng trước · Chương {prev.number}</span>
               <span className="line-clamp-1 text-sm font-medium group-hover:text-primary">{prev.title}</span>
             </Link>
           ) : <span />}
           {next && (
-            <Link href={`/mon/${subject.id}/chuong/${next.number}`} className="group flex flex-col items-end gap-1 rounded-xl border p-4 text-right hover:border-primary/40">
-              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">Chương {next.number} <ArrowRight className="size-3.5" /></span>
+            <Link href={learnHref(subject.id, next.number)} className="group flex flex-col items-end gap-1 rounded-xl border p-4 text-right hover:border-primary/40">
+              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">Chặng sau · Chương {next.number} <ArrowRight className="size-3.5" /></span>
               <span className="line-clamp-1 text-sm font-medium group-hover:text-primary">{next.title}</span>
             </Link>
           )}

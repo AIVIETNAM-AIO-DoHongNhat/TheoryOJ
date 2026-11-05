@@ -69,7 +69,7 @@ export function HistorySheet({ currentId, onNewChat }: { currentId?: string; onN
       <SheetContent side="left" className="w-full gap-0 sm:max-w-sm">
         <SheetHeader className="border-b">
           <SheetTitle>Hội thoại đã lưu</SheetTitle>
-          <SheetDescription>Lưu cho trình duyệt này. Xóa dữ liệu trình duyệt thì danh sách sẽ mất.</SheetDescription>
+          <SheetDescription>Lưu theo tài khoản, đăng nhập trên máy nào cũng thấy.</SheetDescription>
         </SheetHeader>
         <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto p-3">
           {items === null ? (
@@ -90,8 +90,9 @@ export function HistorySheet({ currentId, onNewChat }: { currentId?: string; onN
                   <div
                     key={c.id}
                     className={cn(
-                      "group flex items-center gap-1 rounded-lg pr-1 transition-colors hover:bg-muted",
-                      c.id === currentId && "bg-primary-soft hover:bg-primary-soft",
+                      "group relative flex items-center gap-1 rounded-lg pr-1 transition-colors hover:bg-muted",
+                      c.id === currentId &&
+                        "bg-primary-soft before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:rounded-full before:bg-primary hover:bg-primary-soft",
                     )}
                   >
                     <Link

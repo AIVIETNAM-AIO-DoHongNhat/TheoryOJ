@@ -1,6 +1,6 @@
 # Kế hoạch phát triển TheoryOJ
 
-Web học tập có chatbot cố vấn cho Khoa Lý luận chính trị, Học viện An ninh nhân dân. Giai đoạn 1 làm cho môn Kinh tế chính trị Mác – Lênin (KTCT). Sản phẩm phục vụ sáng kiến chuyển đổi số của Học viện.
+Web học tập có chatbot cố vấn cho Khoa LLCT&KHXHNV, Học viện An ninh nhân dân. Giai đoạn 1 làm cho môn Kinh tế chính trị Mác – Lênin (KTCT). Sản phẩm phục vụ sáng kiến chuyển đổi số của Học viện.
 
 > Cập nhật 29/10/2026 sau khi đo điểm nền ở giai đoạn 0 (mục 2.3). Đây là bản đề xuất, các quyết định còn mở nằm ở mục 11.
 
@@ -109,7 +109,7 @@ Làm ngày 30/10/2026, thử đầu–cuối trên máy phát triển với mô 
 - **Giới hạn tần suất.** `/api/chat`: 20 câu trong 10 phút và 200 câu mỗi ngày theo mã khách, 120 câu trong 10 phút theo IP. Mã khách có thể bị xóa nên giới hạn theo IP mới là chốt chặn chính. Đếm trong bảng `chat_rate_limits` nên vẫn đúng khi chạy nhiều tiến trình. Ngưỡng đổi bằng biến môi trường `CHAT_LIMIT_*`.
 - **Lưu hội thoại.** Mỗi câu trả lời lưu cả `parts` (để mở lại có trích dẫn), câu hỏi, chế độ, chương, nhãn phân loại, lý do từ chối, cờ, câu tìm kiếm đã viết lại, điểm cao nhất, trích dẫn, thời gian từng bước. Câu bị dừng giữa chừng hoặc lỗi được đánh dấu `incomplete`. Người dùng xem lại và xóa hội thoại ở bảng Lịch sử; địa chỉ `/tro-ly/[id]` mở đúng hội thoại.
 - **Đánh giá.** 👍/👎 dưới mỗi câu trả lời; 👎 chọn một trong sáu lý do (`features/chat/feedback.ts`) và ghi chú tùy ý.
-- **Xem lại.** Chưa có giao diện. Giảng viên xem câu bị 👎, câu gắn cờ và câu bị từ chối bằng truy vấn trên bảng `messages`, `feedback`, ví dụ `select question, content, refused, flagged from messages where role = 'assistant' and (flagged or refused is not null)`.
+- **Xem lại.** Ở trang quản trị `/quan-tri/hoi-dap` (mục 4.2): giảng viên lọc câu gắn cờ, câu bị 👎, câu bị từ chối, đọc câu trả lời và đánh dấu đã xem (`messages.reviewed_at`).
 - **Chưa làm.** Chưa gỡ `legacy/`: bản Streamlit vẫn cần để đo điểm nền trên bộ câu chuẩn sau khi giảng viên duyệt (giai đoạn 0 và tiêu chí giai đoạn 1); gỡ sau lần đo đó.
 
 ### 2.7. Tài khoản học viên
@@ -120,7 +120,8 @@ Làm ngày 01/11/2026 theo yêu cầu cho học viên học trên nhiều thiế
 - **Dữ liệu theo tài khoản.** Mỗi tài khoản có một mã khách riêng (`users.visitor_id`); các bảng hội thoại, đánh giá, tiến độ, khảo sát không đổi, vẫn lưu theo `visitor_id`. Khi đăng ký hoặc đăng nhập, dữ liệu đã làm trên trình duyệt đó được gộp vào tài khoản; đăng xuất thì trình duyệt trở về khách mới.
 - **Bảo mật.** Mật khẩu băm bằng scrypt (`lib/auth/password.ts`). Phiên lưu trong bảng `sessions` 30 ngày, cookie httpOnly `theoryoj_phien` chỉ giữ mã ngẫu nhiên, DB lưu SHA-256 của mã. Đăng nhập giới hạn 10 lần trong 10 phút cho mỗi mã học viên (300 lần cho mỗi IP vì cả lớp chung mạng). Sai mã hay sai mật khẩu đều báo chung một câu. Đổi mật khẩu thì đăng xuất các thiết bị khác.
 - **Quên mật khẩu.** Chưa có trang quản trị: người phát triển chạy `npm run dat-lai-mat-khau -- <mã học viên>`, script in mật khẩu tạm và đăng xuất mọi phiên của tài khoản.
-- **Chưa làm.** Vai trò giảng viên (xem tiến độ theo lớp, tin nhắn gắn cờ, đặt lại mật khẩu trên web), xác minh mã học viên với danh sách lớp.
+- **Vai trò giảng viên.** Cột `users.role` (`hoc-vien`, `giang-vien`). Giảng viên không tự đăng ký quyền: người phát triển chạy `npm run cap-quyen -- <mã> [--tao "Họ tên"] [--thu]`. Giảng viên đặt lại mật khẩu học viên ngay trên trang quản trị.
+- **Chưa làm.** Xác minh mã học viên với danh sách lớp; nhập danh sách lớp từ Excel.
 
 ---
 
@@ -187,7 +188,7 @@ Giao diện không gắn với một môn: menu Học liệu, trang `/mon`, tran
 - **Thư viện** (`/thu-vien`, `/thu-vien/[slug]`): danh mục đọc trực tiếp từ `manifest.yaml`, lọc theo loại, tìm không dấu. PDF mở trong trình đọc pdf.js (`react-pdf`) có mục lục chương, số trang in, phóng to, tải về; `?trang=n` mở đúng trang PDF. Văn kiện `.md` và `.docx` (qua `mammoth`) hiển thị dạng văn bản. File gốc phục vụ qua `/api/tai-lieu/[slug]` có hỗ trợ Range. Trích dẫn của trợ lý có liên kết "Mở trong thư viện" tới đúng trang.
 - **Bài viết** (`/bai-viet`): mỗi bài là một file Markdown trong `content/bai-viet/` (mẫu ở `_mau.md`), giảng viên gửi bài, người phát triển đăng. Khi có giai đoạn 3 có thể chuyển sang trang quản trị.
 - **Ôn tập** (`/on-tap`, `/mon/[mon]/chuong/[so]/trac-nghiem`, `/mon/[mon]/chuong/[so]/bai-tap`, `/tien-do`): xem mục 4.3.
-- **Quản trị**: chưa làm ở bản sáng kiến. Dữ liệu hỏi đáp và đánh giá đã lưu đủ (mục 2.6) để làm trang nhật ký, tải tài liệu và chạy nạp lại khi cần.
+- **Quản trị** (`/quan-tri`, giai đoạn 8): chỉ tài khoản giảng viên vào được; người khác chưa đăng nhập thì chuyển tới trang đăng nhập, học viên nhận trang 404, cả khung trang chỉ dựng sau khi kiểm tra quyền. Bốn mục: **Tổng quan** (học viên có tài khoản, người dùng hoạt động, câu hỏi, lượt trắc nghiệm và thẻ ôn trong 7 ngày, tỷ lệ hữu ích, số câu cần xem, bảng điểm theo chương có đánh dấu chương có tỷ lệ đạt thấp nhất); **Học viên** (tìm theo mã, tên, lọc lớp; trang từng người có tiến độ từng chương, thẻ đã thuộc, 15 câu hỏi gần nhất gửi trợ lý, nút đặt lại mật khẩu hiện mật khẩu tạm một lần); **Theo lớp** (điểm lượt đầu, điểm cao nhất, tỷ lệ đạt, thẻ đã thuộc theo chương của một lớp); **Hỏi đáp** (nhật ký câu trả lời cần xem, mục 2.6). Số liệu theo lớp chỉ tính học viên có tài khoản. Truy vấn ở `features/admin/server/`.
 
 ### 4.3. Ôn tập và tiến độ
 
@@ -197,7 +198,17 @@ Giao diện không gắn với một môn: menu Học liệu, trang `/mon`, tran
 - **Bài tập tính toán sinh số** (`src/domain/ktct/exercises.ts`): chương 2 có 3 dạng về lượng tiền cần thiết cho lưu thông (tr. 40–41); chương 3 có 7 dạng gồm giá trị thặng dư, chu chuyển tư bản (tr. 57–58), lợi nhuận bình quân và giá cả sản xuất (tr. 69–70). Đáp án và lời giải từng bước tính bằng `solve` của công cụ trợ lý `tinh_ktct`, nên trợ lý cũng giải được các dạng này; chấp nhận sai số làm tròn 0,5 %.
 - **Tiến độ cá nhân** (`/tien-do`): mỗi lượt làm lưu vào bảng `practice_attempts` theo mã khách; trang tổng hợp điểm cao nhất, lượt gần nhất, bài tập, số câu đã hỏi trợ lý theo chương và gợi ý chương nên ôn tiếp.
 
-Chưa làm: thẻ ghi nhớ theo lịch lặp lại ngắt quãng; thống kê cho giảng viên theo chương (dữ liệu đã có trong `practice_attempts`, cần trang quản trị); hỏi đáp số liệu trên chỉ mục niên giám riêng. Chương 1, 4, 5, 6 chủ yếu là lý luận, giáo trình gần như không có công thức tính, nên chỉ có trắc nghiệm.
+- **Thẻ ghi nhớ** (giai đoạn 7, `/mon/[mon]/chuong/[so]/the-ghi-nho`): mỗi chương một file `content/<môn>/the-ghi-nho/chuong-<n>.yaml` (quy ước ở `_mau.yaml`), thẻ có mặt trước (khái niệm, công thức), mặt sau bám lời văn giáo trình và trang in. KTCT có 56 thẻ (4–19 thẻ mỗi chương), người phát triển soạn bằng cách tra nguyên văn giáo trình, gắn `status: nhap` chờ giảng viên duyệt. Học viên lật thẻ rồi tự chấm Quên, Khó, Nhớ, Dễ; lịch ôn tính theo kiểu lặp lại ngắt quãng giản lược từ SM-2 (`features/flashcards/schedule.ts`): thẻ mới hẹn 1, 2 hoặc 5 ngày, nhớ tiếp thì giãn theo hệ số dễ, quên thì hỏi lại sau 10 phút và ngay cuối lượt. Mỗi lượt tối đa 20 thẻ mới. Lịch ôn lưu trên máy chủ ở bảng `flashcard_states` theo mã khách, gộp vào tài khoản khi đăng nhập. Trang Ôn tập, trang chương và trang Tiến độ có lối vào và số thẻ đã thuộc (khoảng ôn từ 21 ngày), số thẻ đến hạn.
+
+- **Hôm nay** (giai đoạn 9, `/hoc`): trang riêng của học viên, gom thẻ đến hạn, chương nên làm trắc nghiệm, đọc tiếp giáo trình và hội thoại gần đây; chuỗi ngày học tính theo giờ Việt Nam từ lượt làm bài, ôn thẻ, hỏi trợ lý. Kết quả trắc nghiệm có nút ôn lại riêng các câu sai; lượt ôn lại không tính vào tiến độ.
+
+- **Ghi chú trong trình đọc** (`features/notes/`): học viên bôi đen một đoạn trong PDF, văn kiện hoặc bài viết, rồi chọn Ghi chú, Hỏi trợ lý (mở `/tro-ly` với đoạn trích, đúng chương) hoặc Tạo thẻ ghi nhớ.
+  - **Lưu trữ:** ghi chú lưu ở bảng `reader_notes`, thẻ tự tạo ở bảng `user_flashcards` (migration `0007`). Thẻ tự tạo mang mã `u-<id>` và dùng chung lịch ôn `flashcard_states`.
+  - **Định vị:** PDF định vị theo trang. Văn bản định vị bằng đoạn trích kèm 48 ký tự trước và sau (`anchor.ts`). Đoạn đã ghi chú được tô bằng CSS Custom Highlight API, không sửa DOM.
+  - **Nơi hiện:** danh sách ghi chú có ở thanh công cụ trình đọc, mục "Ghi chú của tôi" ở trang chương và số ghi chú ở `/tien-do`. Trang thẻ ghi nhớ gộp thẻ chung với thẻ tự tạo, sửa và xóa được.
+  - **Quyền:** chỉ học viên đã đăng nhập; khách vẫn dùng được "Hỏi trợ lý".
+
+Chưa làm: thống kê cho giảng viên theo chương (dữ liệu đã có trong `practice_attempts`, cần trang quản trị); hỏi đáp số liệu trên chỉ mục niên giám riêng. Chương 1, 4, 5, 6 chủ yếu là lý luận, giáo trình gần như không có công thức tính, nên chỉ có trắc nghiệm.
 
 ### 4.4. Trang chủ
 
@@ -266,6 +277,8 @@ TheoryOJ/
 │   │   │   │   │                      # guardrails, persist
 │   │   │   │   └── tools/ktct-calculator.ts
 │   │   │   ├── quiz/  exercise/  progress/   # Trắc nghiệm, bài tập, tiến độ
+│   │   │   ├── flashcards/            # Thẻ ghi nhớ, lịch ôn lặp lại ngắt quãng
+│   │   │   ├── admin/                 # Trang quản trị cho giảng viên (/quan-tri)
 │   │   ├── components/                # ui/ (shadcn), layout/, markdown/
 │   │   ├── lib/                       # env, visitor, rate-limit, llm, rag-client, db/schema/
 │   │   ├── domain/ktct/formulas.ts    # Công thức KTCT và kiểm thử
@@ -287,7 +300,8 @@ TheoryOJ/
 │   ├── manifest.yaml
 │   ├── tro-ly.yaml                    # Lời dặn riêng cho trợ lý, câu hỏi gợi ý
 │   ├── giao-trinh/  van-kien/  tham-khao/  cand/  so-lieu/
-│   └── question-bank/                 # chuong-<n>.yaml, _mau.yaml
+│   ├── question-bank/                 # chuong-<n>.yaml, _mau.yaml
+│   └── the-ghi-nho/                   # Thẻ ghi nhớ: chuong-<n>.yaml, _mau.yaml
 ├── eval/ktct/golden.jsonl             # Bộ câu hỏi chuẩn (mẫu ở eval/_mau/)
 ├── legacy/streamlit/                  # Code cũ, xóa sau giai đoạn 3
 ├── infra/                             # docker-compose.yml, db/init.sql
@@ -334,7 +348,7 @@ documents:
 | Người dùng | `users` (mã học viên, họ tên, lớp, mật khẩu băm, `visitor_id` của tài khoản), `sessions`; dữ liệu học tập gắn với `visitor_id` |
 | Nội dung | `subjects`, `chapters`, `documents` (kind, page_offset, sha256), `chunks` (chapter_id, page, section, `embedding vector(1024)`, tsv) |
 | Hội thoại | `conversations` (visitor_id), `messages` (citations jsonb, rewritten_query, latency_ms), `feedback` (rating, reason) |
-| Học tập | `practice_attempts` (trắc nghiệm và bài tập, theo mã khách); câu hỏi nằm trong file YAML, không lưu DB |
+| Học tập | `practice_attempts` (trắc nghiệm và bài tập, theo mã khách), `flashcard_states` (lịch ôn từng thẻ); câu hỏi và thẻ nằm trong file YAML, không lưu DB |
 
 ```json
 // POST {RAG_URL}/search
@@ -362,7 +376,10 @@ Lộ trình giả định một người phát triển chính trong khoảng 12 
 | 3. Lưu dữ liệu và giới hạn | 6–7 | Đã xong: lưu hội thoại và lịch sử theo mã khách, đánh giá 👍/👎 kèm lý do, giới hạn tần suất `/api/chat` (mục 2.6). Đăng nhập và trang quản trị để sau bản sáng kiến. Còn lại: gỡ `legacy/` sau khi đo lại điểm nền trên bộ câu đã duyệt. | Mọi lượt hỏi đáp và đánh giá được lưu, truy vấn được |
 | 4. Học liệu và ôn tập | 8–10 | Đã xong: trang 6 chương, 164 câu trắc nghiệm (23–31 câu mỗi chương) có giải thích và trang giáo trình, bài tập sinh số chương 2 và 3 (10 dạng), trang tiến độ, bảng `practice_attempts` (mục 4.3). Còn lại: giảng viên duyệt ngân hàng câu hỏi và đổi `status` thành `da-duyet`. | Mỗi chương có tối thiểu 20 câu trắc nghiệm |
 | 5. Thử nghiệm và triển khai | 11–12 | Đã xong phần mã nguồn: `infra/docker-compose.prod.yml` (Caddy tự cấp HTTPS, web, migrate, rag, db, sao lưu `pg_dump` hằng ngày, Ollama tùy chọn, ghép GPU bằng `docker-compose.gpu.yml`), `apps/web/Dockerfile` (standalone), header CSP và HSTS, `/api/health`, IP lấy từ phần tử cuối `X-Forwarded-For`, trang `/khao-sat` (thang 5 điểm, đợt mở bằng `SURVEY_PHASE`, bảng `survey_responses`), số liệu thật trên trang chủ khi có từ 100 câu trả lời, `scripts/report.mts` xuất số liệu cho hồ sơ. Hướng dẫn và danh mục kiểm thử bảo mật, nội dung ở `infra/TRIEN-KHAI.md`. Còn lại: chốt máy chủ, GPU, tên miền và mô hình (mục 11), triển khai, kiểm thử xâm nhập, chạy `make eval-chat` với mô hình thật, thử với một lớp khoảng 50 học viên trong 2 tuần. | Đạt các chỉ số ở mục 9 |
+| 8. Trang quản trị | Sau 12 | Đã xong phần mã nguồn: vai trò giảng viên và `npm run cap-quyen`, `/quan-tri` gồm Tổng quan, Học viên, Theo lớp, Hỏi đáp, đánh dấu đã xem, đặt lại mật khẩu trên web (mục 4.2). Còn lại: cấp tài khoản cho giảng viên của Khoa khi triển khai. | Giảng viên xem tiến độ theo lớp và tin nhắn cần xem mà không cần truy vấn SQL |
+| 7. Thẻ ghi nhớ | Sau 12 | Đã xong phần mã nguồn: bộ thẻ YAML theo chương, lịch ôn lặp lại ngắt quãng, bảng `flashcard_states`, trang ôn thẻ có phím tắt, số liệu ở trang Tiến độ và báo cáo hồ sơ (mục 4.3). Còn lại: giảng viên duyệt 56 thẻ KTCT, bổ sung thẻ cho chương 1, 4, 5, 6 (hiện 4–7 thẻ). | Mỗi chương có bộ thẻ, kiểm thử nội dung thẻ chạy trong `npm test` |
 | 6. Mở rộng môn | Sau 12 | Đã xong phần mã nguồn: phần riêng của môn trong prompt, bộ phân loại và câu hỏi gợi ý chuyển sang `content/<môn>/tro-ly.yaml`; tên giáo trình trên thẻ trích dẫn lấy theo môn; mẫu môn ở `content/_mau-mon/` và `eval/_mau/`, hướng dẫn `content/THEM-MON.md`; `subjects.test.ts` kiểm tra môn đang mở có đủ manifest khớp chương, `tro-ly.yaml`, ngân hàng trắc nghiệm, bộ câu chuẩn; `make eval SUBJECT=<môn>`. Đã thử mở Triết học từ mẫu: trang chương, trắc nghiệm, thư viện, trợ lý chạy mà chỉ sửa `subjects.ts`. Còn lại: Khoa gửi giáo trình và nội dung của môn tiếp theo. | Không phải sửa code lõi |
+| 9. Trải nghiệm người dùng | Sau 12 | Đã xong đợt 1: trang **Hôm nay** (`/hoc`, học viên đăng nhập xong vào đây) gồm việc nên làm (thẻ đến hạn, chương nên làm trắc nghiệm, thẻ mới), chuỗi ngày học liên tiếp, đọc tiếp giáo trình, hội thoại gần đây (`features/progress/server/today.ts`, logic thuần ở `features/progress/today.ts`); trắc nghiệm lưu bài làm dở trong trình duyệt và hỏi làm tiếp, hỏi xác nhận khi nộp còn câu trống, nút **Ôn lại câu sai** (chấm nhưng không lưu vào tiến độ), "Hỏi trợ lý về câu này" dưới mỗi câu sai; trình đọc PDF nhớ trang đọc gần nhất theo tài khoản (bảng `reading_positions`, migration `0006`) và có lối sang trợ lý, trắc nghiệm, thẻ ghi nhớ của chương đang đọc. **Chế độ đọc** (`features/reader/`): trình đọc PDF cuộn liên tục, phóng to thu nhỏ không chớp, có chế độ toàn màn hình; bài viết và văn kiện văn bản có nút Chế độ đọc toàn màn hình, thanh tiến độ, chỉnh cỡ chữ, kiểu chữ có chân (Noto Serif), độ rộng dòng; ba nền Sáng, Vàng giấy, Tối dùng chung cho cả PDF và văn bản, lưu trong trình duyệt của người đọc. Còn lại: đợt 2 (PWA, thanh điều hướng dưới trên điện thoại, tìm kiếm Ctrl+K), đợt 3 (nhập danh sách lớp, kích hoạt tài khoản thay cho tự đăng ký). | Học viên mở trang là biết việc cần làm, không mất bài làm dở |
 
 ---
 
@@ -416,7 +433,7 @@ Nghị quyết 57-NQ/TW về đột phá phát triển khoa học, công nghệ,
 | 1 | Mô hình ngôn ngữ chạy tại Học viện hay qua API bên ngoài | Ưu tiên chạy tại Học viện. Trước giai đoạn 5, so sánh `qwen2.5:7b` với vài mô hình mở lớn hơn bằng `make eval` và chọn mô hình nhỏ nhất đạt mục 9. Chỉ dùng API ngoài khi Học viện cho phép. Riêng việc đo trên bộ câu chuẩn (không chứa dữ liệu học viên) tạm dùng `qwen/qwen-2.5-7b-instruct` qua OpenRouter, cấu hình trong `.env`. |
 | 2 | Máy chủ, GPU, dung lượng VRAM, tên miền | Hỏi đơn vị CNTT của Học viện trong tuần 1. Quyết định 1 phụ thuộc vào câu trả lời này. |
 | 3 | Đối tượng truy cập | Đã chốt 30/10/2026: bản sáng kiến mở trợ lý cho mọi người, không cần đăng nhập, chặn lạm dụng bằng giới hạn tần suất theo IP. Từ 01/11/2026 có thêm tài khoản không bắt buộc. |
-| 4 | Tài khoản riêng hay tích hợp hệ thống sẵn có | Đã chốt 01/11/2026: tài khoản riêng, học viên tự đăng ký bằng mã học viên; vai trò giảng viên làm sau. Mã học viên chưa đối chiếu với danh sách lớp. |
+| 4 | Tài khoản riêng hay tích hợp hệ thống sẵn có | Đã chốt 01/11/2026: tài khoản riêng, học viên tự đăng ký bằng mã học viên. Từ 03/11/2026 có vai trò giảng viên do người phát triển cấp bằng `npm run cap-quyen`. Mã học viên chưa đối chiếu với danh sách lớp. |
 | 5 | Người soạn bộ câu chuẩn và ngân hàng trắc nghiệm | Cần ít nhất một giảng viên KTCT tham gia từ tuần 1. |
 | 6 | Hiển thị toàn văn giáo trình | Đã chốt 29/10/2026: mọi tài liệu trong Thư viện đọc toàn văn công khai. Trước khi mở công khai, Khoa cần xác nhận quyền phát hành giáo trình, sách của NXB Chính trị quốc gia Sự thật và bài tạp chí; văn kiện của Đảng không vướng. |
 | 7 | Bảng màu, biểu trưng, cách xưng hô | Khoa và đơn vị truyền thông của Học viện duyệt. |

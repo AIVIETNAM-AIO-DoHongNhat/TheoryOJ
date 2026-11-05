@@ -60,7 +60,7 @@ export function PostCover({ post, featured, className }: { post: Post; featured?
         <div className={cn("flex flex-col gap-1", featured ? "max-w-[70%]" : "max-w-[62%]")}>
           {chapter && <span className="text-xs font-medium uppercase tracking-[0.16em] text-mint">Chương {post.chapters.join(", ")}</span>}
           <span className={cn("text-balance font-heading font-bold leading-tight text-white", featured ? "text-2xl md:text-3xl" : "text-xl")}>
-            {subject?.name ?? "Khoa Lý luận chính trị"}
+            {subject?.name ?? "Khoa LLCT&KHXHNV"}
           </span>
         </div>
       </div>

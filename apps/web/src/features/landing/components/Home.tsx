@@ -1,5 +1,5 @@
 import {
-  ArrowRight, ArrowUp, ArrowUpRight, BookOpen, FileText, Library, MessageSquareText, Newspaper, Quote, Search, Sparkles,
+  ArrowRight, ArrowUp, ArrowUpRight, BookOpen, FileText, Library, MessageSquareText, Newspaper, Search, Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -23,26 +23,45 @@ const wrap = "mx-auto max-w-6xl px-4";
 
 /* ------------------------------ Hero ------------------------------ */
 
+/** Hiện dần lần lượt khi tải trang: mỗi khối chậm hơn khối trước một nhịp. */
+const rise = "animate-rise";
+
 /**
  * Hero nền xanh đậm, ô hỏi trợ lý đặt ngay đầu trang. Ô hỏi là form GET tới /tro-ly nên chạy được cả khi chưa tải JavaScript.
+ * Chuyển động chỉ bằng CSS: chữ hiện dần, ảnh hé mở, thẻ hỏi đáp mẫu bật lên rồi trôi nhẹ, vệt sáng nền dạt chậm.
+ * Người dùng bật giảm chuyển động thì mọi thứ đứng yên ở trạng thái cuối (globals.css).
  */
 export function HomeHero({ facts, suggestions }: { facts: { value: string; label: string }[]; suggestions: Suggestion[] }) {
+  const { demo } = hero;
   return (
-    <section className="mesh-dark relative overflow-hidden text-white">
-      <div className="grid-lines pointer-events-none absolute inset-0" aria-hidden />
-      <div className={cn(wrap, "relative grid items-center gap-14 py-16 sm:py-20 lg:grid-cols-[1.15fr_0.85fr] lg:py-24")}>
-        <Reveal className="flex flex-col items-start">
-          <Badge variant="glass-dark" className="h-7 gap-2 px-3 text-xs font-medium">
+    <section className="mesh-dark relative isolate overflow-hidden text-white">
+      <div className="grid-lines pointer-events-none absolute inset-0 -z-10" aria-hidden />
+      {/* Hai vệt sáng dạt chậm, làm nền sống động mà không kéo mắt khỏi nội dung. */}
+      <div aria-hidden className="pointer-events-none absolute -top-40 -left-32 -z-10 size-[520px] rounded-full bg-primary-bright/25 blur-[120px] motion-safe:animate-drift" />
+      <div aria-hidden className="pointer-events-none absolute -right-40 bottom-0 -z-10 size-[460px] rounded-full bg-lime-300/10 blur-[120px] motion-safe:animate-drift motion-safe:[animation-direction:alternate-reverse]" />
+
+      <div className={cn(wrap, "relative grid items-center gap-14 py-16 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:py-24")}>
+        <div className="flex flex-col items-start">
+          <Badge variant="glass-dark" className={cn(rise, "h-7 gap-2 px-3 text-xs font-medium")}>
             <AcademyLogo className="size-4 drop-shadow-none" />
             {hero.overline}
           </Badge>
-          <h1 className="mt-6 text-balance text-[44px] font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-[68px]">
-            {hero.titleStart} <span className="text-gradient">{hero.titleAccent}</span>
+          {/* Hai vế mỗi vế một dòng để không ngắt giữa cụm "chính trị". */}
+          <h1 className={cn(rise, "anim-delay-80 mt-6 text-[34px] font-extrabold leading-[1.08] tracking-tight min-[400px]:text-[38px] sm:text-[56px] lg:text-[60px]")}>
+            <span className="block sm:whitespace-nowrap">{hero.titleStart}</span>
+            <span className="text-gradient block text-balance motion-safe:animate-gradient-pan">{hero.titleAccent}</span>
           </h1>
-          <p className="mt-6 max-w-xl text-pretty text-base leading-relaxed text-white/70 sm:text-lg">{hero.lead}</p>
+          <p className={cn(rise, "anim-delay-160 mt-5 max-w-lg text-pretty text-base leading-relaxed text-white/70 sm:text-lg")}>{hero.lead}</p>
 
-          <form action="/tro-ly" className="mt-9 flex w-full max-w-xl items-center gap-2 rounded-2xl bg-white p-2 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.6)]">
-            <Search className="ml-2 size-5 shrink-0 text-muted-foreground" aria-hidden />
+          <form
+            action="/tro-ly"
+            className={cn(
+              rise,
+              "anim-delay-240 group/ask mt-9 flex w-full max-w-xl items-center gap-2 rounded-2xl bg-card p-2 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.6)]",
+              "ring-4 ring-white/0 transition-shadow focus-within:ring-white/15",
+            )}
+          >
+            <Search className="ml-2 size-5 shrink-0 text-muted-foreground transition-colors group-focus-within/ask:text-primary" aria-hidden />
             <input
               name="q"
               required
@@ -57,8 +76,9 @@ export function HomeHero({ facts, suggestions }: { facts: { value: string; label
             </Button>
           </form>
 
-          <div className="mt-4 flex max-w-xl flex-wrap gap-2">
-            {suggestions.map((s) => (
+          <div className={cn(rise, "anim-delay-320 mt-4 flex max-w-xl flex-wrap items-center gap-2")}>
+            <span className="text-xs font-medium uppercase tracking-[0.14em] text-white/45">{hero.suggestLabel}</span>
+            {suggestions.slice(0, 2).map((s) => (
               <Link
                 key={s.text}
                 href={`/tro-ly?che-do=${s.mode}&q=${encodeURIComponent(s.text)}`}
@@ -69,37 +89,68 @@ export function HomeHero({ facts, suggestions }: { facts: { value: string; label
             ))}
           </div>
 
-          <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
-            {hero.links.map((l) => (
-              <Link key={l.href} href={l.href} className="group flex items-center gap-1.5 text-sm font-semibold text-mint hover:text-white">
+          <div className={cn(rise, "anim-delay-400 mt-9 flex flex-wrap items-center gap-x-6 gap-y-3")}>
+            {hero.links.map((l, i) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className={cn(
+                  "group flex items-center gap-1.5 text-sm font-semibold transition-colors",
+                  i === 0 ? "rounded-full bg-mint px-4 py-2 text-forest hover:bg-white" : "text-mint hover:text-white",
+                )}
+              >
                 {l.label}
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
             ))}
           </div>
-        </Reveal>
+        </div>
 
-        <Reveal delay={120} className="relative hidden lg:block">
-          <div className="absolute -inset-6 rounded-[40px] bg-primary-bright/20 blur-3xl" aria-hidden />
-          <PhotoSlot
-            photo={photos.hero}
-            priority
-            sizes="440px"
-            className="relative aspect-[4/5] rounded-3xl ring-1 ring-white/15"
-          />
-          <div className="absolute -bottom-6 -left-8 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-foreground shadow-[0_20px_40px_-16px_rgb(0_0_0/0.45)]">
-            <span className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <Quote className="size-5" />
+        <div className="relative hidden lg:block">
+          <Reveal delay={120}>
+            <div className="reveal-mask relative aspect-[4/5] overflow-hidden rounded-3xl ring-1 ring-white/15">
+              <div className="reveal-zoom absolute inset-0">
+                <PhotoSlot photo={photos.hero} priority sizes="460px" className="h-full rounded-none" />
+              </div>
+              {/* Tối dần ở chân ảnh để thẻ hỏi đáp nổi rõ. */}
+              <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-forest/80 to-transparent" />
+            </div>
+          </Reveal>
+
+          {/* Hỏi đáp mẫu: câu hỏi bật lên trước, câu trả lời có trích dẫn bật sau, rồi cả hai trôi nhẹ lệch nhịp. Bấm câu hỏi để hỏi thật. */}
+          <Link
+            href={`/tro-ly?q=${encodeURIComponent(demo.question)}`}
+            aria-label={`Hỏi trợ lý: ${demo.question}`}
+            className="absolute top-10 -left-10 animate-pop-in anim-delay-700"
+          >
+            <span className="flex items-center gap-2 rounded-2xl rounded-bl-md bg-card px-4 py-2.5 text-sm font-medium text-foreground shadow-[0_20px_40px_-16px_rgb(0_0_0/0.5)] transition-colors hover:text-primary motion-safe:animate-float">
+              {demo.question}
             </span>
-            <span className="flex flex-col leading-tight">
-              <span className="text-sm font-semibold">Trích dẫn đến từng trang</span>
-              <span className="text-xs text-muted-foreground">Bấm để mở đúng trang giáo trình</span>
-            </span>
+          </Link>
+
+          <div className="absolute -bottom-8 -left-14 w-[320px] animate-pop-in anim-delay-1100" aria-hidden>
+            <div className="flex flex-col gap-3 rounded-2xl bg-card p-4 text-foreground shadow-[0_24px_48px_-16px_rgb(0_0_0/0.55)] motion-safe:animate-float motion-safe:[animation-delay:-3.5s]">
+              <span className="flex items-center gap-2 text-xs font-semibold text-primary">
+                <span className="flex size-6 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <Sparkles className="size-3.5" />
+                </span>
+                Trợ lý học tập
+              </span>
+              <p className="text-[13px] leading-relaxed text-foreground/85">{demo.answer}</p>
+              <span className="flex items-center gap-2 self-start rounded-full bg-primary-soft px-2.5 py-1 text-xs font-medium text-primary">
+                <span className="relative flex size-2">
+                  <span className="absolute inline-flex size-full rounded-full bg-primary/50 motion-safe:animate-ping" />
+                  <span className="relative inline-flex size-2 rounded-full bg-primary" />
+                </span>
+                <BookOpen className="size-3.5" />
+                {demo.source} · tr. {demo.page}
+              </span>
+            </div>
           </div>
-        </Reveal>
+        </div>
       </div>
 
-      <div className="relative border-t border-white/10 bg-black/10">
+      <div className={cn(rise, "anim-delay-500 relative border-t border-white/10 bg-black/10")}>
         <dl className={cn(wrap, "grid grid-cols-2 sm:grid-cols-4")}>
           {facts.map((f, i) => (
             <div
@@ -146,7 +197,7 @@ export function BentoSection({ library, postCount }: { library: LibraryDoc[]; po
               <h2 className="text-2xl font-bold">{subjects.title}</h2>
               <p className="text-sm leading-relaxed text-muted-foreground">{subjects.text}</p>
             </div>
-            <ul className="mt-auto flex flex-col divide-y rounded-2xl border bg-white">
+            <ul className="mt-auto flex flex-col divide-y rounded-2xl border bg-card">
               {SUBJECTS.map((s) => (
                 <li key={s.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
                   <span className={cn("font-medium", !s.active && "text-muted-foreground")}>{s.name}</span>
@@ -162,7 +213,7 @@ export function BentoSection({ library, postCount }: { library: LibraryDoc[]; po
         </Reveal>
 
         <Reveal delay={60}>
-          <Link href={libraryLink.href} className={cn(bento, "h-full bg-white")}>
+          <Link href={libraryLink.href} className={cn(bento, "h-full bg-card")}>
             <div className="flex items-start justify-between">
               <span className="flex size-12 items-center justify-center rounded-2xl border text-primary">
                 <Library className="size-6" strokeWidth={1.75} />
@@ -183,7 +234,7 @@ export function BentoSection({ library, postCount }: { library: LibraryDoc[]; po
         </Reveal>
 
         <Reveal delay={120}>
-          <Link href={posts.href} className={cn(bento, "h-full bg-white")}>
+          <Link href={posts.href} className={cn(bento, "h-full bg-card")}>
             <div className="flex items-start justify-between">
               <span className="flex size-12 items-center justify-center rounded-2xl border text-primary">
                 <Newspaper className="size-6" strokeWidth={1.75} />
@@ -230,12 +281,12 @@ function DemoChat() {
   return (
     <div aria-hidden className="relative">
       <div className="absolute -inset-4 rounded-[36px] bg-primary-bright/15 blur-2xl" />
-      <div className="relative flex flex-col gap-5 rounded-3xl border bg-white p-5 shadow-[0_30px_60px_-30px_rgb(5_46_22/0.4)] sm:p-7">
+      <div className="relative flex flex-col gap-5 rounded-3xl border bg-card p-5 shadow-[0_30px_60px_-30px_rgb(5_46_22/0.4)] sm:p-7">
         <div className="flex justify-end">
           <p className="max-w-[85%] rounded-3xl rounded-br-lg bg-primary-tint px-4 py-2.5 text-sm">{assistantDemo.question}</p>
         </div>
         <div className="flex gap-3">
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-white">
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-card">
             <AcademyLogo className="size-6 drop-shadow-none" />
           </span>
           <div className="flex min-w-0 flex-col gap-3 text-sm leading-relaxed">
@@ -274,7 +325,7 @@ export function AssistantShowcase() {
             {MODE_IDS.map((id) => {
               const Icon = MODE_ICONS[id];
               return (
-                <li key={id} className="flex gap-3 rounded-2xl border bg-white p-4">
+                <li key={id} className="flex gap-3 rounded-2xl border bg-card p-4">
                   <Icon className="mt-0.5 size-5 shrink-0 text-primary" strokeWidth={1.75} />
                   <span className="flex flex-col gap-0.5">
                     <span className="text-sm font-semibold">{MODES[id].label}</span>

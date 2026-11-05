@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 
-/** Hiện dần khối nội dung khi cuộn tới. Không có JavaScript thì nội dung vẫn hiện nhờ khối noscript ở layout.tsx. */
+/**
+ * Hiện dần khối nội dung khi cuộn tới. Không có JavaScript thì nội dung vẫn hiện nhờ khối noscript ở layout.tsx.
+ * Độ trễ được ghi cả vào biến `--reveal-delay` để ảnh `.reveal-mask` bên trong hé mở cùng nhịp.
+ */
 export function Reveal({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -23,7 +26,7 @@ export function Reveal({ children, delay = 0, className = "" }: { children: Reac
   }, []);
 
   return (
-    <div ref={ref} className={`reveal ${className}`} style={{ transitionDelay: `${delay}ms` }}>
+    <div ref={ref} className={`reveal ${className}`} style={{ transitionDelay: `${delay}ms`, "--reveal-delay": `${delay}ms` } as CSSProperties}>
       {children}
     </div>
   );

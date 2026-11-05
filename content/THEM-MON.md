@@ -10,6 +10,7 @@ Hướng dẫn cho người phát triển và giảng viên của môn mới, �
 | Ranh giới chương | `content/triet/manifest.yaml` | Trang PDF đầu và cuối của từng chương, độ lệch giữa trang PDF và trang in (`page_offset`). |
 | Lời dặn cho trợ lý | `content/triet/tro-ly.yaml` | Phạm vi câu hỏi hợp lệ, ví dụ câu cần từ chối, nhiệm vụ cần liên hệ, câu hỏi gợi ý. |
 | Ngân hàng trắc nghiệm | `content/triet/question-bank/chuong-<n>.yaml` | Mỗi chương từ 20 câu, quy ước ở `content/ktct/question-bank/_mau.yaml`. |
+| Thẻ ghi nhớ (không bắt buộc) | `content/triet/the-ghi-nho/chuong-<n>.yaml` | Khái niệm, công thức theo chương, quy ước ở `content/ktct/the-ghi-nho/_mau.yaml`. |
 | Bộ câu chuẩn | `eval/triet/golden.jsonl` | Khoảng 50 câu: câu lý thuyết kèm trang nguồn, câu ngoài phạm vi, câu khiêu khích. |
 
 Mẫu của ba file đầu nằm ở `content/_mau-mon/`, mẫu bộ câu chuẩn ở `eval/_mau/golden.jsonl`. Phần chung cho mọi môn (trích nguồn đến trang, xưng "đồng chí", câu từ chối, chống chèn lệnh, không bình luận về lãnh đạo) đã có sẵn trong code, giảng viên không cần viết lại.

@@ -1,10 +1,10 @@
-import { ArrowRight, Calculator, CloudUpload, ListChecks, MessageSquareText, Trophy } from "lucide-react";
+import { ArrowRight, Calculator, GalleryVerticalEnd, ListChecks, MessageSquareText, Trophy } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { connection } from "next/server";
 import { Suspense } from "react";
 
 import { PageHeader } from "@/components/layout/PageHeader";
-import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,11 +14,19 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ACTIVE_SUBJECTS, type Subject } from "@/config/subjects";
 import { EXERCISES } from "@/domain/ktct/exercises";
+import { StudentGate } from "@/features/auth/components/StudentGate";
+import { cardStatus } from "@/features/flashcards/schedule";
+import { getDeck } from "@/features/flashcards/server/deck";
+import { getStates } from "@/features/flashcards/server/states";
+import { userCardIds } from "@/features/flashcards/server/user-cards";
+import { noteCounts } from "@/features/notes/server/notes";
 import { type ChapterProgress, getProgress } from "@/features/progress/server/progress";
+import { pickNextChapter } from "@/features/progress/today";
+import { reviewHref } from "@/features/review/paths";
 import { quizCounts } from "@/features/quiz/server/bank";
 import { PASS_RATIO, QUIZ_SIZE } from "@/features/quiz/types";
-import { getCurrentUser } from "@/lib/auth/session";
-import { getVisitorId } from "@/lib/visitor";
+import { getCurrentUser, isStudent } from "@/lib/auth/session";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Tiến độ ôn tập" };
 
@@ -32,11 +40,11 @@ function status(c: ChapterProgress) {
 
 function NoProgress() {
   return (
-    <Empty className="border bg-white py-16">
+    <Empty className="border bg-card py-16">
       <EmptyHeader>
         <EmptyTitle>Chưa có lượt ôn tập nào</EmptyTitle>
         <EmptyDescription>
-          Làm trắc nghiệm hoặc bài tập của một chương, kết quả sẽ hiện ở đây. Tiến độ lưu theo trình duyệt này, không cần đăng nhập.
+          Làm trắc nghiệm, bài tập hoặc ôn thẻ ghi nhớ của một chương, kết quả sẽ hiện ở đây.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
@@ -51,7 +59,27 @@ function NoProgress() {
 
 async function SubjectProgress({ subject, visitorId }: { subject: Subject; visitorId: string }) {
   const numbers = subject.chapters.map((c) => c.number);
-  const progress = await getProgress(visitorId, subject.id, numbers);
+  const [progress, cardStates, ownCards, notes] = await Promise.all([
+    getProgress(visitorId, subject.id, numbers),
+    getStates(visitorId, subject.id),
+    userCardIds(visitorId, subject.id),
+    noteCounts(visitorId, subject.id),
+  ]);
+  // Trạng thái thẻ (đến hạn, đã thuộc) tính theo thời điểm mở trang.
+  await connection();
+  const now = new Date();
+  const cards = Object.fromEntries(
+    numbers.map((n) => {
+      // Thẻ trong content/ cùng thẻ học viên tự tạo.
+      const ids = [...(getDeck(subject.id, n)?.cards.map((c) => c.id) ?? []), ...ownCards.filter((c) => c.chapter === n).map((c) => c.id)];
+      const st = ids.map((id) => cardStatus(cardStates.get(id), now));
+      return [n, { total: ids.length, mastered: st.filter((x) => x === "da-thuoc").length, due: st.filter((x) => x === "den-han").length, seen: st.filter((x) => x !== "moi").length }];
+    }),
+  );
+  const cardTotal = Object.values(cards).reduce((a, c) => a + c.total, 0);
+  const noteTotal = Object.values(notes).reduce((a, b) => a + b, 0);
+  const mastered = Object.values(cards).reduce((a, c) => a + c.mastered, 0);
+  const dueCards = Object.values(cards).reduce((a, c) => a + c.due, 0);
   const counts = quizCounts(subject.id, numbers);
   const rows = progress.chapters;
   const quizzes = rows.reduce((s, c) => s + c.quizAttempts, 0);
@@ -59,11 +87,9 @@ async function SubjectProgress({ subject, visitorId }: { subject: Subject; visit
   const exercises = rows.reduce((s, c) => s + c.exerciseAttempts, 0);
   const solved = rows.reduce((s, c) => s + c.exerciseSolved, 0);
   const asked = rows.reduce((s, c) => s + c.questions, 0);
-  // Ưu tiên chương đã làm mà chưa đạt, sau đó tới chương chưa làm.
-  const pending = subject.chapters.filter((c) => counts[c.number] && (rows.find((r) => r.chapter === c.number)?.quizBest ?? 0) < PASS_RATIO);
-  const nextChapter = pending.find((c) => rows.find((r) => r.chapter === c.number)?.quizAttempts) ?? pending[0];
+  const nextChapter = pickNextChapter(subject.chapters, rows, counts);
 
-  if (quizzes + exercises + asked === 0) return <NoProgress />;
+  if (quizzes + exercises + asked + cardStates.size + noteTotal === 0) return <NoProgress />;
 
   const tiles = [
     { icon: Trophy, label: "Chương đã đạt", value: `${passed}/${Object.keys(counts).length}`, hint: `Đúng từ ${score(PASS_RATIO)} trở lên` },
@@ -71,10 +97,18 @@ async function SubjectProgress({ subject, visitorId }: { subject: Subject; visit
     { icon: Calculator, label: "Bài tập làm đúng hết", value: `${solved}/${exercises}`, hint: "Bài tập tính toán" },
     { icon: MessageSquareText, label: "Câu đã hỏi trợ lý", value: String(asked), hint: "Có chọn chương" },
   ];
+  if (cardTotal) {
+    tiles.splice(1, 0, {
+      icon: GalleryVerticalEnd,
+      label: "Thẻ đã thuộc",
+      value: `${mastered}/${cardTotal}`,
+      hint: dueCards ? `${dueCards} thẻ đến hạn ôn hôm nay` : "Không có thẻ đến hạn",
+    });
+  }
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className={cn("grid gap-4 sm:grid-cols-2", tiles.length > 4 ? "lg:grid-cols-5" : "lg:grid-cols-4")}>
         {tiles.map((t) => (
           <Card key={t.label} size="sm">
             <CardHeader>
@@ -96,7 +130,7 @@ async function SubjectProgress({ subject, visitorId }: { subject: Subject; visit
               <CardDescription>Nên ôn tiếp</CardDescription>
               <CardTitle>Chương {nextChapter.number}: {nextChapter.title}</CardTitle>
             </div>
-            <Button render={<Link href={`/mon/${subject.id}/chuong/${nextChapter.number}/trac-nghiem`} />} nativeButton={false} className="shrink-0">
+            <Button render={<Link href={reviewHref(subject.id, nextChapter.number, "trac-nghiem")} />} nativeButton={false} className="shrink-0">
               Làm trắc nghiệm
               <ArrowRight data-icon="inline-end" />
             </Button>
@@ -116,7 +150,7 @@ async function SubjectProgress({ subject, visitorId }: { subject: Subject; visit
                 <div className="flex min-w-0 flex-col gap-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-heading text-lg font-bold text-primary">{String(chapter.number).padStart(2, "0")}</span>
-                    <Link href={`/mon/${subject.id}/chuong/${chapter.number}`} className="min-w-0 font-medium leading-snug hover:text-primary">
+                    <Link href={reviewHref(subject.id, chapter.number)} className="min-w-0 font-medium leading-snug hover:text-primary">
                       {chapter.title}
                     </Link>
                     <Badge variant={s.variant}>{s.label}</Badge>
@@ -128,17 +162,40 @@ async function SubjectProgress({ subject, visitorId }: { subject: Subject; visit
                       {c.quizAttempts ? `cao nhất ${pct(c.quizBest!)}, gần nhất ${pct(c.quizLast!)}, ${c.quizAttempts} lượt` : "chưa làm"}
                     </span>
                     {hasExercises && <span>Bài tập: {c.exerciseAttempts ? `${c.exerciseSolved}/${c.exerciseAttempts} bài đúng hết` : "chưa làm"}</span>}
+                    {cards[chapter.number].total > 0 && (
+                      <span>
+                        Thẻ ghi nhớ:{" "}
+                        {cards[chapter.number].seen
+                          ? `đã thuộc ${cards[chapter.number].mastered}/${cards[chapter.number].total}${cards[chapter.number].due ? `, ${cards[chapter.number].due} thẻ đến hạn` : ""}`
+                          : "chưa ôn"}
+                      </span>
+                    )}
                     {c.questions > 0 && <span>Đã hỏi trợ lý {c.questions} câu</span>}
+                    {notes[chapter.number] > 0 && (
+                      <Link href={`/mon/${subject.id}/chuong/${chapter.number}`} className="hover:text-primary hover:underline">
+                        {notes[chapter.number]} ghi chú
+                      </Link>
+                    )}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
+                  {cards[chapter.number].total > 0 && (
+                    <Button
+                      size="sm"
+                      variant={cards[chapter.number].due ? "default" : "outline"}
+                      render={<Link href={reviewHref(subject.id, chapter.number, "the-ghi-nho")} />}
+                      nativeButton={false}
+                    >
+                      Thẻ ghi nhớ{cards[chapter.number].due ? ` (${cards[chapter.number].due})` : ""}
+                    </Button>
+                  )}
                   {counts[chapter.number] && (
-                    <Button size="sm" variant="outline" render={<Link href={`/mon/${subject.id}/chuong/${chapter.number}/trac-nghiem`} />} nativeButton={false}>
+                    <Button size="sm" variant="outline" render={<Link href={reviewHref(subject.id, chapter.number, "trac-nghiem")} />} nativeButton={false}>
                       Trắc nghiệm
                     </Button>
                   )}
                   {hasExercises && (
-                    <Button size="sm" variant="outline" render={<Link href={`/mon/${subject.id}/chuong/${chapter.number}/bai-tap`} />} nativeButton={false}>
+                    <Button size="sm" variant="outline" render={<Link href={reviewHref(subject.id, chapter.number, "bai-tap")} />} nativeButton={false}>
                       Bài tập
                     </Button>
                   )}
@@ -180,44 +237,24 @@ async function SubjectProgress({ subject, visitorId }: { subject: Subject; visit
   );
 }
 
-/** Chưa đăng nhập: mời tạo tài khoản để tiến độ không mất khi đổi máy hay xóa dữ liệu trình duyệt. */
-function SignInPrompt() {
-  return (
-    <Alert className="bg-primary-soft">
-      <CloudUpload />
-      <AlertTitle>Lưu tiến độ theo tài khoản</AlertTitle>
-      <AlertDescription>
-        Tiến độ dưới đây đang lưu trên trình duyệt này. Đăng ký hoặc đăng nhập để giữ kết quả và học tiếp trên máy khác;
-        những gì đã làm sẽ được chuyển vào tài khoản.
-      </AlertDescription>
-      <AlertAction>
-        <Button size="sm" render={<Link href="/dang-ky?tiep=/tien-do" />} nativeButton={false}>
-          Đăng ký
-        </Button>
-      </AlertAction>
-    </Alert>
-  );
-}
-
 async function ProgressContent() {
-  const [user, visitorId] = await Promise.all([getCurrentUser(), getVisitorId()]);
+  const user = await getCurrentUser();
+  if (!isStudent(user)) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-12 sm:py-16">
+        <StudentGate user={user} next="/tien-do" action="xem tiến độ" />
+      </div>
+    );
+  }
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-12 sm:py-16">
-      {user ? (
-        <p className="-mb-6 text-sm text-muted-foreground">
-          Học viên <span className="font-medium text-foreground">{user.fullName}</span> · {user.studentCode} · Lớp {user.className}
-        </p>
-      ) : (
-        <SignInPrompt />
-      )}
+      <p className="-mb-6 text-sm text-muted-foreground">
+        Học viên <span className="font-medium text-foreground">{user.fullName}</span> · {user.studentCode} · Lớp {user.className}
+      </p>
       {ACTIVE_SUBJECTS.map((subject) => (
         <section key={subject.id} className="flex flex-col gap-6">
           {ACTIVE_SUBJECTS.length > 1 && <h2 className="text-2xl font-bold">{subject.name}</h2>}
-          {visitorId ? (
-            <SubjectProgress subject={subject} visitorId={visitorId} />
-          ) : (
-            <NoProgress />
-          )}
+          <SubjectProgress subject={subject} visitorId={user.visitorId} />
         </section>
       ))}
     </div>
@@ -230,7 +267,7 @@ export default function ProgressPage() {
       <PageHeader
         crumbs={[{ label: "Ôn tập", href: "/on-tap" }, { label: "Tiến độ" }]}
         title="Tiến độ ôn tập"
-        lead="Kết quả trắc nghiệm, bài tập và số câu đã hỏi trợ lý theo từng chương. Đăng nhập thì tiến độ lưu theo tài khoản, học trên máy nào cũng thấy; chưa đăng nhập thì lưu theo trình duyệt này."
+        lead="Thẻ ghi nhớ, kết quả trắc nghiệm, bài tập và số câu đã hỏi trợ lý theo từng chương. Tiến độ lưu theo tài khoản học viên, học trên máy nào cũng thấy."
       />
       <Suspense
         fallback={

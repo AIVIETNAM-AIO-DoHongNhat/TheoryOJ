@@ -1,5 +1,3 @@
-import { SUBJECTS } from "@/config/subjects";
-
 export interface NavItem {
   href: string;
   label: string;
@@ -9,19 +7,13 @@ export interface NavItem {
   children?: NavItem[];
 }
 
-/** Menu chính của toàn trang. Học liệu liệt kê mọi môn của Khoa; trợ lý là nút nổi ở góc phải. */
+/**
+ * Menu chính của toàn trang. Bài học và Ôn tập cùng dẫn tới trang chọn môn của nhánh mình, không mở danh sách môn khi rê chuột.
+ * Trợ lý là nút nổi ở góc phải.
+ */
 export const NAV: NavItem[] = [
   { href: "/", label: "Trang chủ" },
-  {
-    href: "/mon",
-    label: "Học liệu",
-    children: SUBJECTS.map((s) => ({
-      href: `/mon/${s.id}`,
-      label: s.name,
-      description: s.active ? `${s.chapters.length} chương` : "Sắp triển khai",
-      soon: !s.active,
-    })),
-  },
+  { href: "/mon", label: "Bài học" },
   { href: "/on-tap", label: "Ôn tập" },
   { href: "/thu-vien", label: "Thư viện" },
   { href: "/bai-viet", label: "Bài viết" },

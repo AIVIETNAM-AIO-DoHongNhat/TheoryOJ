@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, eq, notInArray } from "drizzle-orm";
+import { and, eq, notInArray, sql } from "drizzle-orm";
 
 import { db, schema } from "@/lib/db";
 
@@ -33,11 +33,12 @@ export async function updateProfile(userId: string, input: { fullName: string; c
 /**
  * Gộp dữ liệu đã làm khi chưa đăng nhập (mã khách của trình duyệt) vào tài khoản.
  * Khảo sát mỗi đợt chỉ giữ một phiếu: tài khoản đã có phiếu đợt nào thì bỏ phiếu ẩn danh của đợt đó.
+ * Thẻ ghi nhớ cũng vậy: thẻ tài khoản đã ôn thì giữ lịch ôn của tài khoản.
  */
 export async function mergeVisitor(from: string, into: string) {
   if (from === into) return;
   await db.transaction(async (tx) => {
-    const { conversations, practiceAttempts, feedback, surveyResponses } = schema;
+    const { conversations, practiceAttempts, feedback, surveyResponses, flashcardStates } = schema;
     await tx.update(conversations).set({ visitorId: into }).where(eq(conversations.visitorId, from));
     await tx.update(practiceAttempts).set({ visitorId: into }).where(eq(practiceAttempts.visitorId, from));
     await tx.update(feedback).set({ visitorId: into }).where(eq(feedback.visitorId, from));
@@ -47,5 +48,15 @@ export async function mergeVisitor(from: string, into: string) {
       .set({ visitorId: into })
       .where(and(eq(surveyResponses.visitorId, from), notInArray(surveyResponses.phase, taken)));
     await tx.delete(surveyResponses).where(eq(surveyResponses.visitorId, from));
+    // Mã thẻ chỉ duy nhất trong một môn, nên so cả môn và mã thẻ.
+    await tx
+      .update(flashcardStates)
+      .set({ visitorId: into })
+      .where(and(
+        eq(flashcardStates.visitorId, from),
+        sql`(${flashcardStates.subject}, ${flashcardStates.cardId}) not in (
+          select subject, card_id from flashcard_states where visitor_id = ${into})`,
+      ));
+    await tx.delete(flashcardStates).where(eq(flashcardStates.visitorId, from));
   });
 }

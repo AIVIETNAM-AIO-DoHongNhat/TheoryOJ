@@ -45,7 +45,7 @@ class DocumentSpec:
     def meta_hash(self, extra: dict) -> str:
         """Mã băm của mọi thứ ảnh hưởng tới kết quả nạp, trừ nội dung file.
         Đổi chương, page_offset hay tham số cắt đoạn thì tài liệu được nạp lại."""
-        keep = {k: v for k, v in self.raw.items() if k not in {"todo", "converted_from", "publisher"}}
+        keep = {k: v for k, v in self.raw.items() if k not in {"todo", "converted_from", "publisher", "code"}}
         blob = json.dumps({"doc": keep, **extra}, ensure_ascii=False, sort_keys=True, default=str)
         return hashlib.sha256(blob.encode()).hexdigest()
 

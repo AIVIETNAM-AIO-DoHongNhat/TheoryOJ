@@ -5,7 +5,7 @@ import { z } from "zod";
 import { EXERCISES, getTemplate, gradeExercise } from "@/domain/ktct/exercises";
 import { QUANTITIES, type Quantity, type Step } from "@/domain/ktct/formulas";
 import { saveAttempt } from "@/features/progress/server/progress";
-import { ensureVisitorId } from "@/lib/visitor";
+import { requireStudent } from "@/lib/auth/session";
 
 const quantity = z.enum(Object.keys(QUANTITIES) as [Quantity, ...Quantity[]]);
 
@@ -24,6 +24,7 @@ export interface ExerciseResult {
 
 /** Chấm bài tập: tính lại đáp án từ dữ kiện bằng cùng bộ công thức, rồi lưu lượt làm vào tiến độ. */
 export async function submitExercise(input: z.input<typeof SubmitInput>): Promise<ExerciseResult> {
+  const user = await requireStudent();
   const { subject, chapter, template: templateId, given, answers } = SubmitInput.parse(input);
   const template = getTemplate(templateId);
   if (!template || !EXERCISES[subject]?.[chapter]?.includes(template)) throw new Error("Không có dạng bài này.");
@@ -35,7 +36,7 @@ export async function submitExercise(input: z.input<typeof SubmitInput>): Promis
   const score = results.filter((r) => r.correct).length;
 
   await saveAttempt({
-    visitorId: await ensureVisitorId(),
+    visitorId: user.visitorId,
     subject,
     chapter,
     kind: "exercise",

@@ -12,9 +12,9 @@ const toggleVariants = cva(
         default: "bg-transparent",
         outline: "border border-input bg-transparent hover:bg-muted",
         /** Ô chọn dạng thẻ: icon và hai dòng chữ, ô đang chọn nổi lên. */
-        card: "h-auto! justify-start gap-3 rounded-xl p-2.5! text-left whitespace-normal hover:bg-white/70 aria-pressed:bg-white aria-pressed:shadow-card aria-pressed:ring-1 aria-pressed:ring-primary/25",
+        card: "h-auto! justify-start gap-3 rounded-xl p-2.5! text-left whitespace-normal hover:bg-card/70 aria-pressed:bg-card aria-pressed:shadow-card aria-pressed:ring-1 aria-pressed:ring-primary/25",
         /** Chip chọn nhiều, ô đang chọn tô màu chính. */
-        chip: "border border-input bg-white text-muted-foreground hover:border-primary/40 aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground",
+        chip: "border border-input bg-card text-muted-foreground hover:border-primary/40 aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-primary-foreground",
       },
       size: {
         default:

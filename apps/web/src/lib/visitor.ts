@@ -29,7 +29,7 @@ export async function getVisitorId(): Promise<string | null> {
 
 /**
  * Trong Server Action hoặc route handler: lấy mã khách, chưa có thì tạo mới và ghi cookie
- * (trắc nghiệm, bài tập làm trước khi hỏi trợ lý).
+ * (hiện chỉ còn phiếu khảo sát cho khách; làm bài, ôn thẻ, hỏi trợ lý cần tài khoản học viên).
  */
 export async function ensureVisitorId(): Promise<string> {
   const current = await getVisitorId();

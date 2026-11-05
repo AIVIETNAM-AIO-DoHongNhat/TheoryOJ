@@ -9,14 +9,17 @@ import { AcademyLogo } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { originOf, THEMES, useTheme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
 import { ASSISTANT, isActive, NAV } from "./nav";
+import { THEME_OPTIONS } from "./ThemeToggle";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const close = () => setOpen(false);
+  const [theme, setTheme] = useTheme();
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -28,7 +31,7 @@ export function MobileMenu() {
           <div className="flex items-center gap-3">
             <AcademyLogo className="drop-shadow-none" />
             <div className="flex flex-col">
-              <SheetTitle className="font-heading">Khoa Lý luận chính trị</SheetTitle>
+              <SheetTitle className="font-heading">{"Khoa LLCT&KHXHNV"}</SheetTitle>
               <SheetDescription>Học viện An ninh nhân dân</SheetDescription>
             </div>
           </div>
@@ -68,7 +71,25 @@ export function MobileMenu() {
             </div>
           ))}
         </nav>
-        <div className="mt-auto p-4">
+        <div className="mt-auto flex flex-col gap-3 p-4">
+          <div role="radiogroup" aria-label="Giao diện" className="grid grid-cols-3 gap-1 rounded-lg bg-muted p-1">
+            {THEMES.map((t) => {
+              const { label, icon: Icon } = THEME_OPTIONS[t];
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  role="radio"
+                  aria-checked={theme === t}
+                  onClick={(e) => setTheme(t, originOf(e.currentTarget))}
+                  className="flex items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium text-muted-foreground transition-colors aria-checked:bg-card aria-checked:text-foreground aria-checked:shadow-sm"
+                >
+                  <Icon className="size-3.5" />
+                  {label}
+                </button>
+              );
+            })}
+          </div>
           <Button size="lg" render={<Link href={ASSISTANT.href} onClick={close} />} nativeButton={false} className="w-full">
             <MessageSquareText data-icon="inline-start" />
             {ASSISTANT.label}

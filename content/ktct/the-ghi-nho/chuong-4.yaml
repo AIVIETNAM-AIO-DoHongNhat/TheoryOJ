@@ -1,0 +1,30 @@
+subject: ktct
+chapter: 4
+status: nhap
+cards:
+  - id: t4-01
+    front: Độc quyền
+    back: |
+      Sự liên minh giữa các doanh nghiệp lớn, có khả năng thâu tóm việc sản xuất và tiêu thụ một số loại hàng hóa,
+      có khả năng định ra giá cả độc quyền, nhằm thu lợi nhuận độc quyền cao.
+    page: 75
+  - id: t4-02
+    front: Theo dự báo của C.Mác và Ph.Ăngghen, độc quyền hình thành từ đâu?
+    back: Tự do cạnh tranh dẫn đến tích tụ và tập trung sản xuất; tích tụ và tập trung sản xuất phát triển đến một mức độ nào đó sẽ dẫn đến độc quyền.
+    page: 75
+  - id: t4-03
+    front: Độc quyền nhà nước trong chủ nghĩa tư bản
+    back: Hình thức vận động mới của quan hệ sản xuất tư bản chủ nghĩa.
+    page: 79
+  - id: t4-04
+    front: Tư bản tài chính
+    back: |
+      "Kết quả của sự hợp nhất giữa tư bản ngân hàng của một số ít ngân hàng độc quyền lớn nhất, với tư bản của những liên minh
+      độc quyền các nhà công nghiệp" (V.I.Lênin).
+    page: 85
+  - id: t4-05
+    front: Xuất khẩu tư bản
+    back: |
+      Xuất khẩu giá trị ra nước ngoài (đầu tư tư bản ra nước ngoài) nhằm mục đích giá trị thặng dư và các nguồn lợi nhuận khác
+      ở nước nhập khẩu tư bản. Thực hiện dưới hình thức đầu tư trực tiếp hoặc đầu tư gián tiếp.
+    page: 85

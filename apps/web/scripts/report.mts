@@ -124,6 +124,12 @@ async function learning() {
   );
   line(`Bài tập tính toán: ${n(ex.attempts)} lượt, làm đúng hết ${n(ex.solved)} lượt (${pct(ex.solved, ex.attempts)}).`);
   line();
+  const [fc] = await sql`
+    select count(distinct visitor_id)::int as people, count(*)::int as cards, coalesce(sum(reviews), 0)::int as reviews,
+           count(*) filter (where interval_days >= 21)::int as mastered
+    from flashcard_states where last_reviewed_at >= ${from} and last_reviewed_at < ${to}`;
+  line(`Thẻ ghi nhớ: ${n(fc.people)} người dùng ôn ${n(fc.cards)} thẻ, tổng ${n(fc.reviews)} lượt chấm; ${n(fc.mastered)} thẻ đã thuộc (khoảng ôn từ 21 ngày).`);
+  line();
 }
 
 async function survey() {

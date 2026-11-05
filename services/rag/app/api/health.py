@@ -16,5 +16,6 @@ def health():
     except Exception as e:                      # báo lỗi thay vì trả 500 để giám sát đọc được
         chunks, db = {}, f"error: {type(e).__name__}"
     return {"status": "ok" if db == "ok" else "degraded", "db": db, "chunks": chunks,
+            "embed_provider": s.embed_provider, "rerank_provider": s.rerank_provider,
             "embed_model": s.embed_model, "embed_loaded": embedder.is_loaded(),
             "rerank_model": s.rerank_model if s.rerank_enabled else None, "rerank_loaded": reranker.is_loaded()}

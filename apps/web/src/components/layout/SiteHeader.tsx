@@ -5,9 +5,11 @@ import { AcademyLogo } from "@/components/brand";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AccountButton } from "@/features/auth/components/AccountButton";
 import { site } from "@/features/landing/content";
+import { StreakButton } from "@/features/progress/components/StreakButton";
 
 import { MainNav } from "./MainNav";
 import { MobileMenu } from "./MobileMenu";
+import { ThemeToggle } from "./ThemeToggle";
 
 /**
  * Đầu trang một dòng, dính ở đầu màn hình: logo và tên đơn vị, menu, tài khoản.
@@ -15,7 +17,7 @@ import { MobileMenu } from "./MobileMenu";
  */
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b border-t-[3px] border-t-primary bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/85">
+    <header className="sticky top-0 z-30 border-b border-t-[3px] border-t-primary bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/85">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
         <Link href="/" className="flex min-w-0 items-center gap-3">
           <AcademyLogo priority className="size-11 drop-shadow-none" />
@@ -26,6 +28,11 @@ export function SiteHeader() {
         </Link>
         <MainNav />
         <div className="flex items-center gap-2">
+          {/* Màn hẹp đổi giao diện trong menu bên (MobileMenu) để đầu trang không chật. */}
+          <ThemeToggle className="hidden sm:inline-flex" />
+          <Suspense fallback={null}>
+            <StreakButton />
+          </Suspense>
           <Suspense fallback={<Skeleton className="h-8 w-28 rounded-lg" />}>
             <AccountButton />
           </Suspense>

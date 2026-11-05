@@ -1,0 +1,26 @@
+subject: ktct
+chapter: 5
+status: nhap
+cards:
+  - id: t5-01
+    front: Kinh tế thị trường định hướng xã hội chủ nghĩa
+    back: |
+      Nền kinh tế vận hành theo các quy luật của thị trường, đồng thời góp phần hướng tới từng bước xác lập một xã hội dân giàu,
+      nước mạnh, dân chủ, công bằng, văn minh; có sự điều tiết của Nhà nước do Đảng Cộng sản Việt Nam lãnh đạo.
+    page: 104
+  - id: t5-02
+    front: Thể chế kinh tế
+    back: |
+      Hệ thống quy tắc, luật pháp, bộ máy quản lý và cơ chế vận hành nhằm điều chỉnh hành vi của các chủ thể kinh tế,
+      các hành vi sản xuất kinh doanh và các quan hệ kinh tế.
+    page: 113
+  - id: t5-03
+    front: Lợi ích kinh tế
+    back: Lợi ích vật chất, lợi ích thu được khi thực hiện các hoạt động kinh tế của con người.
+    page: 118
+  - id: t5-04
+    front: Quan hệ lợi ích kinh tế
+    back: |
+      Sự thiết lập những tương tác giữa con người với con người, giữa các cộng đồng, tổ chức kinh tế, bộ phận hợp thành nền kinh tế,
+      giữa quốc gia với phần còn lại của thế giới, nhằm mục tiêu xác lập các lợi ích kinh tế trong mối liên hệ với trình độ phát triển.
+    page: 121

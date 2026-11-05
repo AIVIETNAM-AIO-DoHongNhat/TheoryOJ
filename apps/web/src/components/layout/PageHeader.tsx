@@ -11,12 +11,16 @@ export interface Crumb {
   href?: string;
 }
 
-/** Đầu trang con: đường dẫn, tiêu đề, đoạn dẫn và vùng nút bên phải. */
+/**
+ * Đầu trang con: đường dẫn, tiêu đề, đoạn dẫn và vùng nút bên phải.
+ * Có `media` (hình nhỏ bên trái tiêu đề) thì `children` nằm ngay dưới tiêu đề, cạnh hình.
+ */
 export function PageHeader({
   crumbs,
   title,
   lead,
   actions,
+  media,
   children,
   className,
 }: {
@@ -24,9 +28,17 @@ export function PageHeader({
   title: ReactNode;
   lead?: ReactNode;
   actions?: ReactNode;
+  media?: ReactNode;
   children?: ReactNode;
   className?: string;
 }) {
+  const heading = (
+    <div className="flex max-w-3xl flex-col gap-3">
+      <h1 className="text-balance text-3xl font-bold leading-tight sm:text-4xl">{title}</h1>
+      {lead && <p className="text-pretty text-base leading-relaxed text-muted-foreground">{lead}</p>}
+      {media && children}
+    </div>
+  );
   return (
     <div className={cn("border-b bg-subtle", className)}>
       <div className="mx-auto flex max-w-6xl flex-col gap-5 px-4 py-10 sm:py-12">
@@ -47,13 +59,17 @@ export function PageHeader({
           </BreadcrumbList>
         </Breadcrumb>
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-          <div className="flex max-w-3xl flex-col gap-3">
-            <h1 className="text-balance text-3xl font-bold leading-tight sm:text-4xl">{title}</h1>
-            {lead && <p className="text-pretty text-base leading-relaxed text-muted-foreground">{lead}</p>}
-          </div>
+          {media ? (
+            <div className="flex items-start gap-5 sm:gap-6">
+              {media}
+              {heading}
+            </div>
+          ) : (
+            heading
+          )}
           {actions && <div className="flex shrink-0 flex-wrap gap-2">{actions}</div>}
         </div>
-        {children}
+        {!media && children}
       </div>
     </div>
   );

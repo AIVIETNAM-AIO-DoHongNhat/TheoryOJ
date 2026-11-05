@@ -1,19 +1,25 @@
 "use client";
 
-import { BookOpen, Check, ChartColumn, Flag, LayoutGrid, MessageSquareText, RotateCcw, Timer, X } from "lucide-react";
+import {
+  BookOpen, Check, ChartColumn, Flag, GalleryVerticalEnd, History, LayoutGrid, MessageSquareText, Repeat, RotateCcw, Timer, X,
+} from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
 import { Field, FieldContent, FieldLabel, FieldTitle } from "@/components/ui/field";
 import { Popover, PopoverContent, PopoverHeader, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
+import { markStudied } from "@/features/progress/streak-event";
 import { cn } from "@/lib/utils";
 
 import { newQuiz, submitQuiz } from "../actions";
@@ -47,6 +53,34 @@ function jumpTo(n: number) {
   document.getElementById(`cau-${n}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+/** Bài đang làm dở lưu trong trình duyệt, để lỡ tải lại trang hay đóng tab vẫn làm tiếp được. */
+interface Draft {
+  questions: QuizQuestion[];
+  answers: Record<string, number>;
+  flagged: string[];
+  elapsed: number;
+}
+
+const noSubscribe = () => () => {};
+
+function readStorage(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function parseDraft(raw: string | null): Draft | null {
+  if (!raw) return null;
+  try {
+    const d = JSON.parse(raw) as Draft;
+    return Array.isArray(d.questions) && d.questions.length && d.answers && Object.keys(d.answers).length ? d : null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Làm một đề trắc nghiệm: đề ở cột trái, bảng thời gian, số câu đã làm, chưa làm, cần xem lại ở cột phải.
  * Nộp để máy chủ chấm, xem giải thích kèm trang giáo trình.
@@ -56,19 +90,30 @@ export function QuizRunner({
   chapter,
   initialQuestions,
   textbook,
+  flashcardsHref,
 }: {
   subject: string;
   chapter: number;
   initialQuestions: QuizQuestion[];
   textbook: TextbookRef | null;
+  /** Trang thẻ ghi nhớ của chương, nếu chương có bộ thẻ. */
+  flashcardsHref: string | null;
 }) {
-  // Đề giữ trong state: lần nộp đầu ghi cookie mã khách làm Next làm mới route, đề và kết quả không được thay theo.
+  // Đề giữ trong state để "Làm đề khác", "Ôn lại câu sai" và bài làm dở không phụ thuộc lần dựng trang.
   const [questions, setQuestions] = useState(initialQuestions);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [flagged, setFlagged] = useState<ReadonlySet<string>>(new Set());
   const [result, setResult] = useState<QuizResult | null>(null);
+  /** Đang ôn lại các câu sai của lượt trước: chấm nhưng không tính vào tiến độ. */
+  const [reviewing, setReviewing] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+
+  // Bài làm dở của lần trước: chỉ đọc sau khi hiện trên trình duyệt (máy chủ trả null), hỏi trước khi khôi phục.
+  const draftKey = `theoryoj:trac-nghiem:${subject}:${chapter}`;
+  const savedDraft = parseDraft(useSyncExternalStore(noSubscribe, () => readStorage(draftKey), () => null));
+  const [draftHandled, setDraftHandled] = useState(false);
 
   // Đồng hồ tính từ lúc mở đề, dừng khi nộp. Tính theo mốc bắt đầu để không lệch khi tab bị ẩn.
   const startRef = useRef<number | null>(null);
@@ -84,6 +129,39 @@ export function QuizRunner({
 
   const answered = Object.keys(answers).length;
   const remaining = questions.length - answered;
+  // Bắt đầu chọn đáp án cho đề mới thì coi như bỏ bài làm dở cũ.
+  const draft = !draftHandled && answered === 0 && !result ? savedDraft : null;
+
+  // Lưu bài đang làm sau mỗi lần chọn; nộp xong thì xóa. Lượt ôn lại câu sai ngắn nên không lưu.
+  useEffect(() => {
+    try {
+      if (result) localStorage.removeItem(draftKey);
+      else if (!reviewing && Object.keys(answers).length) {
+        const spent = startRef.current ? Math.floor((Date.now() - startRef.current) / 1000) : 0;
+        localStorage.setItem(draftKey, JSON.stringify({ questions, answers, flagged: [...flagged], elapsed: spent } satisfies Draft));
+      }
+    } catch {
+      // Trình duyệt chặn bộ nhớ (chế độ riêng tư): vẫn làm bài bình thường, chỉ không khôi phục được.
+    }
+  }, [draftKey, questions, answers, flagged, result, reviewing]);
+
+  function resumeDraft(d: Draft) {
+    setQuestions(d.questions);
+    setAnswers(d.answers);
+    setFlagged(new Set(d.flagged));
+    startRef.current = Date.now() - d.elapsed * 1000;
+    setElapsed(d.elapsed);
+    setDraftHandled(true);
+  }
+
+  function discardDraft() {
+    try {
+      localStorage.removeItem(draftKey);
+    } catch {
+      // Không xóa được thì lần sau vẫn hỏi lại, không ảnh hưởng đề đang làm.
+    }
+    setDraftHandled(true);
+  }
   const byId = new Map(result?.items.map((i) => [i.id, i]));
   const nav: NavItem[] = questions.map((q, i) => ({
     n: i + 1,
@@ -101,13 +179,21 @@ export function QuizRunner({
     });
   }
 
+  /** Còn câu trống thì hỏi lại trước khi nộp, vì câu bỏ trống tính là sai. */
+  function requestSubmit() {
+    if (remaining > 0) setConfirmOpen(true);
+    else submit();
+  }
+
   function submit() {
+    setConfirmOpen(false);
     setError(null);
     if (startRef.current) setElapsed(Math.floor((Date.now() - startRef.current) / 1000));
     startTransition(async () => {
       try {
         const payload = Object.fromEntries(questions.map((q) => [q.id, answers[q.id] ?? null]));
-        setResult(await submitQuiz({ subject, chapter, answers: payload }));
+        setResult(await submitQuiz({ subject, chapter, answers: payload, review: reviewing }));
+        if (!reviewing) markStudied();
         window.scrollTo({ top: 0, behavior: "smooth" });
       } catch {
         setError("Chưa nộp được bài. Đồng chí thử lại sau ít phút.");
@@ -124,6 +210,7 @@ export function QuizRunner({
         setAnswers({});
         setFlagged(new Set());
         setResult(null);
+        setReviewing(false);
         startRef.current = null;
         setElapsed(0);
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -133,8 +220,25 @@ export function QuizRunner({
     });
   }
 
+  /** Làm lại riêng các câu sai và bỏ trống của lượt vừa nộp. */
+  function reviewWrong() {
+    if (!result) return;
+    const wrong = new Set(result.items.filter((i) => !i.correct).map((i) => i.id));
+    setQuestions((qs) => qs.filter((q) => wrong.has(q.id)));
+    setAnswers({});
+    setFlagged(new Set());
+    setResult(null);
+    setReviewing(true);
+    setError(null);
+    startRef.current = null;
+    setElapsed(0);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   const pageHref = (page: number) => (textbook ? `${textbook.href}?trang=${page - textbook.pageOffset}` : null);
-  const wrongTexts = result ? questions.filter((q) => !byId.get(q.id)?.correct).map((q) => q.q) : [];
+  const askHref = (question: string) =>
+    `/tro-ly?mon=${subject}&che-do=qa&chuong=${chapter}&q=${encodeURIComponent(`Giải thích giúp tôi: ${question}`)}`;
+  const wrongCount = result ? result.items.filter((i) => !i.correct).length : 0;
 
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-8">
@@ -148,17 +252,38 @@ export function QuizRunner({
       />
 
       <div className="flex min-w-0 flex-col gap-6">
+        {draft && (
+          <Alert>
+            <History />
+            <AlertTitle>Đồng chí có đề đang làm dở</AlertTitle>
+            <AlertDescription>
+              Đã làm {Object.keys(draft.answers).length}/{draft.questions.length} câu, trong {formatTime(draft.elapsed)}. Làm tiếp đề đó hay bắt đầu đề này?
+            </AlertDescription>
+            <div className="col-start-2 mt-2 flex flex-wrap gap-2">
+              <Button size="sm" onClick={() => resumeDraft(draft)}>Làm tiếp đề cũ</Button>
+              <Button size="sm" variant="outline" className="bg-card" onClick={discardDraft}>Bỏ, làm đề này</Button>
+            </div>
+          </Alert>
+        )}
+
+        {reviewing && !result && (
+          <Alert className="bg-warn-soft">
+            <Repeat />
+            <AlertTitle>Ôn lại {questions.length} câu sai</AlertTitle>
+            <AlertDescription>Lượt ôn lại giúp củng cố, không tính vào điểm và tiến độ của chương.</AlertDescription>
+          </Alert>
+        )}
+
         {result && (
           <ResultSummary
             result={result}
             elapsed={elapsed}
+            reviewing={reviewing}
+            wrongCount={wrongCount}
             onRetry={retry}
+            onReviewWrong={reviewWrong}
+            flashcardsHref={flashcardsHref}
             pending={pending}
-            askHref={
-              wrongTexts.length
-                ? `/tro-ly?mon=${subject}&che-do=qa&chuong=${chapter}&q=${encodeURIComponent(`Giải thích giúp tôi: ${wrongTexts[0]}`)}`
-                : null
-            }
           />
         )}
 
@@ -188,7 +313,7 @@ export function QuizRunner({
                           pressed={isFlagged}
                           onPressedChange={(on) => toggleFlag(q.id, on)}
                           disabled={pending}
-                          className="ml-auto bg-white aria-pressed:border-warn/50 aria-pressed:bg-warn-soft aria-pressed:text-warn"
+                          className="ml-auto bg-card aria-pressed:border-warn/50 aria-pressed:bg-warn-soft aria-pressed:text-warn"
                         >
                           <Flag className={cn(isFlagged && "fill-current")} />
                           {isFlagged ? "Đã đánh dấu" : "Xem lại sau"}
@@ -234,12 +359,20 @@ export function QuizRunner({
                     {item && (
                       <div className="flex flex-col gap-2 rounded-lg bg-subtle p-4 text-sm leading-relaxed">
                         <p>{item.explain}</p>
-                        {item.page && pageHref(item.page) && (
-                          <Link href={pageHref(item.page)!} className="inline-flex items-center gap-1.5 self-start font-medium text-primary hover:underline">
-                            <BookOpen className="size-4" />
-                            Giáo trình, tr. {item.page}
-                          </Link>
-                        )}
+                        <div className="flex flex-wrap gap-x-5 gap-y-2">
+                          {item.page && pageHref(item.page) && (
+                            <Link href={pageHref(item.page)!} className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline">
+                              <BookOpen className="size-4" />
+                              Giáo trình, tr. {item.page}
+                            </Link>
+                          )}
+                          {!item.correct && (
+                            <Link href={askHref(q.q)} className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline">
+                              <MessageSquareText className="size-4" />
+                              Hỏi trợ lý về câu này
+                            </Link>
+                          )}
+                        </div>
                       </div>
                     )}
                   </CardContent>
@@ -260,7 +393,7 @@ export function QuizRunner({
         {!result && (
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-between lg:hidden">
             <SubmitHint remaining={remaining} flaggedCount={flagged.size} />
-            <Button size="lg" onClick={submit} disabled={pending || answered === 0}>
+            <Button size="lg" onClick={requestSubmit} disabled={pending || answered === 0}>
               {pending ? "Đang chấm…" : "Nộp bài"}
             </Button>
           </div>
@@ -295,7 +428,7 @@ export function QuizRunner({
               </Button>
             ) : (
               <>
-                <Button size="lg" onClick={submit} disabled={pending || answered === 0}>
+                <Button size="lg" onClick={requestSubmit} disabled={pending || answered === 0}>
                   {pending ? "Đang chấm…" : "Nộp bài"}
                 </Button>
                 <SubmitHint remaining={remaining} flaggedCount={flagged.size} />
@@ -304,6 +437,21 @@ export function QuizRunner({
           </CardFooter>
         </Card>
       </aside>
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Nộp bài khi còn {remaining} câu chưa làm?</DialogTitle>
+            <DialogDescription>
+              Câu bỏ trống tính là sai.{flagged.size > 0 && ` Đồng chí còn ${flagged.size} câu đánh dấu xem lại.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose render={<Button variant="outline" />}>Làm tiếp</DialogClose>
+            <Button onClick={submit}>Vẫn nộp bài</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -368,7 +516,7 @@ function QuestionNav({ nav, onJump }: { nav: NavItem[]; onJump?: () => void }) {
             }}
             aria-label={`Câu ${x.n}, ${state}${x.flagged && !r ? ", cần xem lại" : ""}`}
             className={cn(
-              "relative flex h-10 items-center justify-center rounded-lg border bg-white text-sm font-medium tabular-nums transition-colors outline-none hover:border-primary/50 focus-visible:ring-[3px] focus-visible:ring-ring/50",
+              "relative flex h-10 items-center justify-center rounded-lg border bg-card text-sm font-medium tabular-nums transition-colors outline-none hover:border-primary/50 focus-visible:ring-[3px] focus-visible:ring-ring/50",
               r
                 ? r.correct
                   ? "border-primary/50 bg-primary-soft text-primary"
@@ -381,7 +529,7 @@ function QuestionNav({ nav, onJump }: { nav: NavItem[]; onJump?: () => void }) {
           >
             {x.n}
             {x.flagged && !r && (
-              <Flag className="absolute -top-1.5 -right-1.5 size-4 rounded-full bg-white fill-warn p-0.5 text-warn ring-1 ring-warn/40" aria-hidden />
+              <Flag className="absolute -top-1.5 -right-1.5 size-4 rounded-full bg-card fill-warn p-0.5 text-warn ring-1 ring-warn/40" aria-hidden />
             )}
           </button>
         );
@@ -398,7 +546,7 @@ function Legend({ done }: { done: boolean }) {
       ]
     : [
         { label: "Đã làm", swatch: "border-primary bg-primary" },
-        { label: "Chưa làm", swatch: "bg-white" },
+        { label: "Chưa làm", swatch: "bg-card" },
       ];
   return (
     <ul className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
@@ -423,7 +571,7 @@ function MobileBar({
 }: { nav: NavItem[]; elapsed: number; answered: number; flaggedCount: number; result: QuizResult | null }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="sticky top-19 z-10 flex items-center gap-3 rounded-xl border bg-white/95 px-3 py-2.5 shadow-sm backdrop-blur lg:hidden">
+    <div className="sticky top-19 z-10 flex items-center gap-3 rounded-xl border bg-background/95 px-3 py-2.5 shadow-sm backdrop-blur lg:hidden">
       <span className="flex items-center gap-1.5 text-sm font-semibold tabular-nums">
         <Timer className="size-4 text-muted-foreground" />
         {formatTime(elapsed)}
@@ -440,7 +588,7 @@ function MobileBar({
         )}
       </span>
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger render={<Button variant="outline" size="sm" className="ml-auto bg-white" />}>
+        <PopoverTrigger render={<Button variant="outline" size="sm" className="ml-auto bg-card" />}>
           <LayoutGrid data-icon="inline-start" />
           Câu
         </PopoverTrigger>
@@ -457,32 +605,50 @@ function MobileBar({
 }
 
 function ResultSummary({
-  result, elapsed, onRetry, pending, askHref,
-}: { result: QuizResult; elapsed: number; onRetry: () => void; pending: boolean; askHref: string | null }) {
+  result, elapsed, reviewing, wrongCount, onRetry, onReviewWrong, flashcardsHref, pending,
+}: {
+  result: QuizResult;
+  elapsed: number;
+  reviewing: boolean;
+  wrongCount: number;
+  onRetry: () => void;
+  onReviewWrong: () => void;
+  flashcardsHref: string | null;
+  pending: boolean;
+}) {
   const ratio = result.score / result.total;
   const passed = ratio >= PASS_RATIO;
+  const message = reviewing
+    ? wrongCount
+      ? `Còn ${wrongCount} câu chưa đúng. Đọc kỹ giải thích dưới mỗi câu rồi ôn lại lần nữa.`
+      : "Đồng chí đã làm đúng hết các câu sai lần trước. Làm một đề mới để kiểm tra lại cả chương."
+    : passed
+      ? "Đồng chí đã nắm được nội dung chính của chương. Có thể làm đề khác hoặc chuyển chương tiếp theo."
+      : "Chưa đạt 7/10. Đồng chí đọc lại phần giải thích và trang giáo trình được dẫn dưới mỗi câu sai rồi ôn lại các câu đó.";
   return (
-    <Card className={cn("bg-subtle", passed && "ring-primary/40")}>
+    <Card className={cn("bg-subtle", (passed || (reviewing && !wrongCount)) && "ring-primary/40")}>
       <CardHeader>
-        <CardDescription>Kết quả, làm trong {formatTime(elapsed)}</CardDescription>
+        <CardDescription>{reviewing ? "Kết quả ôn lại câu sai, không tính vào tiến độ" : `Kết quả, làm trong ${formatTime(elapsed)}`}</CardDescription>
         <CardTitle className="font-heading text-4xl font-bold tabular-nums text-primary">
           {result.score}/{result.total}
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          {passed
-            ? "Đồng chí đã nắm được nội dung chính của chương. Có thể làm đề khác hoặc chuyển chương tiếp theo."
-            : "Chưa đạt 7/10. Đồng chí đọc lại phần giải thích và trang giáo trình được dẫn dưới mỗi câu sai rồi làm lại."}
-        </p>
+        <p className="text-sm text-muted-foreground">{message}</p>
       </CardHeader>
       <CardFooter className="flex flex-wrap gap-2">
-        <Button onClick={onRetry} disabled={pending}>
+        {wrongCount > 0 && (
+          <Button onClick={onReviewWrong} disabled={pending}>
+            <Repeat data-icon="inline-start" />
+            Ôn lại {wrongCount} câu sai
+          </Button>
+        )}
+        <Button variant={wrongCount > 0 ? "outline" : "default"} className={cn(wrongCount > 0 && "bg-card")} onClick={onRetry} disabled={pending}>
           <RotateCcw data-icon="inline-start" />
           Làm đề khác
         </Button>
-        {askHref && (
-          <Button variant="outline" className="bg-white" render={<Link href={askHref} />} nativeButton={false}>
-            <MessageSquareText data-icon="inline-start" />
-            Hỏi trợ lý câu sai
+        {flashcardsHref && (
+          <Button variant="outline" className="bg-card" render={<Link href={flashcardsHref} />} nativeButton={false}>
+            <GalleryVerticalEnd data-icon="inline-start" />
+            Thẻ ghi nhớ chương
           </Button>
         )}
         <Button variant="ghost" render={<Link href="/tien-do" />} nativeButton={false}>

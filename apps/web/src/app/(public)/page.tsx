@@ -7,7 +7,7 @@ import { getUsageStats, MIN_ANSWERS } from "@/features/landing/server/usage";
 import { getProfile } from "@/features/learning/server/profile";
 import { getLibrary } from "@/features/library/server/catalog";
 
-// Trang chủ dạng cổng thông tin: học liệu, thư viện, bài viết; trợ lý là một tính năng trong đó.
+// Trang chủ dạng cổng thông tin: bài học, thư viện, bài viết; trợ lý là một tính năng trong đó.
 const num = (n: number) => n.toLocaleString("vi-VN");
 
 export default async function HomePage() {

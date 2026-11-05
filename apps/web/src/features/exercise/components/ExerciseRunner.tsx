@@ -13,6 +13,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@/
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { EXERCISES, type Exercise, getTemplate, makeExercise, parseAnswer, quantityLabel, UNITS } from "@/domain/ktct/exercises";
 import { PERCENT, type Quantity, SYMBOL } from "@/domain/ktct/formulas";
+import { markStudied } from "@/features/progress/streak-event";
 import { cn } from "@/lib/utils";
 
 import { type ExerciseResult, submitExercise } from "../actions";
@@ -45,6 +46,7 @@ export function ExerciseRunner({ subject, chapter, initial }: { subject: string;
     startTransition(async () => {
       try {
         setResult(await submitExercise({ subject, chapter, template: template.id, given: exercise.given, answers: parsed }));
+        markStudied();
       } catch {
         setError("Chưa chấm được bài. Đồng chí thử lại sau ít phút.");
       }

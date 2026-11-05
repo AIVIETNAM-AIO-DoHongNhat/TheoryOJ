@@ -24,7 +24,7 @@ export function PhotoSlot({
       ) : (
         <Empty className="absolute inset-0 border border-primary/25">
           <EmptyHeader>
-            <EmptyMedia variant="icon" className="size-11 rounded-lg border bg-white text-primary">
+            <EmptyMedia variant="icon" className="size-11 rounded-lg border bg-card text-primary">
               <ImageIcon className="size-5" strokeWidth={1.75} />
             </EmptyMedia>
             <EmptyTitle>{photo.alt}</EmptyTitle>

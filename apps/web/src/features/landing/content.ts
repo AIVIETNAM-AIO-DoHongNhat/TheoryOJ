@@ -9,7 +9,7 @@ export const site = {
   name: "TheoryOJ",
   ministry: "Bộ Công an",
   unit: "Học viện An ninh nhân dân",
-  facultyShort: "Khoa Lý luận chính trị",
+  facultyShort: "Khoa LLCT&KHXHNV",
   product: "Trợ lý học tập Lý luận chính trị",
   year: 2026,
 };
@@ -24,55 +24,61 @@ export interface Photo {
   hint: string;
 }
 
-// Ảnh lấy từ các bài đăng trên hvannd.edu.vn (nguồn ghi trong public/anh-khoa/NGUON.md), đã cắt khung và bỏ logo đài.
+// Ảnh do Khoa cung cấp (nguồn ghi trong public/anh-khoa/NGUON.md), đã thu nhỏ; ảnh hero cắt khung 4:5.
 export const photos: { hero: Photo; about: Photo; gallery: Photo[] } = {
   hero: {
-    src: "/anh-khoa/hoi-thao-cand.jpg",
-    alt: "Cán bộ, học viên Học viện An ninh nhân dân tại Lễ khai mạc Hội thao quân sự, võ thuật và thể thao Công an nhân dân năm 2026",
-    hint: "/anh-khoa/hoi-thao-cand.jpg",
+    src: "/anh-khoa/nghi-thuc-chao.jpg",
+    alt: "Nữ cán bộ, giảng viên trong lễ phục Công an nhân dân thực hiện nghi thức chào",
+    hint: "/anh-khoa/nghi-thuc-chao.jpg",
   },
   about: {
-    src: "/anh-khoa/be-giang-luu-niem.jpg",
-    alt: "Đại biểu và học viên chụp ảnh lưu niệm tại Lễ bế giảng các lớp Cao cấp và Trung cấp lý luận chính trị",
-    hint: "/anh-khoa/be-giang-luu-niem.jpg",
+    src: "/anh-khoa/truoc-hoc-vien.jpg",
+    alt: "Cán bộ, giảng viên trong lễ phục chụp ảnh trước tòa nhà và các tượng đài trong khuôn viên Học viện",
+    hint: "/anh-khoa/truoc-hoc-vien.jpg",
   },
   gallery: [
     {
-      src: "/anh-khoa/luu-niem-cuoc-thi.jpg",
-      alt: "Đại biểu, giảng viên và học viên chụp ảnh lưu niệm tại Cuộc thi “Đường đến triết học”",
-      hint: "/anh-khoa/luu-niem-cuoc-thi.jpg",
+      src: "/anh-khoa/anh-tap-the.jpg",
+      alt: "Tập thể cán bộ, giảng viên trong lễ phục chụp ảnh lưu niệm trong khuôn viên Học viện",
+      hint: "/anh-khoa/anh-tap-the.jpg",
     },
     {
-      src: "/anh-khoa/khai-giang-trung-cap.jpg",
-      alt: "Quang cảnh Lễ khai giảng các lớp Trung cấp lý luận chính trị mở tại Học viện",
-      hint: "/anh-khoa/khai-giang-trung-cap.jpg",
+      src: "/anh-khoa/khai-giang-dang-vien-moi.jpg",
+      alt: "Đại biểu và học viên chụp ảnh lưu niệm tại Lễ khai giảng lớp bồi dưỡng lý luận chính trị cho đảng viên mới năm học 2025–2026",
+      hint: "/anh-khoa/khai-giang-dang-vien-moi.jpg",
     },
     {
-      src: "/anh-khoa/be-giang-toan-canh.jpg",
-      alt: "Toàn cảnh Lễ bế giảng lớp Cao cấp và Trung cấp lý luận chính trị",
-      hint: "/anh-khoa/be-giang-toan-canh.jpg",
+      src: "/anh-khoa/khai-giang-hoi-truong.jpg",
+      alt: "Quang cảnh hội trường Lễ khai giảng lớp bồi dưỡng lý luận chính trị cho đảng viên mới",
+      hint: "/anh-khoa/khai-giang-hoi-truong.jpg",
     },
   ],
 };
 
 export const hero = {
-  overline: "Khoa Lý luận chính trị · Học viện An ninh nhân dân",
-  titleStart: "Học tập lý luận chính trị",
-  titleAccent: "chủ động, chính xác",
-  lead:
-    "Giáo trình và văn kiện đọc trực tuyến, bài viết ôn tập của giảng viên, " +
-    "trợ lý học tập trả lời có trích dẫn đến từng trang.",
-  askPlaceholder: "Hỏi trợ lý một câu về giáo trình…",
+  overline: "Khoa LLCT&KHXHNV · Học viện An ninh nhân dân",
+  titleStart: "Học lý luận chính trị",
+  titleAccent: "đúng nguồn, đúng trang",
+  lead: "Học theo lộ trình, ôn theo chương, hỏi trợ lý và nhận câu trả lời kèm trang giáo trình.",
+  askPlaceholder: "Hỏi một câu về giáo trình…",
   askButton: "Hỏi trợ lý",
+  suggestLabel: "Thử hỏi",
   links: [
+    { href: "/mon", label: "Bắt đầu học" },
     { href: "/thu-vien", label: "Vào thư viện" },
-    { href: "/mon", label: "Học liệu các môn" },
   ],
+  /** Hỏi đáp mẫu nổi trên ảnh hero. Định nghĩa lấy từ thẻ t3-03 (content/ktct/the-ghi-nho/chuong-3.yaml). */
+  demo: {
+    question: "Giá trị thặng dư là gì?",
+    answer: "Bộ phận giá trị mới dôi ra ngoài giá trị sức lao động do công nhân tạo ra, là kết quả của lao động không công cho nhà tư bản.",
+    source: "Giáo trình KTCT",
+    page: 53,
+  },
 };
 
 /** Lưới lối vào nhanh ngay dưới hero. */
 export const quickLinks = [
-  { href: "/mon", title: "Học liệu các môn", text: "Học liệu theo môn và theo chương, kèm tài liệu, bài viết và câu hỏi gợi ý." },
+  { href: "/mon", title: "Bài học các môn", text: "Lộ trình học theo từng chương, kèm giáo trình, tài liệu, bài viết và câu hỏi gợi ý." },
   { href: "/thu-vien", title: "Thư viện tài liệu", text: "Giáo trình, văn kiện, tài liệu tham khảo đọc trực tuyến hoặc tải về." },
   { href: "/bai-viet", title: "Bài viết", text: "Hướng dẫn và bài ôn tập do giảng viên Khoa biên soạn." },
   { href: "/tro-ly", title: "Trợ lý học tập", text: "Hỏi đáp, giải bài tập, liên hệ thực tiễn và ôn thi, có trích nguồn." },
@@ -88,8 +94,8 @@ export const about = {
   overline: "Giới thiệu",
   title: "Ứng dụng chuyển đổi số trong dạy và học lý luận chính trị",
   paragraphs: [
-    "Hưởng ứng yêu cầu chuyển đổi số trong giáo dục, đào tạo, Khoa Lý luận chính trị xây dựng TheoryOJ, " +
-      "trang học tập trực tuyến cho các môn lý luận chính trị: thư viện tài liệu, học liệu theo chương, bài viết của giảng viên và trợ lý học tập ứng dụng trí tuệ nhân tạo.",
+    "Hưởng ứng yêu cầu chuyển đổi số trong giáo dục, đào tạo, Khoa LLCT&KHXHNV xây dựng TheoryOJ, " +
+      "trang học tập trực tuyến cho các môn lý luận chính trị: thư viện tài liệu, bài học theo chương, bài viết của giảng viên và trợ lý học tập ứng dụng trí tuệ nhân tạo.",
     "Trợ lý không thay thế giáo trình và bài giảng của giảng viên. Hệ thống giúp học viên tra cứu nhanh, " +
       "tự ôn tập ngoài giờ lên lớp và rèn luyện kỹ năng vận dụng lý luận vào thực tiễn công tác bảo vệ an ninh quốc gia.",
   ],
@@ -127,9 +133,63 @@ export const principles = {
 };
 
 export const facultySection = {
-  overline: "Khoa Lý luận chính trị",
+  overline: "Khoa LLCT&KHXHNV",
   title: "Đồng hành cùng học viên",
   lead: "Nội dung của trợ lý do giảng viên Khoa biên soạn, kiểm định và cập nhật theo chương trình đào tạo của Học viện.",
+};
+
+/** Phần "Về Khoa" ở trang giới thiệu. Khoa rà soát lời văn và điền số liệu. */
+export const faculty = {
+  overline: "Về Khoa",
+  nameStart: "Khoa Lý luận chính trị",
+  nameAccent: "và Khoa học xã hội nhân văn",
+  paragraphs: [
+    "Khoa LLCT&KHXHNV là đơn vị chuyên môn của Học viện An ninh nhân dân, đảm nhiệm giảng dạy các môn lý luận chính trị " +
+      "và khoa học xã hội nhân văn cho học viên các hệ đào tạo.",
+    "Bên cạnh giảng dạy, Khoa tổ chức nghiên cứu khoa học, các sân chơi học thuật như Cuộc thi học tập song ngữ “Đường đến triết học”, " +
+      "và đẩy mạnh chuyển đổi số trong dạy và học. TheoryOJ là một sản phẩm của hướng đi đó.",
+  ],
+  duties: [
+    { title: "Giảng dạy", text: "Các môn lý luận chính trị theo chương trình đào tạo của Học viện." },
+    { title: "Nghiên cứu khoa học", text: "Đề tài, bài viết gắn lý luận với thực tiễn bảo vệ an ninh quốc gia." },
+    { title: "Giáo dục chính trị tư tưởng", text: "Bồi dưỡng bản lĩnh chính trị, phẩm chất người cán bộ Công an nhân dân." },
+  ],
+  photoCaption: "Tập thể cán bộ, giảng viên trong khuôn viên Học viện",
+  subjectsLabel: "môn lý luận chính trị do Khoa đảm nhiệm",
+  // Số môn lấy từ config/subjects.ts. Các ô còn lại Khoa điền, ví dụ "40+"; ô để trống không hiển thị.
+  stats: [
+    { value: "", label: "Giảng viên" },
+    { value: "", label: "Bộ môn" },
+    { value: "", label: "Năm xây dựng và phát triển" },
+  ],
+};
+
+/**
+ * Nhóm thực hiện ở trang giới thiệu, theo thứ tự hiển thị (Bùi Thị Liên ở giữa). Ảnh chân dung khổ dọc đặt ở `apps/web/public/thanh-vien/`,
+ * khung hiển thị 3:4 cắt bớt phần trên và dưới ảnh.
+ */
+export interface Member {
+  name: string;
+  /** Trung đội của học viên, hoặc đơn vị công tác của giảng viên. */
+  unit: string;
+  photo: Photo;
+}
+
+const member = (name: string, unit: string, file: string): Member => ({
+  name,
+  unit,
+  photo: { src: `/thanh-vien/${file}.jpg`, alt: `Ảnh chân dung ${name}`, hint: `/thanh-vien/${file}.jpg` },
+});
+
+export const team: { title: string; members: Member[] } = {
+  title: "Nhóm thực hiện",
+  members: [
+    member("Phạm Hoàng Minh Châu", "Trung đội B10D57", "pham-hoang-minh-chau"),
+    member("Phạm Xuân Long", "Trung đội B8D55", "pham-xuan-long"),
+    member("Bùi Thị Liên", "Khoa LLCT&KHXHNV", "bui-thi-lien"),
+    member("Bùi Hoàng Minh", "Trung đội B15D57", "bui-hoang-minh"),
+    member("Đỗ Hồng Nhất", "Trung đội B9D55", "do-hong-nhat"),
+  ],
 };
 
 export const roadmap = {
@@ -143,7 +203,7 @@ export const faq = {
   items: [
     {
       q: "Ai được sử dụng trợ lý?",
-      a: "Trong giai đoạn thử nghiệm, trợ lý dành cho học viên có tài khoản do Học viện cấp. Trang giới thiệu và học liệu theo chương được công khai.",
+      a: "Trong giai đoạn thử nghiệm, trợ lý dành cho học viên có tài khoản do Học viện cấp. Trang giới thiệu và bài học theo chương được công khai.",
     },
     {
       q: "Trợ lý có thay thế giáo trình không?",
@@ -188,7 +248,7 @@ export const footer = {
     {
       title: "Học tập",
       links: [
-        { label: "Học liệu các môn", href: "/mon" },
+        { label: "Bài học các môn", href: "/mon" },
         { label: "Thư viện tài liệu", href: "/thu-vien" },
         { label: "Bài viết", href: "/bai-viet" },
         { label: "Giới thiệu", href: "/gioi-thieu" },

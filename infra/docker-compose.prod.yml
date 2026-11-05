@@ -16,7 +16,6 @@ services:
     restart: unless-stopped
     environment:
       DOMAIN: ${DOMAIN:?đặt DOMAIN trong infra/.env}
-      ACME_EMAIL: ${ACME_EMAIL:-}
     ports:
       - "80:80"
       - "443:443"
@@ -42,7 +41,7 @@ services:
       LLM_API_KEY: ${LLM_API_KEY:-ollama}
       LLM_MODEL: ${LLM_MODEL:-qwen2.5:7b}
       LLM_FAST_MODEL: ${LLM_FAST_MODEL:-}
-      REFUSAL_THRESHOLD: ${REFUSAL_THRESHOLD:-0.3}
+      REFUSAL_THRESHOLD: ${REFUSAL_THRESHOLD:-0.44}
       CHAT_LIMIT_VISITOR_10M: ${CHAT_LIMIT_VISITOR_10M:-20}
       CHAT_LIMIT_VISITOR_DAY: ${CHAT_LIMIT_VISITOR_DAY:-200}
       CHAT_LIMIT_IP_10M: ${CHAT_LIMIT_IP_10M:-120}
@@ -73,7 +72,11 @@ services:
         condition: service_healthy
 
   rag:
-    build: ../services/rag
+    build:
+      context: ../services/rag
+      args:
+        # Chỉ cần 1 khi chạy bge-m3 và reranker trên máy (EMBED_PROVIDER=local); xem infra/.env.prod.example.
+        LOCAL_MODELS: ${RAG_LOCAL_MODELS:-0}
     image: theoryoj-rag
     restart: unless-stopped
     environment:
@@ -81,6 +84,11 @@ services:
       CONTENT_DIR: /content
       RAG_API_KEY: ${RAG_API_KEY:?đặt RAG_API_KEY trong infra/.env}
       DEVICE: ${RAG_DEVICE:-}
+      EMBED_PROVIDER: ${EMBED_PROVIDER:-openrouter}
+      RERANK_PROVIDER: ${RERANK_PROVIDER:-openrouter}
+      EMBED_MODEL: ${EMBED_MODEL:-baai/bge-m3}
+      RERANK_MODEL: ${RERANK_MODEL:-cohere/rerank-v3.5}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-${LLM_API_KEY:-}}
     volumes:
       - ../content:/content:ro
       - hfcache:/root/.cache/huggingface

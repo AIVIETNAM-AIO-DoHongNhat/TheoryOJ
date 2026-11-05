@@ -18,7 +18,7 @@ const item =
 export function MainNav() {
   const pathname = usePathname();
   // Trạng thái mở gắn với đường dẫn lúc mở: sang trang khác thì menu thả xuống tự đóng,
-  // không còn treo lại khi rê chuột qua "Học liệu" rồi bấm mục khác.
+  // không còn treo lại khi rê chuột qua "Bài học" rồi bấm mục khác.
   const [open, setOpen] = useState<{ value: string | null; path: string }>({ value: null, path: pathname });
   const value = open.path === pathname ? open.value : null;
   const close = () => setOpen({ value: null, path: pathname });

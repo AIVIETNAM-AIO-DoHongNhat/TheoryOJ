@@ -1,0 +1,93 @@
+subject: ktct
+chapter: 2
+status: nhap
+cards:
+  - id: t2-01
+    front: Hàng hóa
+    back: Sản phẩm của lao động, có thể thỏa mãn nhu cầu nào đó của con người thông qua trao đổi, mua bán.
+    page: 19
+  - id: t2-02
+    front: Giá trị sử dụng của hàng hóa
+    back: |
+      Công dụng của sản phẩm, có thể thỏa mãn nhu cầu nào đó của con người (vật chất hoặc tinh thần, tiêu dùng cá nhân hoặc sản xuất).
+      Giá trị sử dụng chỉ được thực hiện trong việc sử dụng hay tiêu dùng.
+    page: 20
+  - id: t2-03
+    front: Lao động cụ thể
+    back: |
+      Lao động có ích dưới một hình thức cụ thể của những nghề nghiệp chuyên môn nhất định; mỗi lao động cụ thể có mục đích,
+      đối tượng, công cụ, phương pháp và kết quả riêng. Lao động cụ thể tạo ra **giá trị sử dụng** của hàng hóa.
+    page: 21
+  - id: t2-04
+    front: Lao động trừu tượng
+    back: |
+      Lao động xã hội của người sản xuất hàng hóa không kể đến hình thức cụ thể của nó: sự hao phí sức lao động nói chung
+      về cơ bắp, thần kinh, trí óc. Lao động trừu tượng tạo ra **giá trị** của hàng hóa.
+    page: 22
+  - id: t2-05
+    front: Giá trị của hàng hóa
+    back: Lao động xã hội, trừu tượng của người sản xuất ra hàng hóa kết tinh trong hàng hóa.
+    page: 23
+  - id: t2-06
+    front: Thời gian lao động xã hội cần thiết
+    back: |
+      Thời gian đòi hỏi để sản xuất ra một giá trị sử dụng nào đó trong những điều kiện bình thường của xã hội,
+      với trình độ thành thạo trung bình, cường độ lao động trung bình.
+    page: 23
+  - id: t2-07
+    front: Năng suất lao động
+    back: |
+      Năng lực sản xuất của người lao động, tính bằng số lượng sản phẩm sản xuất ra trong một đơn vị thời gian,
+      hay số lượng thời gian hao phí để sản xuất ra một đơn vị sản phẩm. Năng suất lao động tăng thì lượng giá trị
+      trong một đơn vị hàng hóa giảm.
+    page: 23
+  - id: t2-08
+    front: Lao động giản đơn và lao động phức tạp
+    back: |
+      Lao động giản đơn không đòi hỏi quá trình đào tạo hệ thống, chuyên sâu. Lao động phức tạp phải trải qua đào tạo
+      về kỹ năng, nghiệp vụ; trong cùng thời gian tạo ra nhiều giá trị hơn — là lao động giản đơn được nhân bội lên.
+    page: 25
+  - id: t2-09
+    front: Năm chức năng của tiền
+    back: Thước đo giá trị, phương tiện lưu thông, phương tiện cất trữ, phương tiện thanh toán, tiền tệ thế giới.
+    page: 27
+  - id: t2-10
+    front: Thị trường
+    back: |
+      Tổng hòa những quan hệ kinh tế trong đó nhu cầu của các chủ thể được đáp ứng thông qua trao đổi, mua bán,
+      với sự xác định giá cả và số lượng hàng hóa, dịch vụ tương ứng với trình độ phát triển nhất định của nền sản xuất xã hội.
+    page: 32
+  - id: t2-11
+    front: Nền kinh tế thị trường
+    back: |
+      Nền kinh tế được vận hành theo cơ chế thị trường: nền kinh tế hàng hóa phát triển cao, mọi quan hệ sản xuất và trao đổi
+      đều thông qua thị trường, chịu sự tác động, điều tiết của các quy luật thị trường.
+    page: 34
+  - id: t2-12
+    front: Nội dung của quy luật giá trị
+    back: Việc sản xuất và trao đổi hàng hóa phải được tiến hành trên cơ sở của hao phí lao động xã hội cần thiết.
+    page: 38
+  - id: t2-13
+    front: Quy luật cung – cầu
+    back: |
+      Quy luật kinh tế điều tiết quan hệ giữa cung (bên bán) và cầu (bên mua) hàng hóa trên thị trường, đòi hỏi cung – cầu thống nhất.
+      Cung lớn hơn cầu thì giá cả thấp hơn giá trị; cung nhỏ hơn cầu thì giá cả cao hơn giá trị.
+    page: 40
+  - id: t2-14
+    front: Quy luật lưu thông tiền tệ
+    back: |
+      Lưu thông tiền tệ phải căn cứ trên yêu cầu của lưu thông hàng hóa và dịch vụ; không ăn khớp có thể dẫn tới trì trệ hoặc lạm phát.
+      Lượng tiền cần thiết: $M = \frac{P \cdot Q}{V}$ ($P$ giá cả, $Q$ khối lượng hàng hóa, $V$ số vòng lưu thông của tiền).
+    page: 40
+  - id: t2-15
+    front: Quy luật cạnh tranh
+    back: |
+      Quy luật kinh tế điều tiết một cách khách quan mối quan hệ ganh đua kinh tế giữa các chủ thể trong sản xuất và trao đổi hàng hóa.
+      Tham gia thị trường thì bên cạnh hợp tác, các chủ thể luôn phải chấp nhận cạnh tranh.
+    page: 41
+  - id: t2-16
+    front: Cạnh tranh trong nội bộ ngành và cạnh tranh giữa các ngành
+    back: |
+      Trong nội bộ ngành: giữa các chủ thể kinh doanh trong cùng một ngành hàng hóa.
+      Giữa các ngành: giữa các chủ thể sản xuất kinh doanh thuộc các ngành khác nhau.
+    page: 41

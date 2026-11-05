@@ -8,6 +8,7 @@
 #   related_chapters  chương có thể liên hệ, dùng cho chế độ Liên hệ thực tiễn.
 #   index         main (mặc định) | separate (chỉ mục riêng, không lẫn vào tìm kiếm chính)
 #   cite_by       page (PDF) | section (MD, DOCX: trích theo tiêu đề mục gần nhất)
+#   code          chữ lớn trên bìa ở Thư viện. Bỏ trống thì lấy số hiệu văn bản trong tên (68-NQ/TW) hoặc năm.
 #
 # Đo ngày 29/10/2026. Những file có trường `todo` còn việc phải làm.
 
@@ -64,6 +65,7 @@ documents:
 
   - file: van-kien/21-Bao-cao-tong-ket-40-nam-doi-moi.docx
     title: Báo cáo tổng kết 40 năm đổi mới
+    code: 40 năm Đổi mới
     kind: van_kien
     cite_by: section
     related_chapters: [5, 6]
@@ -83,6 +85,7 @@ documents:
 
   - file: tham-khao/18-TBT-Nguyen-Phu-Trong-CNXH-2021.md
     title: Một số vấn đề lý luận và thực tiễn về chủ nghĩa xã hội và con đường đi lên chủ nghĩa xã hội ở Việt Nam (Nguyễn Phú Trọng, 2021)
+    code: Con đường lên CNXH
     kind: tham_khao
     cite_by: section
     related_chapters: [5]

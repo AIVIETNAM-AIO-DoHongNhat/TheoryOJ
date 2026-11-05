@@ -51,7 +51,7 @@ export function IconTile({ icon: Icon, className }: { icon: LucideIcon; classNam
   return (
     <span
       className={cn(
-        "inline-flex size-10 shrink-0 items-center justify-center rounded-lg border bg-white text-primary transition-colors",
+        "inline-flex size-10 shrink-0 items-center justify-center rounded-lg border bg-card text-primary transition-colors",
         "group-aria-pressed/toggle:border-primary group-aria-pressed/toggle:bg-primary group-aria-pressed/toggle:text-primary-foreground",
         className,
       )}

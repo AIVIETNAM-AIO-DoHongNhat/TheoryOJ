@@ -138,6 +138,7 @@ def main():
         index_size = store.count_chunks(conn, args.subject)
     store.close()
     meta = {"system": "services/rag", "subject": args.subject, "top_k": args.top_k,
+            "embed_provider": s.embed_provider, "rerank_provider": s.rerank_provider,
             "embed_model": s.embed_model, "rerank_model": s.rerank_model,
             "chunk_size": s.chunk_size, "chunk_overlap": s.chunk_overlap,
             "candidates": s.candidates, "rerank_candidates": s.rerank_candidates,

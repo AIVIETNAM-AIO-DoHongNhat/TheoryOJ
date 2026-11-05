@@ -18,7 +18,7 @@ async function SurveyContent() {
   const phase = env.SURVEY_PHASE;
   if (phase === "dong") {
     return (
-      <Empty className="border bg-white py-16">
+      <Empty className="border bg-card py-16">
         <EmptyHeader>
           <EmptyTitle>Khảo sát hiện chưa mở</EmptyTitle>
           <EmptyDescription>Khoa sẽ thông báo khi mở đợt khảo sát tiếp theo.</EmptyDescription>

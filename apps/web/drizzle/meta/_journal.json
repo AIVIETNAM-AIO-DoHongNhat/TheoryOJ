@@ -29,6 +29,41 @@
       "when": 1793503670830,
       "tag": "0003_tai_khoan",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793516157788,
+      "tag": "0004_the-ghi-nho",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793705306125,
+      "tag": "0005_quan-tri",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793708423384,
+      "tag": "0006_doc-tiep",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793795072066,
+      "tag": "0007_ghi-chu",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793892789686,
+      "tag": "0008_so-ghi-chep",
+      "breakpoints": true
     }
   ]
 }
