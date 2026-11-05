@@ -1,102 +1,130 @@
-import { ArrowRight, Flag, GalleryVerticalEnd, ListChecks, MessageSquareText, ThumbsUp, Users } from "lucide-react";
+import { Activity, ArrowRight, Ban, CircleCheck, Flag, GalleryVerticalEnd, Layers, ListChecks, MessageSquareText, ThumbsDown } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ACTIVE_SUBJECTS } from "@/config/subjects";
-import { AdminHeading, pct } from "@/features/admin/components/AdminHeading";
-import { ChapterTable } from "@/features/admin/components/ChapterTable";
+import { ActivityChart } from "@/features/admin/components/ActivityChart";
+import { AdminHero } from "@/features/admin/components/AdminHero";
+import { Panel, PanelHeader, StatTile } from "@/features/admin/components/AdminUi";
+import { ChapterSummary, ChapterTable } from "@/features/admin/components/ChapterTable";
 import { getReviewCounts } from "@/features/admin/server/review";
-import { getChapterStats, getOverview } from "@/features/admin/server/stats";
+import { getChapterStats, getDailyActivity, getOverview } from "@/features/admin/server/stats";
 import { deckCounts } from "@/features/flashcards/server/deck";
 import { requireTeacher } from "@/lib/auth/session";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Tổng quan · Quản trị" };
 
 async function Overview() {
-  await requireTeacher();
-  const [o, counts] = await Promise.all([getOverview(), getReviewCounts()]);
+  const user = await requireTeacher();
+  const [o, counts, activity] = await Promise.all([getOverview(), getReviewCounts(), getDailyActivity(14)]);
   const subjects = await Promise.all(ACTIVE_SUBJECTS.map(async (s) => ({ subject: s, stats: await getChapterStats(s.id, null) })));
 
-  const tiles = [
-    { icon: Users, label: "Học viên có tài khoản", value: o.accounts, hint: `${o.active7} người dùng hoạt động trong 7 ngày` },
-    { icon: MessageSquareText, label: "Câu hỏi trợ lý, 7 ngày", value: o.questions7, hint: `${o.refused7} câu bị từ chối` },
-    { icon: ListChecks, label: "Lượt trắc nghiệm, 7 ngày", value: o.quizzes7, hint: `${o.cardReviews7} thẻ ghi nhớ được ôn` },
-    { icon: ThumbsUp, label: "Đánh giá hữu ích", value: pct(o.helpful), hint: `Trên ${o.ratings} lượt đánh giá` },
+  const queues = [
+    { href: "/quan-tri/hoi-dap?loc=gan-co", icon: Flag, label: "Gắn cờ", hint: "Khiêu khích, chèn lệnh", value: counts["gan-co"], urgent: true },
+    { href: "/quan-tri/hoi-dap?loc=danh-gia", icon: ThumbsDown, label: "Đánh giá thấp", hint: "Học viên bấm không hữu ích", value: counts["danh-gia"], urgent: true },
+    { href: "/quan-tri/hoi-dap?loc=tu-choi", icon: Ban, label: "Bị từ chối", hint: "Trợ lý không trả lời", value: counts["tu-choi"], urgent: false },
   ];
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
+      <AdminHero name={user.fullName} overview={o} now={new Date()} />
+
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {tiles.map((t) => (
-          <Card key={t.label} size="sm">
-            <CardHeader>
-              <CardDescription className="flex items-center gap-2">
-                <t.icon className="size-4 text-primary" />
-                {t.label}
-              </CardDescription>
-              <span className="font-heading text-3xl font-bold tabular-nums">{t.value}</span>
-              <p className="text-xs text-muted-foreground">{t.hint}</p>
-            </CardHeader>
-          </Card>
-        ))}
+        <StatTile icon={Activity} label="Người ôn tập · 7 ngày" value={o.active7} hint={`Trên ${o.accounts} tài khoản học viên`} />
+        <StatTile icon={MessageSquareText} label="Câu hỏi trợ lý · 7 ngày" value={o.questions7} hint={`${o.refused7} câu bị từ chối`} />
+        <StatTile icon={ListChecks} label="Lượt trắc nghiệm · 7 ngày" value={o.quizzes7} hint="Tính mọi lượt, kể cả làm lại" />
+        <StatTile icon={Layers} label="Thẻ ghi nhớ được ôn · 7 ngày" value={o.cardReviews7} hint="Theo lần ôn gần nhất của mỗi thẻ" />
       </div>
 
-      <Card className={o.toReview ? "bg-warn-soft ring-warn/30" : undefined}>
-        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3">
-            <Flag className={o.toReview ? "mt-0.5 size-5 text-warn" : "mt-0.5 size-5 text-primary"} />
-            <div className="flex flex-col gap-1">
-              <CardTitle>{o.toReview ? `${o.toReview} câu trả lời cần xem` : "Không có câu trả lời nào cần xem"}</CardTitle>
-              <CardDescription>
-                {counts["gan-co"]} tin nhắn bị gắn cờ (khiêu khích, chèn lệnh), {counts["danh-gia"]} câu trả lời bị học viên đánh giá 👎,
-                {" "}{counts["tu-choi"]} câu bị từ chối chưa xem.
-              </CardDescription>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <ActivityChart data={activity} className="lg:col-span-2" />
+
+        <Panel className="flex flex-col">
+          <div className="flex items-center gap-3 border-b px-5 py-4">
+            <span
+              className={cn(
+                "inline-flex size-10 shrink-0 items-center justify-center rounded-xl",
+                o.toReview ? "bg-warn-soft text-warn ring-1 ring-warn/20" : "bg-primary-soft text-primary ring-1 ring-primary/15",
+              )}
+            >
+              {o.toReview ? <Flag className="size-[18px]" /> : <CircleCheck className="size-[18px]" />}
+            </span>
+            <div className="flex min-w-0 flex-col">
+              <span className="font-heading text-base font-semibold leading-tight">{o.toReview ? `${o.toReview} câu cần xem` : "Đã xem hết"}</span>
+              <span className="text-xs text-muted-foreground">
+                {o.toReview ? "Gắn cờ hoặc đánh giá thấp, chưa xem" : "Không còn câu gắn cờ hay bị đánh giá thấp"}
+              </span>
             </div>
           </div>
-          <Button render={<Link href="/quan-tri/hoi-dap" />} nativeButton={false} className="shrink-0">
-            Mở nhật ký hỏi đáp
-            <ArrowRight data-icon="inline-end" />
-          </Button>
-        </CardHeader>
-      </Card>
+          <div className="flex flex-1 flex-col gap-2 p-4">
+            {queues.map((q) => (
+              <Link
+                key={q.href}
+                href={q.href}
+                className="group flex items-center gap-3 rounded-xl border bg-subtle/60 px-3.5 py-3 transition-colors hover:border-primary/30 hover:bg-primary-soft"
+              >
+                <q.icon className={cn("size-4 shrink-0", q.value && q.urgent ? "text-warn" : "text-muted-foreground")} />
+                <span className="flex min-w-0 flex-1 flex-col leading-tight">
+                  <span className="text-[13px] font-medium">{q.label}</span>
+                  <span className="truncate text-[11px] text-muted-foreground">{q.hint}</span>
+                </span>
+                <span className={cn("font-heading text-xl font-bold tabular-nums", !q.value && "text-muted-foreground/50")}>{q.value}</span>
+              </Link>
+            ))}
+          </div>
+          <div className="border-t p-4">
+            <Button render={<Link href="/quan-tri/hoi-dap" />} nativeButton={false} variant="outline" className="w-full">
+              Mở nhật ký hỏi đáp
+              <ArrowRight data-icon="inline-end" />
+            </Button>
+          </div>
+        </Panel>
+      </div>
 
       {subjects.map(({ subject, stats }) => (
-        <Card key={subject.id}>
-          <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-col gap-1">
-              <CardTitle>Kết quả theo chương: {subject.name}</CardTitle>
-              <CardDescription>
-                Mọi người dùng, kể cả chưa đăng nhập. Điểm trắc nghiệm quy về thang 10; lượt đầu cho biết mức hiểu bài ban đầu.
-              </CardDescription>
-            </div>
-            <Button variant="outline" render={<Link href="/quan-tri/lop" />} nativeButton={false} className="shrink-0">
-              <GalleryVerticalEnd data-icon="inline-start" />
-              Xem theo lớp
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <ChapterTable subject={subject} stats={stats} cardTotals={deckCounts(subject.id, subject.chapters.map((c) => c.number))} />
-          </CardContent>
-        </Card>
+        <Panel key={subject.id}>
+          <PanelHeader
+            title={`Kết quả theo chương · ${subject.name}`}
+            description="Mọi người dùng, kể cả chưa đăng nhập. Điểm thang 10; điểm lượt đầu cho biết mức hiểu bài ban đầu."
+            actions={
+              <Button variant="outline" size="sm" render={<Link href="/quan-tri/lop" />} nativeButton={false}>
+                <GalleryVerticalEnd data-icon="inline-start" />
+                Xem theo lớp
+              </Button>
+            }
+          />
+          <ChapterSummary stats={stats} chapterCount={subject.chapters.length} />
+          <ChapterTable subject={subject} stats={stats} cardTotals={deckCounts(subject.id, subject.chapters.map((c) => c.number))} />
+        </Panel>
       ))}
+
+      <p className="text-xs text-muted-foreground">
+        Số liệu xuất cho hồ sơ sáng kiến: chạy <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">scripts/report.mts</code>.
+      </p>
+    </div>
+  );
+}
+
+function OverviewSkeleton() {
+  return (
+    <div className="flex flex-col gap-6">
+      <Skeleton className="h-64 rounded-3xl" />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-36 rounded-2xl" />)}
+      </div>
+      <Skeleton className="h-80 rounded-2xl" />
     </div>
   );
 }
 
 export default function AdminHome() {
   return (
-    <>
-      <AdminHeading
-        title="Tổng quan"
-        description="Mức độ sử dụng, việc cần xem và kết quả ôn tập của học viên. Số liệu xuất cho hồ sơ sáng kiến dùng scripts/report.mts."
-      />
-      <Suspense fallback={<Skeleton className="h-96 rounded-xl" />}>
-        <Overview />
-      </Suspense>
-    </>
+    <Suspense fallback={<OverviewSkeleton />}>
+      <Overview />
+    </Suspense>
   );
 }

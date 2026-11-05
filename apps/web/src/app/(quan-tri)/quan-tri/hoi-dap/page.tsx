@@ -37,12 +37,12 @@ async function Log({ searchParams }: { searchParams: SearchParams }) {
       <ReviewList items={items} />
       {(page > 1 || hasMore) && (
         <div className="flex items-center justify-between">
-          <Button variant="outline" className="bg-card" disabled={page === 1} render={<Link href={pageHref(page - 1)} />} nativeButton={false}>
+          <Button variant="outline" size="sm" className="bg-card" disabled={page === 1} render={<Link href={pageHref(page - 1)} />} nativeButton={false}>
             <ChevronLeft data-icon="inline-start" />
             Trang trước
           </Button>
-          <span className="text-sm text-muted-foreground">Trang {page}</span>
-          <Button variant="outline" className="bg-card" disabled={!hasMore} render={<Link href={pageHref(page + 1)} />} nativeButton={false}>
+          <span className="rounded-full border bg-card px-3 py-1 text-xs font-medium tabular-nums text-muted-foreground">Trang {page}</span>
+          <Button variant="outline" size="sm" className="bg-card" disabled={!hasMore} render={<Link href={pageHref(page + 1)} />} nativeButton={false}>
             Trang sau
             <ChevronRight data-icon="inline-end" />
           </Button>
@@ -56,10 +56,11 @@ export default function ReviewPage({ searchParams }: { searchParams: SearchParam
   return (
     <>
       <AdminHeading
+        overline="Kiểm duyệt"
         title="Nhật ký hỏi đáp"
-        description="Câu trả lời của trợ lý cần giảng viên xem: tin nhắn bị gắn cờ (khiêu khích, chèn lệnh), câu bị học viên đánh giá 👎 và câu bị từ chối. Xem xong thì đánh dấu đã xem để danh sách gọn lại."
+        description="Câu trả lời của trợ lý cần giảng viên xem: tin nhắn bị gắn cờ (khiêu khích, chèn lệnh), câu bị đánh giá không hữu ích và câu bị từ chối. Xem xong thì đánh dấu để danh sách gọn lại."
       />
-      <Suspense fallback={<Skeleton className="h-96 rounded-xl" />}>
+      <Suspense fallback={<Skeleton className="h-96 rounded-2xl" />}>
         <Log searchParams={searchParams} />
       </Suspense>
     </>

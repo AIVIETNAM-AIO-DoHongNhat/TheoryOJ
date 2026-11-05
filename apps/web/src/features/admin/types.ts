@@ -4,7 +4,7 @@ export type ReviewFilter = (typeof REVIEW_FILTERS)[number];
 
 export const REVIEW_FILTER_LABELS: Record<ReviewFilter, string> = {
   "gan-co": "Gắn cờ",
-  "danh-gia": "Bị đánh giá 👎",
+  "danh-gia": "Đánh giá thấp",
   "tu-choi": "Bị từ chối",
   "tat-ca": "Tất cả",
 };

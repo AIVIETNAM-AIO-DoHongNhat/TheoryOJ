@@ -55,6 +55,35 @@ export async function getOverview(): Promise<Overview> {
   };
 }
 
+export interface DayActivity {
+  /** Ngày theo giờ Việt Nam, dạng YYYY-MM-DD. */
+  day: string;
+  questions: number;
+  quizzes: number;
+}
+
+/** Số câu hỏi trợ lý và lượt trắc nghiệm mỗi ngày trong `days` ngày gần nhất (tính cả hôm nay, giờ Việt Nam). */
+export async function getDailyActivity(days = 14): Promise<DayActivity[]> {
+  const rows = await db.execute<{ day: string; questions: unknown; quizzes: unknown }>(sql`
+    with d as (
+      select generate_series(
+        (now() at time zone 'Asia/Ho_Chi_Minh')::date - ${days - 1}::int,
+        (now() at time zone 'Asia/Ho_Chi_Minh')::date,
+        interval '1 day')::date as day
+    ),
+    q as (
+      select (created_at at time zone 'Asia/Ho_Chi_Minh')::date as day, count(*) as n from messages
+      where role = 'assistant' and created_at > now() - make_interval(days => ${days + 1}::int) group by 1
+    ),
+    p as (
+      select (created_at at time zone 'Asia/Ho_Chi_Minh')::date as day, count(*) as n from practice_attempts
+      where kind = 'quiz' and created_at > now() - make_interval(days => ${days + 1}::int) group by 1
+    )
+    select d.day::text as day, coalesce(q.n, 0) as questions, coalesce(p.n, 0) as quizzes
+    from d left join q using (day) left join p using (day) order by d.day`);
+  return rows.map((r) => ({ day: String(r.day), questions: num(r.questions), quizzes: num(r.quizzes) }));
+}
+
 export interface ClassInfo {
   name: string;
   students: number;

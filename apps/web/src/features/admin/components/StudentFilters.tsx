@@ -38,7 +38,7 @@ export function StudentFilters({ classes, showSearch = true }: { classes: ClassI
   return (
     <div className="flex flex-col gap-2 sm:flex-row">
       {showSearch && (
-        <InputGroup className="h-10 bg-card sm:max-w-sm">
+        <InputGroup className="h-9 bg-background sm:w-80">
           <InputGroupAddon>{pending ? <Spinner /> : <Search />}</InputGroupAddon>
           <InputGroupInput
             value={q}
@@ -53,7 +53,7 @@ export function StudentFilters({ classes, showSearch = true }: { classes: ClassI
         value={params.get("lop") ?? ALL}
         onValueChange={(v) => update("lop", v === ALL ? null : (v as string))}
       >
-        <SelectTrigger className="bg-card data-[size=default]:h-10 sm:w-56" aria-label="Lọc theo lớp">
+        <SelectTrigger className="bg-background data-[size=default]:h-9 sm:w-52" aria-label="Lọc theo lớp">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
