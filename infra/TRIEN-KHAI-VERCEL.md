@@ -101,6 +101,7 @@ Rồi làm theo danh sách ở mục 3 của [TRIEN-KHAI.md](TRIEN-KHAI.md): m�
 
 ## 7. Lưu ý
 
+- **Build luôn bỏ bộ nhớ đệm của Next.js.** `buildCommand` trong [vercel.json](../apps/web/vercel.json) xóa `.next/cache` trước khi build: có lần Vercel build mã mới nhưng dùng lại CSS cũ từ bộ đệm (thiếu các lớp mới ở cuối `globals.css`). Bộ đệm `node_modules` vẫn giữ nên build chỉ chậm hơn ít. Vẫn thấy bản lệch thì *Deployments > ⋯ > Redeploy*, bỏ chọn *Use existing Build Cache*; hoặc thêm biến `VERCEL_FORCE_NO_BUILD_CACHE=1` để bỏ toàn bộ bộ đệm.
 - **Neon tự ngủ sau 5 phút không dùng**, nên câu hỏi đầu tiên sau đó chậm thêm khoảng một giây.
 - **IP người dùng** lấy từ phần tử cuối của `X-Forwarded-For`. Vercel ghi đè header này bằng IP thật, nên giới hạn theo IP vẫn đúng.
 - **PDF** được chép sang `public/tai-lieu-goc/` lúc build (`apps/web/scripts/copy-pdfs.mjs`) và phục vụ qua CDN, hỗ trợ tải từng phần cho trình đọc PDF. Đường `/api/tai-lieu/<slug>` chuyển hướng sang đó.
