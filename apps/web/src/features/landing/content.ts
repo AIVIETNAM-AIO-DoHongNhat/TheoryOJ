@@ -67,13 +67,6 @@ export const hero = {
     { href: "/mon", label: "Bắt đầu học" },
     { href: "/thu-vien", label: "Vào thư viện" },
   ],
-  /** Hỏi đáp mẫu nổi trên ảnh hero. Định nghĩa lấy từ thẻ t3-03 (content/ktct/the-ghi-nho/chuong-3.yaml). */
-  demo: {
-    question: "Giá trị thặng dư là gì?",
-    answer: "Bộ phận giá trị mới dôi ra ngoài giá trị sức lao động do công nhân tạo ra, là kết quả của lao động không công cho nhà tư bản.",
-    source: "Giáo trình KTCT",
-    page: 53,
-  },
 };
 
 /** Lưới lối vào nhanh ngay dưới hero. */

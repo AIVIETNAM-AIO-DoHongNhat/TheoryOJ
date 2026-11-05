@@ -195,21 +195,26 @@
   }
 
   /*
-   * Hiện dần lần lượt ở trang đăng nhập, đăng ký: mờ và nhòe rồi rõ dần. Chế độ lấp `both` giữ trạng thái đầu
+   * Hiện dần lần lượt ở trang đăng nhập, đăng ký: mờ rồi rõ dần kèm trượt nhẹ. Chỉ dùng opacity và transform (chạy trên
+   * compositor); không làm nhòe bằng filter vì rất nặng trên lớp lớn hoặc lớp có backdrop-filter. Chế độ lấp `both` giữ trạng thái đầu
    * trong lúc chờ độ trễ (anim-delay-*), nên không cần lớp ẩn sẵn.
    */
-  --animate-rise: rise-in 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  --animate-slide-in-right: slide-in-right 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-rise: rise-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-fade-in: fade-in 0.5s ease-out both;
+  --animate-slide-in-right: slide-in-right 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   --animate-pop-in: pop-in 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 
+  @keyframes fade-in {
+    from { opacity: 0; }
+  }
   @keyframes rise-in {
-    from { opacity: 0; filter: blur(4px); transform: translateY(16px); }
+    from { opacity: 0; transform: translateY(14px); }
   }
   @keyframes slide-in-right {
-    from { opacity: 0; filter: blur(6px); transform: translateX(32px); }
+    from { opacity: 0; transform: translateX(24px); }
   }
   @keyframes pop-in {
-    from { opacity: 0; filter: blur(4px); transform: translateY(20px) scale(0.96); }
+    from { opacity: 0; transform: translateY(16px) scale(0.97); }
   }
 
   /*
@@ -244,6 +249,15 @@
     25% { transform: scale(1.05, 0.96) rotate(-3deg); }
     50% { transform: scale(0.97, 1.05) rotate(2deg); }
     75% { transform: scale(1.03, 0.98) rotate(-1deg); }
+  }
+
+  /* Huy chương vừa mở khóa: bật ra, xoay nhẹ rồi đứng lại (dùng kèm `motion-safe:`). */
+  --animate-medal-pop: medal-pop 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+
+  @keyframes medal-pop {
+    from { opacity: 0; transform: scale(0.3) rotate(-25deg); }
+    55% { opacity: 1; transform: scale(1.15) rotate(8deg); }
+    75% { transform: scale(0.96) rotate(-3deg); }
   }
 
   /*
@@ -535,4 +549,100 @@ input:-webkit-autofill {
 }
 input:autofill {
   box-shadow: 0 0 0 100px var(--background) inset !important;
+}
+
+/*
+ * Kiểu giấy của sổ ghi chép (features/notebooks). `--dong` là chiều cao một dòng chữ; trình soạn đặt nó theo cỡ chữ
+ * để dòng kẻ trùng chân chữ. `background-attachment: local` cho giấy cuộn cùng chữ trong ô soạn.
+ * Dòng kẻ bắt đầu từ mép trên vùng đệm, nên vùng đệm trên phải bằng đúng một dòng (lớp .giay-viet).
+ */
+:root {
+  --giay-nen: #fffdf7;
+  --giay-ke: rgb(30 64 175 / 0.14);
+  --giay-le: rgb(220 38 38 / 0.32);
+}
+.dark {
+  --giay-nen: #151c19;
+  --giay-ke: rgb(148 163 184 / 0.13);
+  --giay-le: rgb(248 113 113 / 0.28);
+}
+:is(.giay-ke-ngang, .giay-o-vuong, .giay-cham, .giay-tron) { --dong: 28px; --le: 2.75rem; background-color: var(--giay-nen); }
+.giay-ke-ngang {
+  background-image:
+    linear-gradient(to right, transparent calc(var(--le) - 0.75rem), var(--giay-le) calc(var(--le) - 0.75rem), var(--giay-le) calc(var(--le) - 0.75rem + 1px), transparent calc(var(--le) - 0.75rem + 1px)),
+    linear-gradient(to bottom, transparent calc(var(--dong) - 1px), var(--giay-ke) calc(var(--dong) - 1px));
+  background-size: 100% 100%, 100% var(--dong);
+}
+.giay-o-vuong {
+  background-image:
+    linear-gradient(to bottom, transparent calc(var(--dong) - 1px), var(--giay-ke) calc(var(--dong) - 1px)),
+    linear-gradient(to right, transparent calc(var(--dong) - 1px), var(--giay-ke) calc(var(--dong) - 1px));
+  background-size: var(--dong) var(--dong);
+}
+.giay-cham {
+  background-image: radial-gradient(circle at calc(var(--dong) / 2) calc(var(--dong) - 1px), var(--giay-ke) 1.2px, transparent 1.6px);
+  background-size: var(--dong) var(--dong);
+}
+.giay-cham { --giay-ke: rgb(30 64 175 / 0.32); }
+.dark .giay-cham { --giay-ke: rgb(148 163 184 / 0.3); }
+/* Ô soạn: một dòng đệm trên, chữ cao đúng một dòng kẻ. */
+.giay-viet {
+  line-height: var(--dong);
+  padding-top: var(--dong);
+  padding-bottom: var(--dong);
+  background-attachment: local;
+}
+.giay-ke-ngang.giay-viet, .giay-ke-ngang.giay-xem { padding-left: var(--le); }
+/* Bản xem có tiêu đề, công thức cao thấp khác nhau nên không khớp dòng kẻ: giấy kẻ ngang chỉ giữ lề đỏ. */
+.giay-ke-ngang.giay-xem { background-size: 100% 100%, 0 0; }
+.giay-xem .prose-answer { line-height: 1.8; }
+.giay-xem .prose-answer blockquote { border-left: 3px solid var(--primary); padding-left: 0.85em; color: var(--muted-foreground); }
+.giay-xem .prose-answer h1 { font-size: 1.4em; }
+.giay-xem .prose-answer h2 { font-size: 1.2em; }
+.giay-xem .prose-answer h3 { font-size: 1.05em; }
+.giay-xem .prose-answer hr { border-color: var(--border); margin: 1.5em 0; }
+.giay-xem .prose-answer em { font-style: italic; }
+
+/*
+ * Khung trang quản trị: thanh bên xanh rừng đậm, nội dung nằm trên một tấm sáng bo góc (Sidebar variant="inset").
+ * Đặt trên SidebarProvider và trên nội dung thanh bên (bản di động mở trong Sheet, ra ngoài cây của Provider).
+ */
+.admin-chrome {
+  --sidebar: #04190d;
+  --sidebar-foreground: #c3d3c8;
+  --sidebar-primary: #4ade80;
+  --sidebar-primary-foreground: #04170b;
+  --sidebar-accent: rgb(255 255 255 / 0.07);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgb(255 255 255 / 0.09);
+  --sidebar-ring: #4ade80;
+  /* Hai chuỗi của biểu đồ hoạt động (đã qua scripts/validate_palette.js của dataviz, nền sáng và nền tối). */
+  --act-1: #166534;
+  --act-2: #22c55e;
+}
+.dark .admin-chrome { --sidebar: #070d0a; --act-1: #2aa85a; --act-2: #14713c; }
+/* Vệt sáng mờ ở đầu thanh bên. */
+.admin-glow {
+  background-image:
+    radial-gradient(120% 40% at 0% 0%, rgb(34 197 94 / 0.22), transparent 70%),
+    radial-gradient(80% 30% at 100% 100%, rgb(16 185 129 / 0.12), transparent 70%);
+}
+
+/* Nền bảng ghim của lộ trình môn (app/(public)/mon/[mon]/page.tsx): trơn theo màu thẻ (trắng ở giao diện sáng). */
+.nen-bang-ghim {
+  background-color: var(--card);
+}
+
+/* Lưới mảnh trên nền sáng, cặp với grid-lines của nền tối (thẻ chọn môn đã khóa, features/learning/components/SubjectCard.tsx). */
+@utility grid-lines-light {
+  background-image:
+    linear-gradient(rgb(5 46 22 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(5 46 22 / 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(80% 70% at 50% 20%, #000 30%, transparent 85%);
+  .dark & {
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.04) 1px, transparent 1px);
+  }
 }

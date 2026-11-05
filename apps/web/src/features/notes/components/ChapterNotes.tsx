@@ -1,4 +1,4 @@
-import { GalleryVerticalEnd, NotebookPen } from "lucide-react";
+import { BookMarked, GalleryVerticalEnd, NotebookPen } from "lucide-react";
 import Link from "next/link";
 import { connection } from "next/server";
 
@@ -6,6 +6,8 @@ import { getPost } from "@/features/blog/server/posts";
 import { userCardCounts } from "@/features/flashcards/server/user-cards";
 import { getDoc } from "@/features/library/server/catalog";
 import { printedPage } from "@/features/library/types";
+import { chapterPages } from "@/features/notebooks/server/notebooks";
+import { NOTEBOOK_COLORS, notebookHref, UNTITLED_PAGE } from "@/features/notebooks/types";
 import { reviewHref } from "@/features/review/paths";
 import { getCurrentUser, isStudent } from "@/lib/auth/session";
 
@@ -24,9 +26,13 @@ export async function ChapterNotes({ subject, chapter, hasDeck }: { subject: str
   await connection();
   const user = await getCurrentUser();
   if (!isStudent(user)) return null;
-  const [notes, cards] = await Promise.all([listChapterNotes(user.visitorId, subject, chapter, 6), userCardCounts(user.visitorId, subject)]);
+  const [notes, cards, pages] = await Promise.all([
+    listChapterNotes(user.visitorId, subject, chapter, 6),
+    userCardCounts(user.visitorId, subject),
+    chapterPages(user.visitorId, subject, chapter, 4),
+  ]);
   const ownCards = cards[chapter] ?? 0;
-  if (!notes.length && !ownCards) return null;
+  if (!notes.length && !ownCards && !pages.length) return null;
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
@@ -38,6 +44,26 @@ export async function ChapterNotes({ subject, chapter, hasDeck }: { subject: str
           </Link>
         )}
       </div>
+      {pages.length > 0 && (
+        <ul className="grid gap-3 md:grid-cols-2">
+          {pages.map((p) => (
+            <li key={p.id}>
+              <Link
+                href={notebookHref(p.notebookId, p.id)}
+                className="group flex h-full flex-col gap-1.5 rounded-xl border border-l-4 bg-card p-4 transition-colors hover:bg-primary-soft"
+                style={{ borderLeftColor: NOTEBOOK_COLORS[p.notebookColor].cover }}
+              >
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <BookMarked className="size-3.5" />
+                  Sổ {p.notebookTitle}
+                </span>
+                <span className="font-medium leading-snug group-hover:text-primary">{p.title || UNTITLED_PAGE}</span>
+                {p.excerpt && <p className="line-clamp-2 text-sm text-muted-foreground">{p.excerpt}</p>}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
       {notes.length > 0 && (
         <ul className="grid gap-3 md:grid-cols-2">
           {notes.map((n) => (

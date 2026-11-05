@@ -137,6 +137,7 @@ export const notebookHref = (id: number, pageId?: number | null) => `/so-ghi-che
 export function plainExcerpt(body: string, max = 160): string {
   const text = body
     .replace(/\$\$[\s\S]*?\$\$/g, " [công thức] ")
+    .replace(/(?<!\\)\$[^$\n]+?(?<!\\)\$/g, "[công thức]")
     .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
     .replace(/^\s{0,3}(#{1,6}|>|[-*+]|\d+\.)\s+/gm, "")
     .replace(/[*_`~]/g, "")

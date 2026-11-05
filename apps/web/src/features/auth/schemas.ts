@@ -2,6 +2,10 @@ import { z } from "zod";
 
 import { PASSWORD_MAX, PASSWORD_MIN } from "@/lib/auth/password";
 
+import { safeNext } from "./next";
+
+export { safeNext };
+
 // Dùng chung cho form (client) và Server Action. Mã học viên viết hoa để đăng nhập không phân biệt hoa thường.
 
 export const studentCode = z
@@ -65,9 +69,4 @@ export function homeFor(role: "hoc-vien" | "giang-vien", next: unknown): string 
   const target = safeNext(next);
   if (role !== "giang-vien") return target;
   return target === "/quan-tri" || target.startsWith("/quan-tri/") || target.startsWith("/quan-tri?") ? target : "/quan-tri";
-}
-
-/** Chỉ cho chuyển tiếp tới đường dẫn trong trang, chặn "//evil.com" hay "https://…". */
-export function safeNext(value: unknown): string {
-  return typeof value === "string" && /^\/(?![/\\])/.test(value) ? value : "/hoc";
 }

@@ -28,11 +28,10 @@ const rise = "animate-rise";
 
 /**
  * Hero nền xanh đậm, ô hỏi trợ lý đặt ngay đầu trang. Ô hỏi là form GET tới /tro-ly nên chạy được cả khi chưa tải JavaScript.
- * Chuyển động chỉ bằng CSS: chữ hiện dần, ảnh hé mở, thẻ hỏi đáp mẫu bật lên rồi trôi nhẹ, vệt sáng nền dạt chậm.
+ * Chuyển động chỉ bằng CSS: chữ hiện dần, ảnh hé mở, vệt sáng nền dạt chậm.
  * Người dùng bật giảm chuyển động thì mọi thứ đứng yên ở trạng thái cuối (globals.css).
  */
 export function HomeHero({ facts, suggestions }: { facts: { value: string; label: string }[]; suggestions: Suggestion[] }) {
-  const { demo } = hero;
   return (
     <section className="mesh-dark relative isolate overflow-hidden text-white">
       <div className="grid-lines pointer-events-none absolute inset-0 -z-10" aria-hidden />
@@ -112,41 +111,8 @@ export function HomeHero({ facts, suggestions }: { facts: { value: string; label
               <div className="reveal-zoom absolute inset-0">
                 <PhotoSlot photo={photos.hero} priority sizes="460px" className="h-full rounded-none" />
               </div>
-              {/* Tối dần ở chân ảnh để thẻ hỏi đáp nổi rõ. */}
-              <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-forest/80 to-transparent" />
             </div>
           </Reveal>
-
-          {/* Hỏi đáp mẫu: câu hỏi bật lên trước, câu trả lời có trích dẫn bật sau, rồi cả hai trôi nhẹ lệch nhịp. Bấm câu hỏi để hỏi thật. */}
-          <Link
-            href={`/tro-ly?q=${encodeURIComponent(demo.question)}`}
-            aria-label={`Hỏi trợ lý: ${demo.question}`}
-            className="absolute top-10 -left-10 animate-pop-in anim-delay-700"
-          >
-            <span className="flex items-center gap-2 rounded-2xl rounded-bl-md bg-card px-4 py-2.5 text-sm font-medium text-foreground shadow-[0_20px_40px_-16px_rgb(0_0_0/0.5)] transition-colors hover:text-primary motion-safe:animate-float">
-              {demo.question}
-            </span>
-          </Link>
-
-          <div className="absolute -bottom-8 -left-14 w-[320px] animate-pop-in anim-delay-1100" aria-hidden>
-            <div className="flex flex-col gap-3 rounded-2xl bg-card p-4 text-foreground shadow-[0_24px_48px_-16px_rgb(0_0_0/0.55)] motion-safe:animate-float motion-safe:[animation-delay:-3.5s]">
-              <span className="flex items-center gap-2 text-xs font-semibold text-primary">
-                <span className="flex size-6 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Sparkles className="size-3.5" />
-                </span>
-                Trợ lý học tập
-              </span>
-              <p className="text-[13px] leading-relaxed text-foreground/85">{demo.answer}</p>
-              <span className="flex items-center gap-2 self-start rounded-full bg-primary-soft px-2.5 py-1 text-xs font-medium text-primary">
-                <span className="relative flex size-2">
-                  <span className="absolute inline-flex size-full rounded-full bg-primary/50 motion-safe:animate-ping" />
-                  <span className="relative inline-flex size-2 rounded-full bg-primary" />
-                </span>
-                <BookOpen className="size-3.5" />
-                {demo.source} · tr. {demo.page}
-              </span>
-            </div>
-          </div>
         </div>
       </div>
 

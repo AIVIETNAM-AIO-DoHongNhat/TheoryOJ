@@ -1,6 +1,6 @@
 "use client";
 
-import { Layers, MessageCircleQuestion, NotebookPen, X } from "lucide-react";
+import { BookMarked, Layers, MessageCircleQuestion, NotebookPen, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
 import { createPortal } from "react-dom";
@@ -10,11 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { createCard } from "@/features/flashcards/actions";
 import { CARD_BACK_MAX, CARD_FRONT_MAX } from "@/features/flashcards/types";
+import { ClipForm } from "@/features/notebooks/components/ClipForm";
 
 import { saveNote } from "../actions";
 import { askAboutHref, NOTE_MAX, type NoteAnchor, type NoteSource, type ReaderNote } from "../types";
 
-type Step = "menu" | "note" | "card";
+type Step = "menu" | "note" | "card" | "clip";
 
 interface Shown {
   anchor: NoteAnchor;
@@ -22,11 +23,12 @@ interface Shown {
   step: Step;
 }
 
-const MENU_W = 300;
+const MENU_W = 396;
+const TITLES: Record<Exclude<Step, "menu">, string> = { note: "Ghi chú", card: "Tạo thẻ ghi nhớ", clip: "Chép vào sổ ghi chép" };
 const FORM_W = 340;
 
 /**
- * Thanh công cụ nổi khi bôi đen chữ trong `rootRef`: ghi chú, hỏi trợ lý, tạo thẻ ghi nhớ.
+ * Thanh công cụ nổi khi bôi đen chữ trong `rootRef`: ghi chú, chép vào sổ ghi chép, hỏi trợ lý, tạo thẻ ghi nhớ.
  * `resolve` đổi vùng chọn thành vị trí ghi chú (trang PDF, chương, đoạn trích kèm ngữ cảnh); null thì không hiện.
  * Popover gắn `data-popup-open` để Esc và phím tắt của trình đọc bỏ qua khi đang mở.
  */
@@ -194,7 +196,7 @@ export function SelectionMenu({
         ref={boxRef}
         data-popup-open=""
         role={step === "menu" ? "toolbar" : "dialog"}
-        aria-label={step === "menu" ? "Thao tác với đoạn đã chọn" : step === "note" ? "Ghi chú" : "Tạo thẻ ghi nhớ"}
+        aria-label={step === "menu" ? "Thao tác với đoạn đã chọn" : TITLES[step]}
         className="fixed z-70 rounded-xl border bg-popover text-popover-foreground shadow-float"
         style={{ left, top, width: w }}
         onPointerDown={step === "menu" ? (e) => e.preventDefault() : undefined}
@@ -204,6 +206,10 @@ export function SelectionMenu({
             <Button variant="ghost" size="sm" className="flex-1" onClick={() => setShown({ ...shown, step: "note" })}>
               <NotebookPen data-icon="inline-start" />
               Ghi chú
+            </Button>
+            <Button variant="ghost" size="sm" className="flex-1" onClick={() => setShown({ ...shown, step: "clip" })} title="Chép đoạn này vào sổ ghi chép, kèm số trang">
+              <BookMarked data-icon="inline-start" />
+              Vào sổ
             </Button>
             <Button variant="ghost" size="sm" className="flex-1" render={<Link href={askAboutHref(subject, anchor.chapter, anchor.quote)} />} nativeButton={false}>
               <MessageCircleQuestion data-icon="inline-start" />
@@ -224,7 +230,7 @@ export function SelectionMenu({
         ) : (
           <div className="flex flex-col gap-3 p-3">
             <div className="flex items-center gap-2">
-              <p className="flex-1 text-sm font-medium">{step === "note" ? "Ghi chú" : `Thẻ ghi nhớ chương ${anchor.chapter}`}</p>
+              <p className="flex-1 text-sm font-medium">{step === "card" ? `Thẻ ghi nhớ chương ${anchor.chapter}` : TITLES[step]}</p>
               <Button variant="ghost" size="icon-xs" onClick={close} aria-label="Đóng">
                 <X />
               </Button>
@@ -236,6 +242,8 @@ export function SelectionMenu({
                   Đăng nhập
                 </Button>
               </div>
+            ) : step === "clip" ? (
+              <ClipForm anchor={anchor} target={target} onDone={done} />
             ) : step === "note" ? (
               <form action={submitNote} className="flex flex-col gap-2">
                 <blockquote className="line-clamp-3 border-l-2 border-primary pl-2 text-xs text-muted-foreground">{anchor.quote}</blockquote>

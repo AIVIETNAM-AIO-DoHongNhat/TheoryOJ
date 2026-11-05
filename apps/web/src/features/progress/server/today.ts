@@ -20,7 +20,7 @@ import { getProgress } from "./progress";
  * Ngày (giờ Việt Nam) có làm bài, ôn thẻ hoặc hỏi trợ lý trong một năm gần nhất (đủ cho kỷ lục chuỗi).
  * Đầu trang và trang Hôm nay cùng cần trong một yêu cầu nên bọc `cache` để chỉ đọc DB một lần.
  */
-const activityDays = cache(async (visitorId: string): Promise<string[]> => {
+export const activityDays = cache(async (visitorId: string): Promise<string[]> => {
   const rows = await db.execute<{ day: string }>(sql`
     select distinct to_char(t at time zone 'Asia/Ho_Chi_Minh', 'YYYY-MM-DD') as day from (
       select created_at as t from practice_attempts where visitor_id = ${visitorId}

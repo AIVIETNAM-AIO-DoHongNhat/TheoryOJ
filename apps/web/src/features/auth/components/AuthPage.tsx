@@ -1,11 +1,9 @@
 import { ArrowLeft, ChartNoAxesColumn, History, type LucideIcon, MonitorSmartphone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense } from "react";
 
 import { AcademyLogo } from "@/components/brand";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { site } from "@/features/landing/content";
 import { cn } from "@/lib/utils";
 
@@ -77,15 +75,21 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <div className="flex flex-1 items-center justify-center px-5 pt-6 pb-12 sm:px-8">{children}</div>
       </section>
 
-      {/* Cột phải: ảnh và thẻ lợi ích. Dính ở đỉnh để form đăng ký dài cuộn được mà ảnh vẫn đứng yên. */}
+      {/*
+        Cột phải: ảnh và thẻ lợi ích. Dính ở đỉnh để form đăng ký dài cuộn được mà ảnh vẫn đứng yên.
+        Khung nền xanh hiện ngay từ khung hình đầu (không để nửa màn hình trắng trong lúc chờ hiệu ứng), chỉ ảnh mờ dần lên
+        và thẻ lợi ích nổi lên sau một nhịp ngắn.
+      */}
       <aside className="sticky top-0 hidden h-svh flex-1 self-start p-4 lg:block">
-        <div className="animate-slide-in-right anim-delay-300 relative isolate h-full overflow-hidden rounded-3xl bg-forest">
-          <Image src={PHOTO} alt="" fill priority sizes="50vw" className="-z-20 object-cover" />
+        <div className="relative isolate h-full overflow-hidden rounded-3xl bg-forest">
+          <div className="animate-fade-in absolute inset-0 -z-20">
+            <Image src={PHOTO} alt="" fill priority sizes="50vw" className="object-cover" />
+          </div>
           <div className="absolute inset-0 -z-10 bg-linear-to-t from-forest/95 via-forest/35 to-forest/10" />
           <ul className="absolute inset-x-0 bottom-0 flex gap-3 p-6 xl:p-8">
-            <PerkCard perk={PERKS[0]} className="animate-pop-in anim-delay-1000" />
-            <PerkCard perk={PERKS[1]} className="animate-pop-in anim-delay-1200 hidden xl:flex" />
-            <PerkCard perk={PERKS[2]} className="animate-pop-in anim-delay-1400 hidden 2xl:flex" />
+            <PerkCard perk={PERKS[0]} className="animate-pop-in anim-delay-200" />
+            <PerkCard perk={PERKS[1]} className="animate-pop-in anim-delay-280 hidden xl:flex" />
+            <PerkCard perk={PERKS[2]} className="animate-pop-in anim-delay-360 hidden 2xl:flex" />
           </ul>
         </div>
       </aside>
@@ -112,12 +116,12 @@ export function AuthPage({
   return (
     <div className={cn("flex w-full flex-col gap-8", wide ? "max-w-lg" : "max-w-md")}>
       <div className="flex flex-col gap-3">
-        <h1 className="animate-rise anim-delay-100 text-4xl leading-tight font-bold tracking-tight text-foreground md:text-5xl">
+        <h1 className="animate-rise text-4xl leading-tight font-bold tracking-tight text-foreground md:text-5xl">
           {title}
         </h1>
-        <p className="animate-rise anim-delay-200 text-pretty text-muted-foreground">{description}</p>
+        <p className="animate-rise anim-delay-40 text-pretty text-muted-foreground">{description}</p>
       </div>
-      <Suspense fallback={<Skeleton className="h-80 rounded-2xl" />}>{children}</Suspense>
+      {children}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarCheck, ChartNoAxesColumn, LayoutDashboard, LogIn, LogOut, type LucideIcon, UserRound } from "lucide-react";
+import { Award, CalendarCheck, ChartNoAxesColumn, LayoutDashboard, LogIn, LogOut, type LucideIcon, NotebookPen, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTransition } from "react";
@@ -51,6 +51,8 @@ interface MenuLink {
 const STUDENT_LINKS: MenuLink[] = [
   { href: "/hoc", icon: CalendarCheck, label: "Hôm nay", hint: "Việc nên làm, chuỗi ngày học" },
   { href: "/tien-do", icon: ChartNoAxesColumn, label: "Tiến độ ôn tập", hint: "Điểm, thẻ đã thuộc theo chương" },
+  { href: "/huy-hieu", icon: Award, label: "Bộ sưu tập", hint: "Huy hiệu đã sưu tầm, huy hiệu sắp đạt" },
+  { href: "/so-ghi-chep", icon: NotebookPen, label: "Sổ ghi chép", hint: "Ghi chép bài học, đoạn chép từ giáo trình" },
 ];
 const TEACHER_LINKS: MenuLink[] = [{ href: "/quan-tri", icon: LayoutDashboard, label: "Trang quản trị", hint: "Học viên, lớp, hỏi đáp cần xem" }];
 const ACCOUNT_LINK: MenuLink = { href: "/tai-khoan", icon: UserRound, label: "Tài khoản", hint: "Họ tên, lớp, đổi mật khẩu" };

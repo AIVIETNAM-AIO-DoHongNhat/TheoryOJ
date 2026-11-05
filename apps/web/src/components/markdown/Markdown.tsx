@@ -23,12 +23,18 @@ export function normalize(text: string): string {
       list.split(/\s*[,;]\s*/).map((n) => `[${n}](${CITE_PREFIX}${n})`).join(""));
 }
 
+/**
+ * `chat` (mặc định) chuẩn hóa đầu ra của mô hình như trên. `notes` (sổ ghi chép) để nguyên chữ của học viên:
+ * công thức viết bằng `$`, còn `[1]` hay `\[` là chữ thường.
+ */
 export function Markdown({
   children,
   renderCitation,
+  variant = "chat",
 }: {
   children: string;
   renderCitation?: (n: number) => ReactNode;
+  variant?: "chat" | "notes";
 }) {
   return (
     <div className="prose-answer">
@@ -48,7 +54,7 @@ export function Markdown({
           },
         }}
       >
-        {normalize(children)}
+        {variant === "chat" ? normalize(children) : children}
       </ReactMarkdown>
     </div>
   );

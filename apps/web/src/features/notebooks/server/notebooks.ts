@@ -192,7 +192,7 @@ export async function updatePage(
 }
 
 /** Nối thêm một đoạn vào cuối trang. Nối trong SQL để hai lần chép liền nhau không đè nhau. */
-export async function appendToPage(visitorId: string, id: number, chunk: string, maxLength: number): Promise<NotebookPage | null> {
+export async function appendToPage(visitorId: string, notebookId: number, id: number, chunk: string, maxLength: number): Promise<NotebookPage | null> {
   const [row] = await db
     .update(notebookPages)
     .set({
@@ -202,6 +202,7 @@ export async function appendToPage(visitorId: string, id: number, chunk: string,
     .where(
       and(
         eq(notebookPages.id, id),
+        eq(notebookPages.notebookId, notebookId),
         eq(notebookPages.visitorId, visitorId),
         sql`length(${notebookPages.body}) + ${chunk.length + 2} <= ${maxLength}`,
       ),

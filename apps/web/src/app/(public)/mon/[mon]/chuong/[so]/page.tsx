@@ -47,9 +47,10 @@ function LearnStep({ index, id, title, last, children }: { index: number; id: st
   const step = LEARN_STEPS[index];
   return (
     <section id={id} aria-labelledby={`${id}-title`} className="relative grid scroll-mt-24 grid-cols-[2rem_minmax(0,1fr)] gap-4 sm:grid-cols-[2.5rem_minmax(0,1fr)] sm:gap-6">
-      {!last && <span aria-hidden className="absolute top-9 bottom-0 left-4 w-px bg-border sm:left-5" />}
+      {/* Trục dọc bắt đầu dưới vòng số một khoảng hở (vòng cao 2 + 32px, màn rộng 2 + 40px) và chạy giữa cột số. */}
+      {!last && <span aria-hidden className="absolute top-10 bottom-2 left-4 w-px -translate-x-1/2 bg-border sm:top-12 sm:left-5" />}
       <div className="flex justify-center pt-0.5">
-        <span className="flex size-8 items-center justify-center rounded-full bg-primary font-heading text-sm font-bold text-primary-foreground sm:size-10 sm:text-base">
+        <span className="relative z-10 flex size-8 items-center justify-center rounded-full bg-primary font-heading text-sm font-bold text-primary-foreground ring-4 ring-background sm:size-10 sm:text-base">
           {index + 1}
         </span>
       </div>
@@ -248,8 +249,9 @@ async function ChapterPageContent({ params }: PageProps<"/mon/[mon]/chuong/[so]"
 
         <LearnStep index={3} id="ghi-chep" title="Ghi chú và tạo thẻ của riêng mình" last>
           <p className="text-sm leading-relaxed text-foreground/80">
-            Trong trình đọc, chọn <b>Ghi chú</b> hoặc <b>Tạo thẻ</b> sau khi bôi đen. Ghi chú hiện lại ở đây; thẻ tự tạo được ôn cùng bộ thẻ của
-            chương ở Ôn tập.
+            Trong trình đọc, chọn <b>Ghi chú</b>, <b>Vào sổ</b> hoặc <b>Tạo thẻ</b> sau khi bôi đen. Ghi chú và trang{" "}
+            <Link href="/so-ghi-chep" className="font-medium text-primary hover:underline">sổ ghi chép</Link> gắn chương này hiện lại ở đây; thẻ tự tạo
+            được ôn cùng bộ thẻ của chương ở Ôn tập.
           </p>
           <Suspense fallback={null}>
             <ChapterNotes subject={subject.id} chapter={n} hasDeck={concepts.length > 0} />

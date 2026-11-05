@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { type RefObject, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -11,31 +11,39 @@ const SHOW_AFTER = 480;
 const R = 22;
 const CIRCUMFERENCE = 2 * Math.PI * R;
 
-/** Nút về đầu trang, kèm vòng tròn thể hiện tiến độ cuộn. Đặt trong cụm nút nổi `FloatingActions`. */
-export function ScrollToTop() {
+/**
+ * Nút về đầu trang, kèm vòng tròn thể hiện tiến độ cuộn. Mặc định theo cuộn của cả trang (cụm nút nổi `FloatingActions`);
+ * truyền `target` để theo một vùng cuộn riêng, như vùng nội dung của trang quản trị.
+ */
+export function ScrollToTop({ target }: { target?: RefObject<HTMLElement | null> }) {
   const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    const el = target?.current ?? null;
+    const scroller: HTMLElement | Window = el ?? window;
     let frame = 0;
     const update = () => {
       frame = 0;
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(max > 0 ? Math.min(1, window.scrollY / max) : 0);
-      setVisible(window.scrollY > SHOW_AFTER);
+      const top = el ? el.scrollTop : window.scrollY;
+      const max = el ? el.scrollHeight - el.clientHeight : document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(max > 0 ? Math.min(1, top / max) : 0);
+      setVisible(top > SHOW_AFTER);
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update);
     };
     update();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    scroller.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
-      window.removeEventListener("scroll", onScroll);
+      scroller.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [target]);
+
+  const toTop = () => (target?.current ?? window).scrollTo({ top: 0, behavior: "smooth" });
 
   return (
     <div
@@ -53,7 +61,7 @@ export function ScrollToTop() {
               size="icon-lg"
               aria-label="Về đầu trang"
               tabIndex={visible ? 0 : -1}
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              onClick={toTop}
               className="relative size-12 rounded-full bg-card shadow-md"
             />
           }

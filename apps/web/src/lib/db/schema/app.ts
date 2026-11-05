@@ -227,3 +227,14 @@ export const notebookPages = pgTable("notebook_pages", {
   index("notebook_pages_notebook_idx").on(t.notebookId, t.updatedAt),
   index("notebook_pages_chapter_idx").on(t.visitorId, t.subject, t.chapter),
 ]);
+
+/**
+ * Huy hiệu học viên đã sưu tầm (features/badges). Điều kiện tính lại từ dữ liệu học tập; bảng này giữ ngày mở khóa
+ * và để huy hiệu không mất đi khi dữ liệu nguồn đổi (chuỗi đứt, thẻ đã thuộc lại đến hạn).
+ */
+export const userBadges = pgTable("user_badges", {
+  visitorId: text("visitor_id").notNull(),
+  /** Mã trong features/badges/catalog.ts, ví dụ `chuoi-7`, `chuong:ktct:3`. */
+  badgeId: text("badge_id").notNull(),
+  earnedAt: timestamp("earned_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [uniqueIndex("user_badges_badge_idx").on(t.visitorId, t.badgeId)]);

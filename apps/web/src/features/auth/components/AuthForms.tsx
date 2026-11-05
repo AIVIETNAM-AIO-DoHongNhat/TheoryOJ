@@ -2,7 +2,7 @@
 
 import { ArrowRight, CheckCircle2, CircleAlert, Eye, EyeOff, IdCard, KeyRound, type LucideIcon, Users, UserRound } from "lucide-react";
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useState, useSyncExternalStore } from "react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,20 @@ import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 
 import { changePassword, login, register, saveProfile } from "../actions";
+import { safeNext } from "../next";
 import type { FormState } from "../schemas";
+
+const noSubscribe = () => () => {};
+
+/**
+ * Đích chuyển tiếp (?tiep=) đọc ngay ở trình duyệt, để form đăng nhập, đăng ký nằm trong khung tĩnh của trang và hiện
+ * tức thì, không phải chờ máy chủ đọc searchParams (trước đây form thay cho khung xương sau vài trăm mili giây, trang nhảy).
+ * Lần dựng ở máy chủ và lúc hydrate dùng "/hoc"; Server Action vẫn lọc lại bằng safeNext.
+ */
+function useNextParam(): string {
+  const search = useSyncExternalStore(noSubscribe, () => window.location.search, () => "");
+  return safeNext(new URLSearchParams(search).get("tiep") ?? undefined);
+}
 
 interface TextFieldProps extends Omit<React.ComponentProps<typeof InputGroupInput>, "name"> {
   name: string;
@@ -210,7 +223,8 @@ function SubmitButton({
 
 const empty: FormState = {};
 
-export function LoginForm({ next }: { next: string }) {
+export function LoginForm() {
+  const next = useNextParam();
   const [state, action, pending] = useActionState(login, empty);
   return (
     <form action={action} className="flex flex-col gap-5">
@@ -225,7 +239,7 @@ export function LoginForm({ next }: { next: string }) {
         autoComplete="username"
         autoCapitalize="characters"
         required
-        className="animate-rise anim-delay-300"
+        className="animate-rise anim-delay-80"
       />
       <GlassField
         name="password"
@@ -236,20 +250,21 @@ export function LoginForm({ next }: { next: string }) {
         placeholder="Nhập mật khẩu"
         autoComplete="current-password"
         required
-        className="animate-rise anim-delay-400"
+        className="animate-rise anim-delay-120"
       />
-      <p className="animate-rise anim-delay-500 -mt-1 text-right text-sm text-muted-foreground">
+      <p className="animate-rise anim-delay-160 -mt-1 text-right text-sm text-muted-foreground">
         Quên mật khẩu? <span className="text-foreground/85">Liên hệ giảng viên để được đặt lại.</span>
       </p>
-      <SubmitButton pending={pending} primary className="animate-rise anim-delay-600">
+      <SubmitButton pending={pending} primary className="animate-rise anim-delay-200">
         Đăng nhập
       </SubmitButton>
-      <AuthSwitch current="dang-nhap" next={next} className="animate-rise anim-delay-700 pt-1" />
+      <AuthSwitch current="dang-nhap" next={next} className="animate-rise anim-delay-240 pt-1" />
     </form>
   );
 }
 
-export function RegisterForm({ next }: { next: string }) {
+export function RegisterForm() {
+  const next = useNextParam();
   const [state, action, pending] = useActionState(register, empty);
   return (
     <form action={action} className="flex flex-col gap-5">
@@ -265,9 +280,9 @@ export function RegisterForm({ next }: { next: string }) {
         autoCapitalize="characters"
         required
         description="Dùng để đăng nhập, không đổi được sau khi đăng ký."
-        className="animate-rise anim-delay-300"
+        className="animate-rise anim-delay-80"
       />
-      <div className="animate-rise anim-delay-400 grid gap-5 sm:grid-cols-[1.5fr_1fr]">
+      <div className="animate-rise anim-delay-120 grid gap-5 sm:grid-cols-[1.5fr_1fr]">
         <GlassField name="fullName" label="Họ và tên" icon={UserRound} state={state} placeholder="Nguyễn Văn A" autoComplete="name" required />
         <GlassField name="className" label="Lớp" icon={Users} state={state} placeholder="B2K60" required />
       </div>
@@ -280,7 +295,7 @@ export function RegisterForm({ next }: { next: string }) {
         placeholder="Tối thiểu 8 ký tự"
         autoComplete="new-password"
         required
-        className="animate-rise anim-delay-500"
+        className="animate-rise anim-delay-160"
       />
       <GlassField
         name="confirm"
@@ -291,15 +306,15 @@ export function RegisterForm({ next }: { next: string }) {
         placeholder="Gõ lại mật khẩu ở trên"
         autoComplete="new-password"
         required
-        className="animate-rise anim-delay-600"
+        className="animate-rise anim-delay-200"
       />
-      <SubmitButton pending={pending} primary className="animate-rise anim-delay-700 mt-1">
+      <SubmitButton pending={pending} primary className="animate-rise anim-delay-240 mt-1">
         Tạo tài khoản
       </SubmitButton>
-      <p className="animate-rise anim-delay-800 text-center text-xs leading-relaxed text-muted-foreground">
+      <p className="animate-rise anim-delay-280 text-center text-xs leading-relaxed text-muted-foreground">
         Tài khoản chỉ lưu mã học viên, họ tên và lớp để ghi nhận tiến độ học tập.
       </p>
-      <AuthSwitch current="dang-ky" next={next} className="animate-rise anim-delay-900" />
+      <AuthSwitch current="dang-ky" next={next} className="animate-rise anim-delay-320" />
     </form>
   );
 }

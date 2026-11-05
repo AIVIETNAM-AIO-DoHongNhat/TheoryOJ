@@ -16,6 +16,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { ACTIVE_SUBJECTS } from "@/config/subjects";
+import { BadgeSummary } from "@/features/badges/components/BadgeSummary";
+import { syncBadges } from "@/features/badges/server/badges";
 import { printedPage } from "@/features/library/types";
 import { getToday, type SubjectToday } from "@/features/progress/server/today";
 import { reviewHref } from "@/features/review/paths";
@@ -121,7 +123,7 @@ async function TodayContent() {
   if (!user) redirect("/dang-nhap?tiep=/hoc");
   if (user.role === "giang-vien") redirect("/quan-tri");
   await connection();
-  const today = await getToday(user.visitorId);
+  const [today, badges] = await Promise.all([getToday(user.visitorId), syncBadges(user.visitorId)]);
   const many = ACTIVE_SUBJECTS.length > 1;
   const tasks = today.subjects.flatMap((s) => tasksOf(s, many ? `${s.subject.shortName}: ` : ""));
   const name = user.fullName.trim().split(/\s+/).at(-1);
@@ -202,6 +204,8 @@ async function TodayContent() {
               </CardContent>
             </Card>
           )}
+
+          <BadgeSummary collection={badges} />
 
           {today.subjects.map((s) => (
             <Card key={s.subject.id} size="sm">
