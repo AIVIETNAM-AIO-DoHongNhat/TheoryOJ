@@ -6,10 +6,23 @@ import { cn } from "@/lib/utils";
  *
  * `compact`: cắt khung sát hình và bỏ bóng đổ, để linh vật to rõ ở cỡ nhỏ (nút chat 48px, ảnh đại diện 32px).
  * Có `title` thì là hình có nghĩa (role="img"); không có thì chỉ để trang trí.
+ * `size`: cạnh hình theo px, dùng khi không có CSS (ảnh xem trước khi chia sẻ liên kết, `app/opengraph-image.tsx`).
  */
-export function MinhMascot({ className, compact = false, title }: { className?: string; compact?: boolean; title?: string }) {
+export function MinhMascot({
+  className,
+  compact = false,
+  title,
+  size,
+}: {
+  className?: string;
+  compact?: boolean;
+  title?: string;
+  size?: number;
+}) {
   return (
     <svg
+      width={size}
+      height={size}
       viewBox={compact ? "12 5 96 96" : "0 0 120 120"}
       fill="none"
       className={cn("shrink-0", className)}
