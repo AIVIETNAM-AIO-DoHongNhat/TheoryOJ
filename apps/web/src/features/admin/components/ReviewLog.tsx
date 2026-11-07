@@ -1,6 +1,6 @@
 "use client";
 
-import { Ban, Check, CheckCheck, ChevronDown, Flag, Inbox, MessageSquareQuote, RotateCcw, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Ban, BookAlert, Check, CheckCheck, ChevronDown, Flag, Inbox, MessageSquareQuote, RotateCcw, ThumbsDown, ThumbsUp } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -16,7 +16,7 @@ import { MODES, type ModeId } from "@/features/chat/modes";
 import { cn } from "@/lib/utils";
 
 import { setReviewed } from "../actions";
-import { REFUSAL_LABELS, REVIEW_FILTER_LABELS, REVIEW_FILTERS, type ReviewFilter, type ReviewItem } from "../types";
+import { GROUNDING_LABELS, REFUSAL_LABELS, REVIEW_FILTER_LABELS, REVIEW_FILTERS, type ReviewFilter, type ReviewItem } from "../types";
 import { dateTime } from "./AdminHeading";
 import { Initials } from "./AdminUi";
 
@@ -24,6 +24,7 @@ const FILTER_ICONS: Record<ReviewFilter, typeof Flag> = {
   "gan-co": Flag,
   "danh-gia": ThumbsDown,
   "tu-choi": Ban,
+  "kien-thuc-chung": BookAlert,
   "tat-ca": Inbox,
 };
 
@@ -159,6 +160,7 @@ function ReviewCard({ item }: { item: ReviewItem }) {
       <div className="flex flex-col gap-3 py-4 pr-5 pl-6">
         <div className="flex flex-wrap items-center gap-1.5">
           {item.flagged && <Tag tone="danger" icon={Flag}>Gắn cờ</Tag>}
+          {item.grounding && GROUNDING_LABELS[item.grounding] && <Tag tone="warn" icon={BookAlert}>{GROUNDING_LABELS[item.grounding]}</Tag>}
           {item.refused && <Tag icon={Ban}>Từ chối · {REFUSAL_LABELS[item.refused] ?? item.refused}</Tag>}
           {item.feedback && (
             <Tag tone={negative ? "warn" : "good"} icon={negative ? ThumbsDown : ThumbsUp}>

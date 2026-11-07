@@ -18,6 +18,7 @@ import { DOC_KINDS, KIND_LABELS, type LibraryDoc } from "@/features/library/type
 import { cn } from "@/lib/utils";
 
 import { assistantDemo, cta, facultySection, features, hero, latestPosts, photos, quickLinks } from "../content";
+import { SpotlightWordmark } from "./SpotlightWordmark";
 
 const wrap = "mx-auto max-w-6xl px-4";
 
@@ -368,6 +369,17 @@ export function FacultyGallery() {
 }
 
 /* ------------------------------ Kêu gọi ------------------------------ */
+
+/* ------------------------------ Tên khoa trên footer ------------------------------ */
+
+/** Dải cuối trang chủ, ngay trên footer, trên nền trang: tên khoa cỡ lớn, rê chuột vào thì có đèn rọi theo. */
+export function WordmarkBand() {
+  return (
+    <section className={cn(wrap, "pb-10 sm:pb-14")}>
+      <SpotlightWordmark />
+    </section>
+  );
+}
 
 export function CtaPanel() {
   return (

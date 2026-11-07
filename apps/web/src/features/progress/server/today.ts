@@ -72,7 +72,7 @@ export interface Today {
 async function subjectToday(visitorId: string, subject: Subject, now: Date): Promise<SubjectToday> {
   const numbers = subject.chapters.map((c) => c.number);
   const [progress, states] = await Promise.all([getProgress(visitorId, subject.id, numbers), getStates(visitorId, subject.id)]);
-  const counts = quizCounts(subject.id, numbers);
+  const counts = await quizCounts(subject.id, numbers);
 
   const due: SubjectToday["due"] = [];
   let newCards: SubjectToday["newCards"] = null;

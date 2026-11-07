@@ -21,7 +21,13 @@ function crumbs(pathname: string) {
   if (section) items.push({ href: section.href, label: section.label });
   else items.push({ href: "/quan-tri", label: "Tổng quan" });
   const rest = section ? pathname.slice(section.href.length).split("/").filter(Boolean) : [];
-  if (rest[0]) items.push({ href: pathname, label: decodeURIComponent(rest[0]).toUpperCase() });
+  if (rest[0] && section) {
+    // Trang con: mã học viên viết hoa; đề thi theo số đề, trang tạo, trang sửa.
+    const seg = decodeURIComponent(rest[0]);
+    const label = section.href === "/quan-tri/de-thi" ? (seg === "moi" ? "Tạo đề" : `Đề #${seg}`) : seg.toUpperCase();
+    items.push({ href: `${section.href}/${rest[0]}`, label });
+    if (rest[1] === "sua") items.push({ href: pathname, label: "Sửa" });
+  }
   return items;
 }
 

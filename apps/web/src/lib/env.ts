@@ -13,6 +13,8 @@ const schema = z.object({
   LLM_MODEL: z.string().default("qwen2.5:7b"),
   /** Mô hình cho bước phân loại và viết lại câu hỏi. Mặc định dùng LLM_MODEL. */
   LLM_FAST_MODEL: z.string().optional(),
+  /** Mô hình cho script sinh tóm tắt chương (npm run tom-tat). Mặc định dùng LLM_MODEL. */
+  LLM_SUMMARY_MODEL: z.string().optional(),
   /** Địa chỉ dịch vụ services/rag. Bỏ trống thì tìm kiếm chạy ngay trong Next.js (triển khai Vercel). */
   RAG_URL: z.preprocess((v) => (v === "" ? undefined : v), z.url().optional()),
   RAG_TIMEOUT_MS: z.coerce.number().int().positive().default(15_000),
@@ -23,6 +25,13 @@ const schema = z.object({
   RERANK_MODEL: z.string().default("cohere/rerank-v3.5"),
   /** Ngưỡng điểm reranker. Dưới ngưỡng thì trả câu từ chối cố định (PLAN.md mục 2.4). */
   REFUSAL_THRESHOLD: z.coerce.number().min(0).max(1).default(0.44),
+  /**
+   * Câu hợp lệ mà tài liệu không có (điểm dưới REFUSAL_THRESHOLD): true thì trả lời bằng kiến thức chung, có gắn nhãn;
+   * false thì từ chối như trước.
+   */
+  CHAT_GENERAL_ANSWERS: z.stringbool().default(true),
+  /** Dưới ngưỡng này thì coi như tài liệu không liên quan: trả lời hoàn toàn bằng kiến thức chung, không đưa đoạn nào vào. */
+  GENERAL_FLOOR: z.coerce.number().min(0).max(1).default(0.15),
   /** Cùng cơ sở dữ liệu với services/rag. Next.js sở hữu bảng hội thoại và đánh giá. */
   DATABASE_URL: z.string().default("postgresql://theoryoj:theoryoj@127.0.0.1:5433/theoryoj"),
   /** Số câu hỏi tối đa mỗi trình duyệt trong 10 phút và trong một ngày, mỗi IP trong 10 phút. */

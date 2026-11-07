@@ -6,6 +6,7 @@ import "./globals.css";
 
 import { FloatingActions } from "@/components/brand/FloatingActions";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthTransitionHost } from "@/features/auth/components/AuthTransition";
 import { THEME_SCRIPT } from "@/lib/theme-script";
 import { cn } from "@/lib/utils";
 
@@ -64,6 +65,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Suspense fallback={null}>
             <FloatingActions />
           </Suspense>
+          {/* Màn chào mừng sau đăng nhập, tạm biệt khi đăng xuất; nằm ở gốc để không bị gỡ khi trang đổi trạng thái phiên. */}
+          <AuthTransitionHost />
         </TooltipProvider>
       </body>
     </html>

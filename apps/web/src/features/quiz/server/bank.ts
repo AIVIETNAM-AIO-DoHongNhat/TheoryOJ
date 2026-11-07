@@ -3,17 +3,27 @@ import "server-only";
 import fs from "node:fs";
 import path from "node:path";
 
+import { eq } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
 import { parse } from "yaml";
 import { z } from "zod";
 
 import { CONTENT_ROOT } from "@/features/library/server/catalog";
+import { db, schema } from "@/lib/db";
 
+import { type BankEdits, mergeBank, type QuizBank } from "../merge";
 import { QUIZ_SIZE, type QuizQuestion } from "../types";
 
-// Ngân hàng trắc nghiệm: content/<môn>/question-bank/chuong-<n>.yaml (mẫu ở _mau.yaml).
-// Giảng viên sửa file, không cần chạm vào code. Đáp án ghi bằng chữ cái theo thứ tự phương án trong file.
+export type { BankEdits, BankQuestion, QuestionEdit, QuizBank } from "../merge";
+
+// Ngân hàng trắc nghiệm của một chương = câu trong content/<môn>/question-bank/chuong-<n>.yaml (mẫu ở _mau.yaml)
+// ghép với câu giảng viên soạn, sửa, ẩn ở /quan-tri/cau-hoi (bảng quiz_questions). Đáp án trong file ghi bằng chữ cái
+// theo thứ tự phương án; trong bảng ghi bằng vị trí.
 
 const LETTERS = "ABCDEF";
+
+/** Tag của dữ liệu ngân hàng câu hỏi trong bộ đệm. Server Action sửa câu hỏi gọi updateTag với tag này. */
+export const QUIZ_BANK_TAG = "ngan-hang-cau-hoi";
 
 const QuestionSchema = z.object({
   id: z.string().min(1),
@@ -32,31 +42,17 @@ const BankSchema = z.object({
   questions: z.array(QuestionSchema),
 });
 
-export interface BankQuestion {
-  id: string;
-  q: string;
-  options: string[];
-  /** Vị trí đáp án đúng trong `options`. */
-  answer: number;
-  explain: string;
-  page?: number;
-}
-
-export interface QuizBank {
-  subject: string;
-  chapter: number;
-  reviewed: boolean;
-  questions: BankQuestion[];
-}
-
 const cache = new Map<string, QuizBank | null>();
 
 function bankPath(subject: string, chapter: number): string {
   return path.join(CONTENT_ROOT, subject, "question-bank", `chuong-${chapter}.yaml`);
 }
 
-/** Đọc và kiểm tra ngân hàng câu hỏi của một chương. Null nếu chương chưa có file. File sai cấu trúc thì báo lỗi rõ chỗ sai. */
-export function getQuizBank(subject: string, chapter: number): QuizBank | null {
+/**
+ * Ngân hàng trong file của một chương, chưa ghép chỉnh sửa của giảng viên. Null nếu chương chưa có file.
+ * File sai cấu trúc thì báo lỗi rõ chỗ sai.
+ */
+export function getContentBank(subject: string, chapter: number): QuizBank | null {
   const key = `${subject}/${chapter}`;
   if (cache.has(key) && process.env.NODE_ENV === "production") return cache.get(key)!;
 
@@ -81,17 +77,66 @@ export function getQuizBank(subject: string, chapter: number): QuizBank | null {
   return bank;
 }
 
+/** Đọc thẳng từ DB, không qua bộ đệm. Trang quản trị và lúc chép câu vào đề thi dùng hàm này. */
+export async function loadBankEdits(subject: string): Promise<BankEdits> {
+  const [rows, reviews] = await Promise.all([
+    db
+      .select({
+        chapter: schema.quizQuestions.chapter,
+        code: schema.quizQuestions.code,
+        q: schema.quizQuestions.q,
+        options: schema.quizQuestions.options,
+        answer: schema.quizQuestions.answer,
+        explain: schema.quizQuestions.explain,
+        page: schema.quizQuestions.page,
+        hidden: schema.quizQuestions.hidden,
+      })
+      .from(schema.quizQuestions)
+      .where(eq(schema.quizQuestions.subject, subject))
+      .orderBy(schema.quizQuestions.chapter, schema.quizQuestions.id),
+    db
+      .select({ chapter: schema.quizChapterReviews.chapter, reviewed: schema.quizChapterReviews.reviewed })
+      .from(schema.quizChapterReviews)
+      .where(eq(schema.quizChapterReviews.subject, subject)),
+  ]);
+  return { questions: rows, reviews: Object.fromEntries(reviews.map((r) => [r.chapter, r.reviewed])) };
+}
+
+/**
+ * Bản trong bộ đệm cho trang học viên, kể cả trang dựng tĩnh. Sửa câu hỏi thì Server Action làm mới tag.
+ * Không đọc được DB (ví dụ lúc build không có DB) thì dùng ngân hàng trong file và thử lại sau ít phút.
+ */
+async function cachedBankEdits(subject: string): Promise<BankEdits> {
+  "use cache";
+  cacheTag(QUIZ_BANK_TAG);
+  try {
+    const edits = await loadBankEdits(subject);
+    cacheLife("hours");
+    return edits;
+  } catch (error) {
+    console.warn(`Chưa đọc được chỉnh sửa ngân hàng câu hỏi môn ${subject}, tạm dùng câu trong content/:`, error);
+    cacheLife("minutes");
+    return { questions: [], reviews: {} };
+  }
+}
+
+/** Ngân hàng câu hỏi của một chương dùng cho học viên. Null nếu chương chưa có câu nào. */
+export async function getQuizBank(subject: string, chapter: number): Promise<QuizBank | null> {
+  return mergeBank(subject, chapter, getContentBank(subject, chapter), await cachedBankEdits(subject));
+}
+
 /** Số câu của từng chương có ngân hàng câu hỏi. */
-export function quizCounts(subject: string, chapters: number[]): Record<number, number> {
+export async function quizCounts(subject: string, chapters: number[]): Promise<Record<number, number>> {
+  const edits = await cachedBankEdits(subject);
   const counts: Record<number, number> = {};
   for (const n of chapters) {
-    const bank = getQuizBank(subject, n);
+    const bank = mergeBank(subject, n, getContentBank(subject, n), edits);
     if (bank?.questions.length) counts[n] = bank.questions.length;
   }
   return counts;
 }
 
-function shuffle<T>(items: T[]): T[] {
+export function shuffle<T>(items: T[]): T[] {
   const a = [...items];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

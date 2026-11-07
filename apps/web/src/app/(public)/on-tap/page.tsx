@@ -30,17 +30,18 @@ function Heading({ id, title, lead }: { id: string; title: string; lead: string 
 }
 
 /** Số liệu ôn tập của một môn cho thẻ chọn môn. */
-function reviewStats(subject: Subject) {
+async function reviewStats(subject: Subject) {
   if (!subject.active) return [];
   const numbers = subject.chapters.map((c) => c.number);
   return [
     { label: "chương", value: subject.chapters.length },
     { label: "thẻ ghi nhớ", value: sum(deckCounts(subject.id, numbers)) },
-    { label: "câu hỏi", value: sum(quizCounts(subject.id, numbers)) },
+    { label: "câu hỏi", value: sum(await quizCounts(subject.id, numbers)) },
   ];
 }
 
-export default function OnTapPage() {
+export default async function OnTapPage() {
+  const stats = await Promise.all(SUBJECTS.map(reviewStats));
   return (
     <>
       <PageHeader
@@ -59,7 +60,7 @@ export default function OnTapPage() {
           <Heading id="chon-mon" title="Chọn môn để ôn" lead="Vào một môn để thấy toàn bộ chương và bốn bước ôn của từng chương." />
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {SUBJECTS.map((s, i) => (
-              <SubjectCard key={s.id} subject={s} index={i + 1} href={reviewHref(s.id)} cta="Vào ôn tập" stats={reviewStats(s)} />
+              <SubjectCard key={s.id} subject={s} index={i + 1} href={reviewHref(s.id)} cta="Vào ôn tập" stats={stats[i]} />
             ))}
           </div>
         </section>

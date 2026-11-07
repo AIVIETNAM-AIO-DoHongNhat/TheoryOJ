@@ -1,12 +1,12 @@
 import "server-only";
 
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { conversations, feedback, messages } from "@/lib/db/schema";
 
 import type { ModeId } from "../modes";
-import type { ChatMessage, Citation, Label, RefusalReason } from "../types";
+import type { ChatMessage, Citation, Grounding, Intent, Label, RefusalReason } from "../types";
 import type { Timings } from "./pipeline";
 
 // Bước 7 của PLAN.md mục 3: lưu câu hỏi, câu trả lời, trích dẫn để mở lại hội thoại và để giảng viên xem nhật ký.
@@ -42,6 +42,8 @@ export interface AssistantRecord {
   mode: ModeId;
   chapters?: number[];
   label: Label | null;
+  intent: Intent | null;
+  grounding: Grounding | null;
   refused: RefusalReason | null;
   flagged: boolean;
   rewrittenQuery: string | null;
@@ -63,6 +65,8 @@ export async function saveAssistantMessage(r: AssistantRecord) {
     mode: r.mode,
     chapters: r.chapters?.length ? r.chapters : null,
     label: r.label,
+    intent: r.intent,
+    grounding: r.grounding,
     refused: r.refused,
     flagged: r.flagged,
     rewrittenQuery: r.rewrittenQuery,
@@ -73,6 +77,17 @@ export async function saveAssistantMessage(r: AssistantRecord) {
     incomplete: r.incomplete,
   }).onConflictDoNothing();
   await db.update(conversations).set({ updatedAt: sql`now()` }).where(eq(conversations.id, r.conversationId));
+}
+
+/** Trích dẫn của câu trả lời gần nhất trong hội thoại (đã trả lời, không bị từ chối). */
+export async function lastCitations(conversationId: string): Promise<Citation[]> {
+  const [row] = await db
+    .select({ citations: messages.citations })
+    .from(messages)
+    .where(and(eq(messages.conversationId, conversationId), eq(messages.role, "assistant"), isNull(messages.refused)))
+    .orderBy(desc(messages.createdAt))
+    .limit(1);
+  return Array.isArray(row?.citations) ? (row.citations as Citation[]) : [];
 }
 
 export interface ConversationSummary {

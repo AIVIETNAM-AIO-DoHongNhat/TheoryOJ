@@ -21,6 +21,8 @@ import { ChapterNotes } from "@/features/notes/components/ChapterNotes";
 import { getQuizBank } from "@/features/quiz/server/bank";
 import { StepBadge } from "@/features/review/components/steps";
 import { learnHref, reviewHref } from "@/features/review/paths";
+import { VideoCard } from "@/features/video/components/VideoCard";
+import { getVideos } from "@/features/video/server/videos";
 import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -79,8 +81,9 @@ async function ChapterPageContent({ params }: PageProps<"/mon/[mon]/chuong/[so]"
   const index = subject.chapters.findIndex((c) => c.number === n);
   const prev = subject.chapters[index - 1];
   const next = subject.chapters[index + 1];
-  const quizSize = getQuizBank(subject.id, n)?.questions.length ?? 0;
+  const quizSize = (await getQuizBank(subject.id, n))?.questions.length ?? 0;
   const hasExercises = !!EXERCISES[subject.id]?.[n];
+  const videos = getVideos().filter((v) => v.subject === subject.id && v.chapters.includes(n));
 
   return (
     <>
@@ -218,9 +221,9 @@ async function ChapterPageContent({ params }: PageProps<"/mon/[mon]/chuong/[so]"
           </Button>
         </LearnStep>
 
-        <LearnStep index={2} id="mo-rong" title="Văn kiện và bài viết liên quan">
-          {docs.length === 0 && posts.length === 0 && (
-            <p className="text-sm text-muted-foreground">Chưa có văn kiện, tài liệu tham khảo hay bài viết gắn với chương này.</p>
+        <LearnStep index={2} id="mo-rong" title="Văn kiện, bài viết và video liên quan">
+          {docs.length === 0 && posts.length === 0 && videos.length === 0 && (
+            <p className="text-sm text-muted-foreground">Chưa có văn kiện, tài liệu tham khảo, bài viết hay video gắn với chương này.</p>
           )}
           {docs.length > 0 && (
             <ul className="overflow-hidden rounded-xl border bg-card">
@@ -242,6 +245,13 @@ async function ChapterPageContent({ params }: PageProps<"/mon/[mon]/chuong/[so]"
             <div className="grid gap-5 sm:grid-cols-2">
               {posts.map((p) => (
                 <PostCard key={p.slug} post={p} />
+              ))}
+            </div>
+          )}
+          {videos.length > 0 && (
+            <div className="grid gap-5 sm:grid-cols-2">
+              {videos.map((v) => (
+                <VideoCard key={v.slug} video={v} />
               ))}
             </div>
           )}

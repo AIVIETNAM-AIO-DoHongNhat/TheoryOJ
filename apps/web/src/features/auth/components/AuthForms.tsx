@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { changePassword, login, register, saveProfile } from "../actions";
 import { safeNext } from "../next";
 import type { FormState } from "../schemas";
+import { playAuthTransition } from "./AuthTransition";
 
 const noSubscribe = () => () => {};
 
@@ -223,9 +224,23 @@ function SubmitButton({
 
 const empty: FormState = {};
 
+/**
+ * Bọc Server Action đăng nhập, đăng ký: thành công thì mở màn chào mừng ngay khi có kết quả. Gọi ở đây chứ không trong
+ * effect của form, vì cookie phiên vừa đặt khiến Next dựng lại trang và form có thể đã bị gỡ trước khi effect kịp chạy.
+ */
+function withWelcome(kind: "login" | "register", act: (prev: FormState, form: FormData) => Promise<FormState>) {
+  return async (prev: FormState, form: FormData): Promise<FormState> => {
+    const res = await act(prev, form);
+    if (res.ok && res.to) playAuthTransition({ kind, fullName: res.fullName, to: res.to });
+    return res;
+  };
+}
+const loginWithWelcome = withWelcome("login", login);
+const registerWithWelcome = withWelcome("register", register);
+
 export function LoginForm() {
   const next = useNextParam();
-  const [state, action, pending] = useActionState(login, empty);
+  const [state, action, pending] = useActionState(loginWithWelcome, empty);
   return (
     <form action={action} className="flex flex-col gap-5">
       <input type="hidden" name="next" value={next} />
@@ -265,7 +280,7 @@ export function LoginForm() {
 
 export function RegisterForm() {
   const next = useNextParam();
-  const [state, action, pending] = useActionState(register, empty);
+  const [state, action, pending] = useActionState(registerWithWelcome, empty);
   return (
     <form action={action} className="flex flex-col gap-5">
       <input type="hidden" name="next" value={next} />

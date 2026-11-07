@@ -1,0 +1,25 @@
+# Mẫu bản tóm tắt cho trợ lý. Mỗi chương một file chuong-<số>.yaml; mỗi văn kiện một file
+# tai-lieu-<tên file không có số thứ tự đầu, viết thường>.yaml, ví dụ tai-lieu-nq-68-nq-tw-2025.yaml.
+#
+# Sinh tự động: cd apps/web && npm run tom-tat -- --chapter 3   (hoặc --all, --document van-kien/...)
+#
+# Quy ước:
+# - status: nhap khi chưa duyệt; giảng viên đọc, sửa xong thì đổi thành da-duyet. Trợ lý dùng cả bản nháp
+#   nhưng ghi rõ "chưa được giảng viên duyệt". Chạy lại script không ghi đè bản đã duyệt (trừ khi --force).
+# - overview: phần khái quát, gồm ý chính, "Cần ghi nhớ" và câu hỏi ôn tập. Viết bằng Markdown.
+# - parts: các phần theo trình tự tài liệu. Mỗi phần thành một nguồn trích dẫn [n] khi trợ lý tóm tắt:
+#     title      tên phần
+#     pdf_pages  trang PDF đầu và cuối (giáo trình); bấm thẻ trích dẫn sẽ mở trang đầu
+#     section    tên mục (văn kiện MD, DOCX), thay cho pdf_pages
+#     summary    nội dung tóm tắt, bám lời văn tài liệu; công thức đặt trong $...$
+# - File bắt đầu bằng dấu _ (như file này) không được đọc.
+subject: ktct
+chapter: 3
+status: nhap
+overview: |
+  Chương trình bày nguồn gốc, bản chất của giá trị thặng dư...
+parts:
+  - title: Nguồn gốc của giá trị thặng dư
+    pdf_pages: [51, 56]
+    summary: |
+      - **Công thức chung của tư bản**: T – H – T'...

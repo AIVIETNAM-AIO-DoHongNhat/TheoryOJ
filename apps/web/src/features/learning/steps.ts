@@ -22,8 +22,8 @@ export const LEARN_STEPS: Step[] = [
   {
     icon: Library,
     name: "Mở rộng",
-    tool: "Văn kiện và bài viết",
-    text: "Liên hệ lý luận với văn kiện của Đảng và bài phân tích của giảng viên về chương.",
+    tool: "Văn kiện, bài viết, video",
+    text: "Liên hệ lý luận với văn kiện của Đảng, bài phân tích và video bài giảng, minh họa của giảng viên về chương.",
   },
   {
     icon: NotebookPen,

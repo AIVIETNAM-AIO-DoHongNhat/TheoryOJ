@@ -11,3 +11,4 @@ const provider = createOpenAICompatible({
 
 export const chatModel = provider.chatModel(env.LLM_MODEL);
 export const fastModel = provider.chatModel(env.LLM_FAST_MODEL ?? env.LLM_MODEL);
+export const summaryModel = provider.chatModel(env.LLM_SUMMARY_MODEL ?? env.LLM_MODEL);

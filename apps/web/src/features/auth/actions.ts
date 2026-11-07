@@ -43,7 +43,8 @@ export async function register(_: FormState, form: FormData): Promise<FormState>
     return { errors: { studentCode: "Mã học viên này đã được đăng ký. Nếu là của đồng chí, hãy đăng nhập." }, values };
   }
   await signIn(user);
-  redirect(homeFor(user.role, raw.next));
+  // Không redirect ở đây: form mở màn chào mừng (AuthTransition), màn đó tự chuyển trang.
+  return { ok: true, to: homeFor(user.role, raw.next), fullName: user.fullName };
 }
 
 export async function login(_: FormState, form: FormData): Promise<FormState> {
@@ -64,14 +65,14 @@ export async function login(_: FormState, form: FormData): Promise<FormState> {
   if (!user || !ok) return { message: "Mã học viên hoặc mật khẩu không đúng.", values };
 
   await signIn(user);
-  redirect(homeFor(user.role, raw.next));
+  return { ok: true, to: homeFor(user.role, raw.next), fullName: user.fullName };
 }
 
+/** Không redirect: nút đăng xuất mở màn tạm biệt (AuthTransition), màn đó tự đưa về trang chủ. */
 export async function logout(): Promise<void> {
   await endSession();
   // Mã khách của tài khoản không nằm trong cookie, nên sau khi đăng xuất trình duyệt trở về trạng thái khách mới.
   (await cookies()).delete(VISITOR_COOKIE);
-  redirect("/");
 }
 
 export async function changePassword(_: FormState, form: FormData): Promise<FormState> {

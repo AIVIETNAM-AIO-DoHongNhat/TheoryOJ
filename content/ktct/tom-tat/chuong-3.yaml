@@ -1,0 +1,125 @@
+# Bản tóm tắt do `npm run tom-tat` sinh, trợ lý dùng khi học viên đề nghị tóm tắt.
+# Giảng viên đọc và sửa trực tiếp nội dung (overview, từng phần trong parts), rồi đổi status thành da-duyet.
+# Khi status còn là nhap, trợ lý vẫn dùng nhưng ghi rõ bản tóm tắt chưa được duyệt.
+# Chạy lại script sẽ không ghi đè bản đã duyệt, trừ khi thêm --force. Quy ước ở _mau.yaml cùng thư mục.
+subject: ktct
+chapter: 3
+status: nhap
+model: qwen/qwen3-235b-a22b-2507
+generated_at: 2026-11-06
+overview: |-
+  Chương 3 trình bày lý luận của C.Mác về giá trị thặng dư – phạm trù trung tâm của nền kinh tế tư bản chủ nghĩa, làm rõ nguồn gốc, bản chất và các hình thái biểu hiện của nó. Giá trị thặng dư được tạo ra trong quá trình sản xuất nhờ khai thác sức lao động, phản ánh quan hệ bóc lột giai cấp, đồng thời là động lực thúc đẩy tích lũy, cạnh tranh và phát triển của chủ nghĩa tư bản.
+
+  **Cần ghi nhớ**
+  - Công thức chung của tư bản: $T - H - T’$, với $T’ = T + m$.
+  - Giá trị thặng dư ($m$) là phần giá trị mới dôi ra ngoài giá trị sức lao động, do công nhân làm thuê tạo ra và bị nhà tư bản chiếm đoạt.
+  - Tư bản bất biến ($c$) và tư bản khả biến ($v$): $c$ bảo toàn giá trị, $v$ là nguồn gốc tạo ra giá trị thặng dư.
+  - Tỷ suất giá trị thặng dư: $m' = \frac{m}{v} \times 100\%$, phản ánh trình độ bóc lột lao động.
+  - Hai phương pháp sản xuất giá trị thặng dư: tuyệt đối (kéo dài ngày lao động) và tương đối (tăng năng suất, rút ngắn thời gian lao động tất yếu).
+  - Tích lũy tư bản là tư bản hóa giá trị thặng dư, làm tăng quy mô tư bản và dẫn đến tích tụ, tập trung tư bản.
+  - Cấu tạo hữu cơ tư bản ($c/v$) tăng theo tiến bộ kỹ thuật, dẫn đến bần cùng hóa tương đối và tuyệt đối.
+  - Giá trị thặng dư biểu hiện thành lợi nhuận, lợi tức, địa tô – các hình thái che giấu bản chất bóc lột.
+
+  **Câu hỏi ôn tập**
+  1. Trình bày nội dung và ý nghĩa của công thức chung tư bản. Vì sao lưu thông thông thường không tạo ra giá trị thặng dư?
+  2. Phân tích vai trò của hàng hóa sức lao động trong việc giải thích bí mật giá trị thặng dư.
+  3. So sánh phương pháp sản xuất giá trị thặng dư tuyệt đối và tương đối.
+  4. Vì sao tích lũy tư bản dẫn đến bần cùng hóa giai cấp công nhân?
+  5. Giải thích sự chuyển hóa giá trị thặng dư thành lợi nhuận, lợi tức và địa tô.
+parts:
+  - title: Lý luận của C.Mác về giá trị thặng dư
+    pdf_pages:
+      - 50
+      - 55
+    summary: |-
+      - **Công thức chung của tư bản** là $T-H-T’$, trong đó $T’ = T + t$ ($t > 0$), với $t$ là **giá trị thặng dư**.
+      - Mục đích của lưu thông tư bản là tạo ra giá trị lớn hơn, khác với lưu thông hàng hóa giản đơn ($H-T-H$) nhằm giá trị sử dụng.
+      - Lưu thông thông thường không tạo ra giá trị thặng dư vì mua bán ngang giá không sinh lợi trên phạm vi xã hội.
+      - **Bí mật giá trị thặng dư** nằm ở việc nhà tư bản mua được **hàng hóa sức lao động** – loại hàng hóa đặc biệt có khả năng tạo ra giá trị lớn hơn bản thân nó.
+      - **Hai điều kiện để sức lao động trở thành hàng hóa**: người lao động tự do về thân thể và không có tư liệu sản xuất.
+      - **Giá trị hàng hóa sức lao động** do thời gian lao động xã hội cần thiết để tái sản xuất nó quyết định, gồm: giá trị tư liệu sinh hoạt, phí tổn đào tạo, và giá trị nuôi con.
+      - **Giá trị sử dụng của sức lao động** đặc biệt ở chỗ trong quá trình sử dụng, nó tạo ra giá trị mới lớn hơn giá trị bản thân – chính là nguồn gốc giá trị thặng dư.
+      - **Quá trình sản xuất giá trị thặng dư** là sự thống nhất giữa tạo ra giá trị và làm tăng giá trị.
+      - **Thời gian lao động tất yếu** là phần thời gian lao động để bù đắp giá trị sức lao động; **thời gian lao động thặng dư** là phần còn lại, tạo ra giá trị thặng dư.
+      - Trong ví dụ sản xuất sợi: ứng 121 USD, thu 136 USD → $m = 15$ USD, là giá trị do công nhân tạo ra ngoài thời gian lao động tất yếu.
+      - **Giá trị thặng dư ($m$)** là bộ phận giá trị mới dôi ra ngoài giá trị sức lao động, do công nhân làm thuê tạo ra và bị nhà tư bản chiếm đoạt.
+      - **Tư bản bất biến ($c$)** là bộ phận tư bản tồn tại dưới hình thái tư liệu sản xuất, giá trị được bảo toàn và chuyển nguyên vẹn vào sản phẩm, không tạo ra giá trị thặng dư.
+  - title: Nguồn gốc và bản chất giá trị thặng dư
+    pdf_pages:
+      - 56
+      - 61
+    summary: |-
+      - **Máy móc**, nguyên nhiên vật liệu là điều kiện cần thiết cho quá trình sản xuất giá trị thặng dư, nhưng vai trò của chúng giống như chiếc bình thủy tinh trong phản ứng hóa học – chỉ là phương tiện, không tạo ra giá trị mới.
+      - Dù được tự động hóa, **người máy** vẫn chỉ là tư bản bất biến; nhà tư bản chỉ sử dụng sức lao động sống khi nó còn có lợi hơn so với người máy.
+      - **Tư bản khả biến (v)** là bộ phận tư bản dùng để mua hàng hóa sức lao động, không tái hiện giá trị mà tăng lên thông qua lao động trừu tượng của công nhân.
+      - Giá trị hàng hóa được công thức hóa: $G = c + (v + m)$, trong đó $c$ là tư bản bất biến, $(v + m)$ là giá trị mới do lao động tạo ra.
+      - **Tiền công** là giá cả của hàng hóa sức lao động, là bộ phận giá trị mới do người lao động tạo ra nhưng thường bị hiểu nhầm là tiền trả cho lao động.
+      - Giá trị thặng dư chỉ được **thực hiện** khi hàng hóa được bán thành công trên thị trường; thất bại trong tiêu thụ dẫn đến phá sản.
+      - **Tuần hoàn tư bản** trải qua ba giai đoạn: tư bản tiền tệ → tư bản sản xuất → tư bản hàng hóa, gắn với chức năng chuẩn bị, sản xuất và thực hiện giá trị thặng dư.
+      - **Chu chuyển tư bản** là quá trình tuần hoàn lặp lại; tốc độ chu chuyển $n = \frac{CH}{ch}$, với $CH$ là thời gian năm, $ch$ là thời gian một vòng chu chuyển.
+      - Tư bản được chia thành **tư bản cố định** (chuyển giá trị dần theo hao mòn) và **tư bản lưu động** (chuyển giá trị toàn bộ một lần).
+      - **Giá trị thặng dư** có bản chất là quan hệ giai cấp, phản ánh sự **bóc lột** dù trao đổi ngang giá.
+      - **Tỷ suất giá trị thặng dư**: $m' = \frac{m}{v} \times 100\% = \frac{t'}{t} \times 100\%$, phản ánh trình độ khai thác lao động.
+      - **Khối lượng giá trị thặng dư**: $M = m' \cdot V$, phản ánh quy mô giá trị thặng dư thu được.
+      - Hai phương pháp sản xuất giá trị thặng dư: **tuyệt đối** (kéo dài ngày lao động) và **tương đối** (rút ngắn thời gian lao động tất yếu bằng tăng năng suất).
+  - title: Sản xuất giá trị thặng dư tương đối và tích lũy tư bản
+    pdf_pages:
+      - 62
+      - 67
+    summary: |-
+      - **Giá trị thặng dư tương đối** là giá trị thặng dư thu được nhờ rút ngắn thời gian lao động tất yếu, kéo dài thời gian lao động thặng dư trong khi độ dài ngày lao động không đổi hoặc rút ngắn.
+      - Ví dụ: với ngày lao động 8 giờ, lao động tất yếu 4 giờ, lao động thặng dư 4 giờ → $m' = \frac{4}{4} \times 100\% = 100\%$.
+      - Nếu lao động tất yếu giảm xuống 2 giờ (do giảm giá trị sức lao động), lao động thặng dư tăng lên 6 giờ → $m' = \frac{6}{2} \times 100\% = 300\%$.
+      - Nếu ngày lao động giảm còn 6 giờ, lao động tất yếu 1 giờ, lao động thặng dư 5 giờ → $m' = \frac{5}{1} \times 100\% = 500\%$.
+      - Để giảm giá trị sức lao động, phải tăng **năng suất lao động** trong các ngành sản xuất tư liệu sinh hoạt và tư liệu sản xuất.
+      - **Giá trị thặng dư siêu ngạch** là phần giá trị thặng dư trội hơn do cải tiến kỹ thuật ở một số xí nghiệp, làm giá trị cá biệt thấp hơn giá trị xã hội.
+      - Giá trị thặng dư siêu ngạch là hiện tượng tạm thời với từng xí nghiệp, nhưng tồn tại thường xuyên trong toàn xã hội tư bản.
+      - Đây là động lực thúc đẩy các nhà tư bản cải tiến kỹ thuật, tăng năng suất, dẫn đến hình thành **giá trị thặng dư tương đối**.
+      - Giá trị thặng dư siêu ngạch là hình thái biến tướng của giá trị thặng dư tương đối.
+      - Các cuộc cách mạng về tổ chức, quản lý, phân công lao động và tư liệu lao động thúc đẩy phát triển đại công nghiệp.
+      - **Tích lũy tư bản** là quá trình tái sản xuất mở rộng bằng cách chuyển hóa một phần giá trị thặng dư thành tư bản phụ thêm.
+      - Bản chất: tái sản xuất mở rộng tư bản chủ nghĩa thông qua tư bản hóa giá trị thặng dư.
+      - Nguồn gốc duy nhất của tích lũy tư bản là **giá trị thặng dư**.
+      - Quy mô tích lũy phụ thuộc: tỷ lệ phân chia giữa tích lũy và tiêu dùng, khối lượng giá trị thặng dư.
+      - Các nhân tố ảnh hưởng: trình độ khai thác sức lao động, năng suất lao động xã hội, hiệu quả sử dụng máy móc, đại lượng tư bản ứng trước.
+      - **Cấu tạo hữu cơ tư bản** ($c/v$) tăng do cấu tạo kỹ thuật tăng, phản ánh xu hướng giảm $v$ tương đối so với $c$.
+      - Tích tụ tư bản: tăng quy mô tư bản cá biệt và xã hội nhờ tư bản hóa giá trị thặng dư.
+      - Tập trung tư bản: tăng quy mô tư bản cá biệt bằng hợp nhất, không làm tăng tư bản xã hội.
+      - Tích lũy tư bản làm tăng chênh lệch thu nhập giữa nhà tư bản và người lao động.
+      - Dẫn đến **bần cùng hóa giai cấp công nhân**: bần cùng hóa tương đối (giảm tỷ lệ phân phối) và bần cùng hóa tuyệt đối (sụt giảm mức sống).
+  - title: Lợi nhuận và các hình thái biểu hiện của giá trị thặng dư
+    pdf_pages:
+      - 68
+      - 73
+    summary: |-
+      - **Lợi nhuận** (p) là số chênh lệch giữa giá trị hàng hóa (G) và chi phí sản xuất (k), với công thức: $G = k + p$, suy ra $p = G - k$.
+      - Lợi nhuận là hình thái chuyển hóa của **giá trị thặng dư**, được coi là con đẻ của toàn bộ tư bản ứng trước.
+      - Nhà tư bản chỉ cần bán hàng hóa cao hơn chi phí sản xuất là có lợi nhuận; lợi nhuận có thể nhỏ hơn giá trị thặng dư nếu bán thấp hơn giá trị.
+      - **Tỷ suất lợi nhuận** ($p'$) là tỷ lệ phần trăm giữa lợi nhuận và toàn bộ tư bản ứng trước: $p' = \frac{p}{c+v} \times 100\%$.
+      - Tỷ suất lợi nhuận phản ánh mức độ hiệu quả đầu tư, trở thành động cơ cạnh tranh chủ yếu.
+      - Các nhân tố ảnh hưởng đến $p'$: **tỷ suất giá trị thặng dư**, **cấu tạo hữu cơ tư bản** ($c/v$), **tốc độ chu chuyển tư bản**, và **tiết kiệm tư bản bất biến**.
+      - **Lợi nhuận bình quân** (P) hình thành do cạnh tranh giữa các ngành, khi tư bản di chuyển tự do giữa các ngành đến khi $P'$ xấp xỉ bằng nhau.
+      - $P' = \frac{\sum p}{\sum (c+v)} \times 100\%$, và $P = P' \times K$ (K: tư bản ứng trước).
+      - Giá trị hàng hóa chuyển hóa thành **giá cả sản xuất**: $GCSX = k + P$.
+      - **Lợi nhuận thương nghiệp** là chênh lệch giữa giá bán và giá mua, thực chất là một phần giá trị thặng dư do nhà tư bản sản xuất chuyển giao.
+      - **Lợi tức** là một phần lợi nhuận bình quân mà người đi vay trả cho người cho vay; **tư bản cho vay** tách quyền sở hữu khỏi quyền sử dụng.
+      - **Tỷ suất lợi tức** ($z'$): $z' = \frac{Z}{TBCV} \times 100\%$, phụ thuộc tỷ suất lợi nhuận bình quân và cung cầu tư bản.
+      - **Tư bản giả** (cổ phiếu, trái phiếu) được giao dịch độc lập với sản xuất thực.
+      - **Địa tô tư bản chủ nghĩa** là phần giá trị thặng dư còn lại sau khi khấu trừ lợi nhuận bình quân, trả cho địa chủ.
+      - Các hình thức địa tô: **địa tô chênh lệch I, II** và **địa tô tuyệt đối**, ký hiệu $R$.
+  - title: Tóm tắt chương về giá trị thặng dư và địa tô
+    pdf_pages:
+      - 74
+      - 75
+    summary: |-
+      - **Giá trị thặng dư** là giá trị mới dôi ra ngoài giá trị của hàng hóa sức lao động, do người lao động tạo ra.
+      - **Hàng hóa sức lao động** là nguồn gốc tạo ra giá trị thặng dư, là hàng hóa đặc biệt.
+      - Bản chất kinh tế - xã hội của giá trị thặng dư là quan hệ giữa lao động làm thuê và người mua hàng hóa sức lao động.
+      - Các phương pháp sản xuất giá trị thặng dư gồm: sản xuất giá trị thặng dư **tuyệt đối** và **tương đối**.
+      - **Tích lũy tư bản** là quá trình tư bản duy trì sự tồn tại và phát triển.
+      - Quy mô tích lũy tư bản phụ thuộc vào: $tỷ\ suất\ giá\ trị\ thặng\ dư$, năng suất lao động, chênh lệch giữa tư bản sử dụng và tư bản tiêu dùng, quy mô tư bản ứng trước.
+      - Tích lũy tư bản làm tăng **cấu tạo hữu cơ của tư bản**, thúc đẩy **tích tụ** và **tập trung tư bản**, dẫn đến phân hóa thu nhập.
+      - Giá trị thặng dư biểu hiện thành các hình thái: **lợi nhuận**, **lợi tức**, **địa tô**.
+      - Giá cả ruộng đất được xác định theo công thức: $Giá\ cả\ đất\ đai = \frac{Địa\ tô}{Tỷ\ suất\ lợi\ tức\ ngân\ hàng}$.
+      - Lý luận **địa tô tư bản chủ nghĩa** của C.Mác là cơ sở khoa học cho chính sách thuế, điều tiết địa tô, quan hệ đất đai, nhằm khuyến khích thâm canh, sử dụng đất tiết kiệm, phát triển nông nghiệp hàng hóa bền vững.
+      - Các thuật ngữ cần ghi nhớ: giá trị thặng dư, tư bản bất biến, tư bản khả biến, tích lũy tư bản, cấu tạo hữu cơ tư bản, lợi nhuận, lợi tức, địa tô tư bản chủ nghĩa.

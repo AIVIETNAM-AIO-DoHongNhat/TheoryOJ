@@ -1,26 +1,29 @@
 "use client";
 
-import { ArrowUpRight, ChartColumnBig, LayoutDashboard, LogOut, MessagesSquare, Users } from "lucide-react";
+import { ArrowUpRight, ChartColumnBig, ClipboardList, LayoutDashboard, Library, LogOut, MessagesSquare, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTransition } from "react";
 
 import { AcademyLogo } from "@/components/brand";
 import {
   Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu,
   SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarRail, useSidebar,
 } from "@/components/ui/sidebar";
-import { logout } from "@/features/auth/actions";
+import { signOut } from "@/features/auth/components/UserMenu";
 import { cn } from "@/lib/utils";
 
 import { Initials } from "./AdminUi";
 
 export const ADMIN_NAV = [
-  { href: "/quan-tri", label: "Tổng quan", icon: LayoutDashboard },
-  { href: "/quan-tri/hoc-vien", label: "Học viên", icon: Users },
-  { href: "/quan-tri/lop", label: "Theo lớp", icon: ChartColumnBig },
-  { href: "/quan-tri/hoi-dap", label: "Hỏi đáp", icon: MessagesSquare },
+  { href: "/quan-tri", label: "Tổng quan", icon: LayoutDashboard, group: "Theo dõi" },
+  { href: "/quan-tri/hoc-vien", label: "Học viên", icon: Users, group: "Theo dõi" },
+  { href: "/quan-tri/lop", label: "Theo lớp", icon: ChartColumnBig, group: "Theo dõi" },
+  { href: "/quan-tri/hoi-dap", label: "Hỏi đáp", icon: MessagesSquare, group: "Theo dõi" },
+  { href: "/quan-tri/cau-hoi", label: "Ngân hàng câu hỏi", icon: Library, group: "Nội dung" },
+  { href: "/quan-tri/de-thi", label: "Đề thi", icon: ClipboardList, group: "Nội dung" },
 ];
+
+const NAV_GROUPS = [...new Set(ADMIN_NAV.map((n) => n.group))];
 
 export const isActive = (pathname: string, href: string) =>
   href === "/quan-tri" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
@@ -41,7 +44,6 @@ const FADE = "transition-opacity duration-300 delay-75 group-data-[collapsible=i
 export function AdminSidebar({ fullName, toReview }: { fullName: string; toReview: number }) {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
-  const [pending, startTransition] = useTransition();
 
   return (
     <Sidebar collapsible="icon" variant="inset">
@@ -64,13 +66,14 @@ export function AdminSidebar({ fullName, toReview }: { fullName: string; toRevie
         </SidebarHeader>
 
         <SidebarContent className="pt-2">
-          <SidebarGroup>
+          {NAV_GROUPS.map((group) => (
+          <SidebarGroup key={group}>
             <SidebarGroupLabel className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-sidebar-foreground/45">
-              Giảng viên
+              {group}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="gap-1">
-                {ADMIN_NAV.map(({ href, label, icon: Icon }) => (
+                {ADMIN_NAV.filter((n) => n.group === group).map(({ href, label, icon: Icon }) => (
                   <SidebarMenuItem key={href}>
                     <SidebarMenuButton
                       isActive={isActive(pathname, href)}
@@ -91,6 +94,7 @@ export function AdminSidebar({ fullName, toReview }: { fullName: string; toRevie
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
+          ))}
         </SidebarContent>
 
         <SidebarFooter className="gap-1 pb-3">
@@ -108,8 +112,7 @@ export function AdminSidebar({ fullName, toReview }: { fullName: string; toRevie
               <SidebarMenuButton
                 size="lg"
                 tooltip={`Đăng xuất (${fullName})`}
-                disabled={pending}
-                onClick={() => startTransition(() => logout())}
+                onClick={() => signOut(fullName)}
                 className="group/user h-12 gap-3 rounded-lg px-2 hover:bg-sidebar-accent"
               >
                 <Initials name={fullName} className="size-8 bg-none bg-white/10 text-[11px] text-white ring-white/15" />

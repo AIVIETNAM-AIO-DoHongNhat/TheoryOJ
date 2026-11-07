@@ -17,7 +17,7 @@ import { PdfReaderLoader } from "@/features/library/components/PdfReaderLoader";
 import { getDoc, getLibrary } from "@/features/library/server/catalog";
 import { readMarkdownDoc, renderDocx } from "@/features/library/server/render";
 import { docMeta, KIND_LABELS, type LibraryDoc } from "@/features/library/types";
-import { getQuizBank } from "@/features/quiz/server/bank";
+import { quizCounts } from "@/features/quiz/server/bank";
 import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -72,6 +72,7 @@ async function DocumentPageContent({ params }: PageProps<"/thu-vien/[slug]">) {
   );
 
   if (doc.format === "pdf") {
+    const quiz = await quizCounts(doc.subject, doc.chapters.map((c) => c.number));
     return (
       <>
         {header}
@@ -84,10 +85,7 @@ async function DocumentPageContent({ params }: PageProps<"/thu-vien/[slug]">) {
             pageOffset={doc.pageOffset}
             chapters={doc.chapters}
             practice={Object.fromEntries(
-              doc.chapters.map((c) => [
-                c.number,
-                { quiz: !!getQuizBank(doc.subject, c.number)?.questions.length, cards: !!getDeck(doc.subject, c.number)?.cards.length },
-              ]),
+              doc.chapters.map((c) => [c.number, { quiz: !!quiz[c.number], cards: !!getDeck(doc.subject, c.number)?.cards.length }]),
             )}
           />
         </div>

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 
-import { PageHeader } from "@/components/layout/PageHeader";
 import { LibraryBrowser } from "@/features/library/components/LibraryBrowser";
+import { LibraryHero } from "@/features/library/components/LibraryHero";
 import { getLibrary } from "@/features/library/server/catalog";
+import { getVideos } from "@/features/video/server/videos";
 
 export const metadata: Metadata = {
   title: "Thư viện tài liệu",
@@ -13,13 +14,11 @@ export default function LibraryPage() {
   const docs = getLibrary();
   return (
     <>
-      <PageHeader
-        crumbs={[{ label: "Thư viện" }]}
-        title="Thư viện tài liệu"
-        lead="Giáo trình, văn kiện của Đảng và tài liệu tham khảo được trợ lý dùng để trả lời. Đọc trực tuyến hoặc tải về để học."
-      />
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
-        <LibraryBrowser docs={docs} />
+      <LibraryHero docs={docs} videos={getVideos()} tab="tai-lieu" />
+      <div className="bg-subtle">
+        <div className="mx-auto max-w-6xl px-4 pb-16 sm:pb-24">
+          <LibraryBrowser docs={docs} />
+        </div>
       </div>
     </>
   );

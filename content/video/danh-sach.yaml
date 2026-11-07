@@ -1,0 +1,70 @@
+# Danh sách video ở tab Video của Thư viện (trang /thu-vien/video). Mỗi video là một mục dưới "videos:". Trang tự xếp theo ngày, mới nhất trước;
+# cùng ngày thì giữ thứ tự trong file, video đầu tiên được làm nổi bật.
+#
+# Cách thêm một video:
+#   1. Chép link video (YouTube: thanh địa chỉ hoặc nút "Chia sẻ"; Facebook: "..." > "Sao chép liên kết",
+#      hoặc "Nhúng" rồi chép cả mã <iframe>).
+#   2. Chép khối mẫu dưới đây, bỏ dấu "#" đầu dòng, dán link vào "url".
+#   Video phải để chế độ Công khai (YouTube: Công khai hoặc Không công khai) và cho phép nhúng thì mới phát được.
+#
+# Các dạng link nhận được:
+#   YouTube:  youtube.com/watch?v=…, youtu.be/…, youtube.com/shorts/…, youtube.com/live/…; giữ được "&t=…" (giây bắt đầu).
+#             Bìa lấy ảnh thu nhỏ của YouTube nếu không khai "cover".
+#   Facebook: facebook.com/watch/?v=…, facebook.com/<trang>/videos/<số>, facebook.com/reel/<số>,
+#             facebook.com/share/v/<mã>, fb.watch/<mã>. Facebook không có ảnh thu nhỏ, bìa là bìa chữ.
+#   Hoặc nguyên mã <iframe> nhúng của hai nền tảng trên.
+# Kiểm tra trước khi đăng: cd apps/web && npm test (videos.test.ts báo link sai, môn hoặc chương không có).
+#
+#  - slug: gia-tri-thang-du-qua-vi-du-xuong-may   # đường dẫn /thu-vien/video/<slug>, viết không dấu, nối bằng "-", không trùng
+#    title: Giá trị thặng dư qua ví dụ xưởng may
+#    description: Một đến hai câu tóm tắt nội dung video.
+#    url: https://www.facebook.com/ten-trang/videos/1234567890/
+#    date: 2026-11-06
+#    author: Họ tên giảng viên         # hoặc tên trang đăng video, có thể bỏ
+#    category: Bài giảng               # Bài giảng | Minh họa | Tư liệu | Hướng dẫn
+#    subject: ktct                     # mã môn trong apps/web/src/config/subjects.ts
+#    chapters: [3]                     # chương liên quan, video hiện ở trang chương đó; để [] nếu không có
+#    duration: "12:30"                 # thời lượng, có thể bỏ
+#    orientation: ngang                # ngang (16:9) | doc (reel, 9:16)
+#    cover: /anh-khoa/ten-anh.jpg      # ảnh bìa trong apps/web/public, có thể bỏ
+#    draft: true                       # true: chưa đăng
+
+videos:
+  - slug: nghi-quyet-68-tao-suc-bat-cho-nen-kinh-te
+    title: Nghị quyết 68 tạo sức bật cho nền kinh tế
+    description: >-
+      Phim tài liệu của VTV về Nghị quyết 68-NQ/TW của Bộ Chính trị về phát triển kinh tế tư nhân.
+      Xem cùng chương 5 khi học về các thành phần kinh tế trong nền kinh tế thị trường định hướng xã hội chủ nghĩa.
+    url: https://www.youtube.com/watch?v=sY3aVOBllwg
+    date: 2026-11-06
+    author: Ấn tượng VTV
+    category: Tư liệu
+    subject: ktct
+    chapters: [5]
+    duration: "21:47"
+
+  - slug: nghi-quyet-68-xung-luc-moi-cho-kinh-te-tu-nhan
+    title: "Nghị quyết 68-NQ/TW: Tạo niềm tin mới, xung lực mới cho kinh tế tư nhân"
+    description: >-
+      Chương trình của Thông tin Chính phủ về những điểm mới của Nghị quyết 68-NQ/TW đối với khu vực kinh tế tư nhân.
+      Liên hệ với vai trò của kinh tế tư nhân trong nền kinh tế thị trường định hướng xã hội chủ nghĩa.
+    url: https://www.youtube.com/watch?v=gevIKIzONMA
+    date: 2026-11-06
+    author: Thông tin Chính phủ
+    category: Tư liệu
+    subject: ktct
+    chapters: [5]
+    duration: "20:06"
+
+  - slug: dat-nuoc-doi-moi
+    title: Đất nước đổi mới
+    description: >-
+      Phim tài liệu của Truyền hình Vĩnh Long về công cuộc Đổi mới của đất nước.
+      Minh họa cho quá trình chuyển sang kinh tế thị trường định hướng xã hội chủ nghĩa, công nghiệp hóa, hiện đại hóa và hội nhập.
+    url: https://www.youtube.com/watch?v=IONfqbbvzys
+    date: 2026-11-06
+    author: Truyền hình Vĩnh Long
+    category: Tư liệu
+    subject: ktct
+    chapters: [5, 6]
+    duration: "32:31"

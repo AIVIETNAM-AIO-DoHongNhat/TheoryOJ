@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   boolean, index, integer, jsonb, pgTable, real, smallint, text, timestamp, uniqueIndex,
 } from "drizzle-orm/pg-core";
@@ -55,6 +56,10 @@ export const messages = pgTable("messages", {
   mode: text("mode"),
   chapters: integer("chapters").array(),
   label: text("label"),
+  /** Ý định do bộ định tuyến nhận ra (`Intent`): hoi_dap, tom_tat, tro_chuyen. */
+  intent: text("intent"),
+  /** Mức căn cứ (`Grounding`): tai_lieu, mot_phan, kien_thuc_chung. Null nếu bị từ chối hoặc chào hỏi. */
+  grounding: text("grounding"),
   /** Lý do từ chối (`RefusalReason`), null nếu đã trả lời. */
   refused: text("refused"),
   /** Câu khiêu khích hoặc chèn lệnh, cần giảng viên xem. */
@@ -238,3 +243,89 @@ export const userBadges = pgTable("user_badges", {
   badgeId: text("badge_id").notNull(),
   earnedAt: timestamp("earned_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [uniqueIndex("user_badges_badge_idx").on(t.visitorId, t.badgeId)]);
+
+/**
+ * Câu trắc nghiệm giảng viên soạn hoặc sửa ở /quan-tri/cau-hoi (features/question-bank). Ngân hàng của chương là câu trong
+ * content/<môn>/question-bank/ ghép với bảng này: dòng cùng `code` với một câu trong file thì thay câu đó (`hidden` để ẩn),
+ * mã khác thì là câu mới. Xóa dòng của câu trong file là khôi phục bản gốc.
+ */
+export const quizQuestions = pgTable("quiz_questions", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  subject: text("subject").notNull(),
+  chapter: integer("chapter").notNull(),
+  /** Mã câu như trong file (c3-07) hoặc mã sinh cho câu mới (gv3-k8f2qa). Tiến độ lưu theo mã này. */
+  code: text("code").notNull(),
+  q: text("q").notNull(),
+  /** 2 đến 6 phương án theo thứ tự soạn; trang làm bài tự trộn. */
+  options: jsonb("options").$type<string[]>().notNull(),
+  /** Vị trí phương án đúng trong `options`. */
+  answer: smallint("answer").notNull(),
+  explain: text("explain").notNull().default(""),
+  /** Trang in của giáo trình. */
+  page: integer("page"),
+  hidden: boolean("hidden").notNull().default(false),
+  updatedBy: text("updated_by").references(() => users.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [uniqueIndex("quiz_questions_code_idx").on(t.subject, t.chapter, t.code)]);
+
+/** Giảng viên đánh dấu đã duyệt (hoặc bỏ duyệt) bộ câu của một chương. Có dòng thì thay `status` trong file. */
+export const quizChapterReviews = pgTable("quiz_chapter_reviews", {
+  subject: text("subject").notNull(),
+  chapter: integer("chapter").notNull(),
+  reviewed: boolean("reviewed").notNull(),
+  updatedBy: text("updated_by").references(() => users.id, { onDelete: "set null" }),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [uniqueIndex("quiz_chapter_reviews_idx").on(t.subject, t.chapter)]);
+
+/**
+ * Đề thi giảng viên giao (features/exams). Câu hỏi chép nguyên vào `questions` lúc lưu đề, để sửa ngân hàng sau đó
+ * không làm đổi đề học viên đang làm hay bài đã chấm.
+ */
+export const exams = pgTable("exams", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  subject: text("subject").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull().default(""),
+  /** `ExamQuestion[]` ở features/exams/types.ts. */
+  questions: jsonb("questions").notNull(),
+  durationMin: integer("duration_min").notNull(),
+  /** Null: mở ngay khi giao. */
+  opensAt: timestamp("opens_at", { withTimezone: true }),
+  /** Null: không có hạn đóng. */
+  closesAt: timestamp("closes_at", { withTimezone: true }),
+  /** Lớp được giao (users.class_name); rỗng là mọi học viên. */
+  classes: text("classes").array().notNull().default([]),
+  maxAttempts: integer("max_attempts").notNull().default(1),
+  shuffle: boolean("shuffle").notNull().default(true),
+  /** Học viên xem gì sau khi nộp: `ngay` điểm và đáp án; `sau-han` điểm ngay, đáp án sau hạn đóng; `chi-diem` chỉ điểm. */
+  reveal: text("reveal", { enum: ["ngay", "sau-han", "chi-diem"] }).notNull().default("sau-han"),
+  /** `nhap` chỉ giảng viên thấy; `da-giao` học viên thuộc lớp được giao thấy. */
+  status: text("status", { enum: ["nhap", "da-giao"] }).notNull().default("nhap"),
+  createdBy: text("created_by").references(() => users.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [index("exams_status_idx").on(t.status, t.subject)]);
+
+/** Một lượt làm đề thi. Đáp án lưu dần trong lúc làm, để mất mạng hay hết giờ vẫn chấm được phần đã chọn. */
+export const examAttempts = pgTable("exam_attempts", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  examId: integer("exam_id").notNull().references(() => exams.id, { onDelete: "cascade" }),
+  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  startedAt: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
+  /** Lúc bắt đầu cộng thời gian làm bài. Hạn thật là giá trị nhỏ hơn giữa cột này và `exams.closes_at`. */
+  deadline: timestamp("deadline", { withTimezone: true }).notNull(),
+  /** Thứ tự câu và phương án của lượt: [{ id, options: number[] }]. */
+  layout: jsonb("layout").notNull(),
+  /** Mã câu → vị trí phương án đã chọn trong đề gốc. */
+  answers: jsonb("answers").$type<Record<string, number>>().notNull().default({}),
+  submittedAt: timestamp("submitted_at", { withTimezone: true }),
+  /** Hết giờ mà chưa nộp: máy chủ tự chấm phần đã lưu. */
+  autoSubmitted: boolean("auto_submitted").notNull().default(false),
+  score: integer("score"),
+  total: integer("total").notNull(),
+}, (t) => [
+  index("exam_attempts_exam_idx").on(t.examId, t.userId),
+  // Mỗi học viên chỉ một lượt đang làm của một đề, kể cả khi bấm "Bắt đầu" hai lần liền.
+  uniqueIndex("exam_attempts_open_idx").on(t.examId, t.userId).where(sql`${t.submittedAt} is null`),
+]);

@@ -1,6 +1,6 @@
 "use client";
 
-import { ShieldAlert } from "lucide-react";
+import { BookAlert, FilePen, ShieldAlert } from "lucide-react";
 import { useState } from "react";
 
 import { MinhMascot } from "@/components/brand/MinhMascot";
@@ -10,7 +10,7 @@ import { Bubble, BubbleContent } from "@/components/ui/bubble";
 import { Message, MessageContent } from "@/components/ui/message";
 import { cn } from "@/lib/utils";
 
-import type { ChatMessage, Citation } from "../types";
+import type { ChatMessage, ChatStatus, Citation } from "../types";
 import { CalculatorTrace } from "./CalculatorTrace";
 import { CitationChip } from "./CitationChip";
 import { FeedbackBar } from "./FeedbackBar";
@@ -99,6 +99,44 @@ export function PendingReply() {
   );
 }
 
+function thinkingLabel(status: ChatStatus | undefined, found: number): string {
+  if (!status) return "Đang tra cứu giáo trình và văn kiện";
+  if (status.intent === "tro_chuyen") return "Đang soạn câu trả lời";
+  if (status.intent === "tom_tat") return found ? `Đã đọc ${found} phần tài liệu, đang soạn bản tóm tắt` : "Đang soạn bản tóm tắt";
+  if (status.grounding === "kien_thuc_chung") return "Đang soạn câu trả lời";
+  return found ? `Đã tìm thấy ${found} đoạn, đang soạn câu trả lời` : "Đang tra cứu giáo trình và văn kiện";
+}
+
+const NOTICE: Record<"mot_phan" | "kien_thuc_chung", string> = {
+  mot_phan:
+    "Giáo trình chỉ đề cập một phần nội dung này. Ý có số trích dẫn lấy từ tài liệu; phần còn lại dựa trên kiến thức chung, đồng chí nên đối chiếu với giảng viên.",
+  kien_thuc_chung:
+    "Giáo trình và văn kiện hiện có không đề cập trực tiếp nội dung này. Câu trả lời dựa trên kiến thức chung, đồng chí nên đối chiếu với giảng viên.",
+};
+
+/** Nhãn do giao diện gắn theo trạng thái máy chủ gửi về, không để mô hình tự viết nên luôn có và không bị bịa. */
+function SourceNotice({ status }: { status: ChatStatus | undefined }) {
+  const grounding = status?.grounding;
+  const lines: { icon: typeof BookAlert; text: string }[] = [];
+  if (grounding === "mot_phan" || grounding === "kien_thuc_chung") lines.push({ icon: BookAlert, text: NOTICE[grounding] });
+  if (status?.draftSummary) lines.push({ icon: FilePen, text: "Bản tóm tắt dựng từ bản nháp chưa được giảng viên duyệt." });
+  if (lines.length === 0) return null;
+  return (
+    <div className="flex flex-col gap-1.5 motion-safe:animate-in motion-safe:fade-in">
+      {lines.map(({ icon: Icon, text }) => (
+        <p
+          key={text}
+          role="note"
+          className="flex items-start gap-2 rounded-xl border border-amber-300/60 bg-amber-50 px-3 py-2 text-[13px] leading-snug text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200"
+        >
+          <Icon aria-hidden className="mt-0.5 size-4 shrink-0" />
+          <span>{text}</span>
+        </p>
+      ))}
+    </div>
+  );
+}
+
 function AssistantMessage({ message, showActions, latest, streaming, feedback }: Omit<MessageViewProps, "animate">) {
   const [open, setOpen] = useState<Set<number>>(new Set());
   const [sourcesExpanded, setSourcesExpanded] = useState(false);
@@ -137,6 +175,7 @@ function AssistantMessage({ message, showActions, latest, streaming, feedback }:
           </Alert>
         ) : (
           <>
+            <SourceNotice status={status} />
             {tools.length > 0 && <CalculatorTrace parts={tools} />}
             {text ? (
               // Câu trả lời không đóng khung, đọc như một trang văn bản.
@@ -149,7 +188,7 @@ function AssistantMessage({ message, showActions, latest, streaming, feedback }:
               </Bubble>
             ) : (
               streaming && tools.length === 0 && (
-                <Thinking label={citations.length ? `Đã tìm thấy ${citations.length} đoạn, đang soạn câu trả lời` : "Đang tra cứu giáo trình và văn kiện"} />
+                <Thinking label={thinkingLabel(status, citations.length)} />
               )
             )}
             {citations.length > 0 && (

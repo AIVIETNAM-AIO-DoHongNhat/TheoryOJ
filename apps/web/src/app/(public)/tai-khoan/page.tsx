@@ -1,14 +1,12 @@
-import { LogOut } from "lucide-react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { PageHeader } from "@/components/layout/PageHeader";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { logout } from "@/features/auth/actions";
 import { ChangePasswordForm, ProfileForm } from "@/features/auth/components/AuthForms";
+import { LogoutButton } from "@/features/auth/components/UserMenu";
 import { getCurrentUser } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Tài khoản", robots: { index: false } };
@@ -50,12 +48,7 @@ export default function AccountPage() {
         title="Tài khoản"
         lead="Tiến độ ôn tập, lịch sử hỏi trợ lý và phiếu khảo sát được lưu theo tài khoản này."
         actions={
-          <form action={logout}>
-            <Button type="submit" variant="outline" size="lg">
-              <LogOut data-icon="inline-start" />
-              Đăng xuất
-            </Button>
-          </form>
+          <LogoutButton />
         }
       />
       <Suspense fallback={<div className="mx-auto max-w-6xl px-4 py-12"><Skeleton className="h-80 rounded-xl" /></div>}>

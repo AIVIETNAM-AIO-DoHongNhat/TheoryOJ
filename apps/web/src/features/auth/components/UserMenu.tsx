@@ -1,9 +1,8 @@
 "use client";
 
-import { Award, CalendarCheck, ChartNoAxesColumn, LayoutDashboard, LogIn, LogOut, type LucideIcon, NotebookPen, UserRound } from "lucide-react";
+import { Award, CalendarCheck, ChartNoAxesColumn, ClipboardList, LayoutDashboard, LogIn, LogOut, type LucideIcon, NotebookPen, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTransition } from "react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,22 @@ import {
 import { cn } from "@/lib/utils";
 
 import { logout } from "../actions";
+import { playAuthTransition } from "./AuthTransition";
+
+/** Đăng xuất kèm màn tạm biệt; màn đó gọi Server Action rồi đưa về trang chủ. */
+export function signOut(fullName?: string) {
+  playAuthTransition({ kind: "logout", fullName, to: "/", work: logout });
+}
+
+/** Nút đăng xuất ở trang Tài khoản. */
+export function LogoutButton() {
+  return (
+    <Button variant="outline" size="lg" onClick={() => signOut()}>
+      <LogOut data-icon="inline-start" />
+      Đăng xuất
+    </Button>
+  );
+}
 
 /** Chữ cái đầu của tên gọi (từ cuối trong họ tên tiếng Việt). */
 function initial(fullName: string): string {
@@ -50,11 +65,12 @@ interface MenuLink {
 
 const STUDENT_LINKS: MenuLink[] = [
   { href: "/hoc", icon: CalendarCheck, label: "Hôm nay", hint: "Việc nên làm, chuỗi ngày học" },
+  { href: "/de-thi", icon: ClipboardList, label: "Đề thi", hint: "Đề kiểm tra giảng viên giao cho lớp" },
   { href: "/tien-do", icon: ChartNoAxesColumn, label: "Tiến độ ôn tập", hint: "Điểm, thẻ đã thuộc theo chương" },
   { href: "/huy-hieu", icon: Award, label: "Bộ sưu tập", hint: "Huy hiệu đã sưu tầm, huy hiệu sắp đạt" },
   { href: "/so-ghi-chep", icon: NotebookPen, label: "Sổ ghi chép", hint: "Ghi chép bài học, đoạn chép từ giáo trình" },
 ];
-const TEACHER_LINKS: MenuLink[] = [{ href: "/quan-tri", icon: LayoutDashboard, label: "Trang quản trị", hint: "Học viên, lớp, hỏi đáp cần xem" }];
+const TEACHER_LINKS: MenuLink[] = [{ href: "/quan-tri", icon: LayoutDashboard, label: "Trang quản trị", hint: "Học viên, câu hỏi, đề thi, hỏi đáp" }];
 const ACCOUNT_LINK: MenuLink = { href: "/tai-khoan", icon: UserRound, label: "Tài khoản", hint: "Họ tên, lớp, đổi mật khẩu" };
 
 /** Menu tài khoản ở góc phải đầu trang: thẻ thông tin, lối vào trang cá nhân, đăng xuất. */
@@ -70,7 +86,6 @@ export function UserMenu({
   classroom: string;
   teacher: boolean;
 }) {
-  const [pending, startTransition] = useTransition();
   const pathname = usePathname();
   const links = [...(teacher ? TEACHER_LINKS : STUDENT_LINKS), ACCOUNT_LINK];
 
@@ -138,11 +153,11 @@ export function UserMenu({
         </DropdownMenuGroup>
         <DropdownMenuSeparator className="my-1.5" />
         <DropdownMenuGroup>
-          <DropdownMenuItem variant="destructive" disabled={pending} onClick={() => startTransition(() => logout())} className="gap-3 px-2 py-2">
+          <DropdownMenuItem variant="destructive" onClick={() => signOut(fullName)} className="gap-3 px-2 py-2">
             <span className="flex size-8 shrink-0 items-center justify-center">
               <LogOut />
             </span>
-            {pending ? "Đang đăng xuất…" : "Đăng xuất"}
+            Đăng xuất
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

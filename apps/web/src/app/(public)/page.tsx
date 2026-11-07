@@ -1,7 +1,7 @@
 import { ACTIVE_SUBJECTS, DEFAULT_SUBJECT, SUBJECTS } from "@/config/subjects";
 import { getPosts } from "@/features/blog/server/posts";
 import {
-  AssistantShowcase, BentoSection, CtaPanel, FacultyGallery, HomeHero, LatestPosts,
+  AssistantShowcase, BentoSection, CtaPanel, FacultyGallery, HomeHero, LatestPosts, WordmarkBand,
 } from "@/features/landing/components/Home";
 import { getUsageStats, MIN_ANSWERS } from "@/features/landing/server/usage";
 import { getProfile } from "@/features/learning/server/profile";
@@ -40,6 +40,7 @@ export default async function HomePage() {
       <LatestPosts posts={posts.slice(0, 3)} />
       <FacultyGallery />
       <CtaPanel />
+      <WordmarkBand />
     </>
   );
 }

@@ -80,7 +80,7 @@ async function SubjectProgress({ subject, visitorId }: { subject: Subject; visit
   const noteTotal = Object.values(notes).reduce((a, b) => a + b, 0);
   const mastered = Object.values(cards).reduce((a, c) => a + c.mastered, 0);
   const dueCards = Object.values(cards).reduce((a, c) => a + c.due, 0);
-  const counts = quizCounts(subject.id, numbers);
+  const counts = await quizCounts(subject.id, numbers);
   const rows = progress.chapters;
   const quizzes = rows.reduce((s, c) => s + c.quizAttempts, 0);
   const passed = rows.filter((c) => (c.quizBest ?? 0) >= PASS_RATIO).length;

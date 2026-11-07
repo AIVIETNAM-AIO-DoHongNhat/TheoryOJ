@@ -10,7 +10,18 @@ export interface Turn {
 const MAX_TURNS = 4;
 const MAX_CHARS = 600;
 
-/** Viết lại câu hỏi nối tiếp thành câu độc lập để tìm kiếm. Câu hỏi đầu tiên không cần gọi mô hình. */
+/** Mấy lượt cuối của hội thoại dạng văn bản, mỗi lượt cắt ngắn, cho bộ định tuyến và bước viết lại câu hỏi. */
+export function transcriptOf(history: Turn[]): string {
+  return history
+    .slice(-MAX_TURNS)
+    .map((t) => `${t.role === "user" ? "Học viên" : "Trợ lý"}: ${t.text.slice(0, MAX_CHARS)}`)
+    .join("\n");
+}
+
+/**
+ * Viết lại câu hỏi nối tiếp thành câu độc lập để tìm kiếm. Câu hỏi đầu tiên không cần gọi mô hình.
+ * Từ khi có bộ định tuyến (router.ts), hàm này chỉ chạy khi bộ định tuyến trả sai cấu trúc.
+ */
 export async function rewriteQuery(
   model: LanguageModel,
   history: Turn[],
@@ -19,14 +30,10 @@ export async function rewriteQuery(
 ): Promise<string> {
   if (history.length === 0) return question;
 
-  const transcript = history
-    .slice(-MAX_TURNS)
-    .map((t) => `${t.role === "user" ? "Học viên" : "Trợ lý"}: ${t.text.slice(0, MAX_CHARS)}`)
-    .join("\n");
   const { text } = await generateText({
     model,
     instructions: REWRITE_PROMPT,
-    prompt: `Hội thoại:\n${transcript}\n\nTin nhắn cuối: ${question}\n\nCâu truy vấn:`,
+    prompt: `Hội thoại:\n${transcriptOf(history)}\n\nTin nhắn cuối: ${question}\n\nCâu truy vấn:`,
     temperature: 0,
     maxOutputTokens: 120,
     abortSignal,

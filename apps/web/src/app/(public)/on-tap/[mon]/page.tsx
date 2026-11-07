@@ -150,7 +150,7 @@ async function ReviewSubjectContent({ params }: PageProps<"/on-tap/[mon]">) {
 
   const textbook = getLibrary().find((d) => d.subject === subject.id && d.kind === "giao_trinh");
   const numbers = subject.chapters.map((c) => c.number);
-  const quiz = quizCounts(subject.id, numbers);
+  const quiz = await quizCounts(subject.id, numbers);
   const decks = deckCounts(subject.id, numbers);
   const exercises = numbers.filter((n) => EXERCISES[subject.id]?.[n]);
   const stats = [

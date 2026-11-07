@@ -11,7 +11,7 @@ import { QUIZ_SIZE, type QuizQuestion, type QuizResult } from "./types";
 /** Đề mới cho nút "Làm đề khác". Không làm mới cả trang, để kết quả lượt trước không bị xóa giữa chừng. */
 export async function newQuiz(subject: string, chapter: number): Promise<QuizQuestion[]> {
   await requireStudent();
-  const bank = getQuizBank(z.string().max(32).parse(subject), z.number().int().positive().parse(chapter));
+  const bank = await getQuizBank(z.string().max(32).parse(subject), z.number().int().positive().parse(chapter));
   if (!bank) throw new Error("Chương này chưa có trắc nghiệm.");
   return drawQuiz(bank);
 }
@@ -29,7 +29,7 @@ const SubmitInput = z.object({
 export async function submitQuiz(input: z.input<typeof SubmitInput>): Promise<QuizResult> {
   const user = await requireStudent();
   const { subject, chapter, answers, review } = SubmitInput.parse(input);
-  const bank = getQuizBank(subject, chapter);
+  const bank = await getQuizBank(subject, chapter);
   if (!bank) throw new Error("Chương này chưa có trắc nghiệm.");
 
   const ids = Object.keys(answers);

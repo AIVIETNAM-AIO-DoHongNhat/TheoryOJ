@@ -244,6 +244,7 @@ export const footer = {
         { label: "Bài học các môn", href: "/mon" },
         { label: "Thư viện tài liệu", href: "/thu-vien" },
         { label: "Bài viết", href: "/bai-viet" },
+        { label: "Video bài giảng, tư liệu", href: "/thu-vien/video" },
         { label: "Giới thiệu", href: "/gioi-thieu" },
         { label: "Câu hỏi thường gặp", href: "/gioi-thieu#hoi-dap" },
         { label: "Ôn tập và tiến độ", href: "/tien-do" },

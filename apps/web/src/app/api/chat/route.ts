@@ -9,8 +9,8 @@ import { z } from "zod";
 
 import { getSubject } from "@/config/subjects";
 import { MODE_IDS } from "@/features/chat/modes";
-import { ensureConversation, saveAssistantMessage, saveUserMessage, type AssistantRecord } from "@/features/chat/server/persist";
-import { answerSettings, prepare } from "@/features/chat/server/pipeline";
+import { ensureConversation, lastCitations, saveAssistantMessage, saveUserMessage, type AssistantRecord } from "@/features/chat/server/persist";
+import { answerSettings, cannedAnswer, prepare } from "@/features/chat/server/pipeline";
 import { refusalText } from "@/features/chat/server/prompts";
 import type { Turn } from "@/features/chat/server/rewrite-query";
 import type { ChatMessage } from "@/features/chat/types";
@@ -95,7 +95,10 @@ export async function POST(req: Request) {
   }
   await saveUserMessage(conversationId, lastMessage.id, last.text);
 
-  const input = { subject, mode, chapters, history: turns.slice(0, -1), question: last.text };
+  const history = turns.slice(0, -1);
+  // Trích dẫn của câu trả lời trước đọc từ DB, không lấy từ client, cho yêu cầu "tóm tắt lại ý trên".
+  const previousCitations = history.length ? await lastCitations(conversationId) : [];
+  const input = { subject, mode, chapters, history, question: last.text, previousCitations };
   const started = performance.now();
   const assistantId = generateId();
   // Điền dần trong execute, lưu một lần ở onEnd (kể cả khi bị dừng giữa chừng).
@@ -112,6 +115,8 @@ export async function POST(req: Request) {
         mode,
         chapters,
         label: decision.label,
+        intent: decision.intent,
+        grounding: decision.type === "answer" ? decision.grounding : null,
         refused: decision.type === "refuse" ? decision.reason : null,
         flagged: decision.type === "refuse" && decision.flagged,
         rewrittenQuery: decision.query,
@@ -127,21 +132,26 @@ export async function POST(req: Request) {
           refused: decision.type === "refuse" ? decision.reason : null,
           query: decision.query,
           maxScore: decision.maxScore,
+          intent: decision.intent,
+          ...(decision.type === "answer" && decision.grounding ? { grounding: decision.grounding } : {}),
+          ...(decision.type === "answer" && decision.draftSummary ? { draftSummary: true } : {}),
         },
       });
 
-      if (decision.type === "refuse") {
-        const id = "refusal";
+      const fixed = decision.type === "refuse" ? refusalText(decision.reason, getSubject(subject)!) : cannedAnswer(decision);
+      if (fixed !== null) {
+        const id = "fixed";
         writer.write({ type: "text-start", id });
-        writer.write({ type: "text-delta", id, delta: refusalText(decision.reason, getSubject(subject)!) });
+        writer.write({ type: "text-delta", id, delta: fixed });
         writer.write({ type: "text-end", id });
         writer.write({ type: "finish" });
         return;
       }
+      if (decision.type === "refuse") return;
 
-      writer.write({ type: "data-citations", data: decision.citations });
+      if (decision.citations.length) writer.write({ type: "data-citations", data: decision.citations });
       const result = streamText({
-        ...answerSettings(input, decision.citations),
+        ...answerSettings(input, decision),
         abortSignal: req.signal,
       });
       writer.merge(toUIMessageStream({ stream: result.stream, sendStart: false }));
@@ -152,7 +162,7 @@ export async function POST(req: Request) {
       const totalMs = Math.round(performance.now() - started);
       console.info(JSON.stringify({
         event: record.refused ? "chat.refused" : "chat.answered", reason: record.refused, flagged: record.flagged,
-        mode, maxScore: record.maxScore, timings: record.timings, totalMs,
+        mode, intent: record.intent, grounding: record.grounding, maxScore: record.maxScore, timings: record.timings, totalMs,
       }));
       try {
         await saveAssistantMessage({

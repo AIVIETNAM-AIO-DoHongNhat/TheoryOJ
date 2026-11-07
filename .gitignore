@@ -27,3 +27,5 @@ Thumbs.db
 
 # PDF chép sang public lúc build trên Vercel (apps/web/scripts/copy-pdfs.mjs)
 apps/web/public/tai-lieu-goc/
+
+/C4*.docx

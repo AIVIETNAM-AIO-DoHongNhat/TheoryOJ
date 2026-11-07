@@ -15,15 +15,19 @@ import { getDeck } from "@/features/flashcards/server/deck";
 import { docsForChapter } from "@/features/library/server/catalog";
 import { readerHref } from "@/features/library/types";
 import { QuizRunner } from "@/features/quiz/components/QuizRunner";
-import { drawQuiz, getQuizBank } from "@/features/quiz/server/bank";
+import { drawQuiz, getQuizBank, quizCounts } from "@/features/quiz/server/bank";
 import { QUIZ_SIZE } from "@/features/quiz/types";
 import { reviewCrumbs, reviewHref } from "@/features/review/paths";
 import { getCurrentUser, isStudent } from "@/lib/auth/session";
 
-export function generateStaticParams() {
-  return ACTIVE_SUBJECTS.flatMap((s) =>
-    s.chapters.filter((c) => getQuizBank(s.id, c.number)?.questions.length).map((c) => ({ mon: s.id, so: String(c.number) })),
+export async function generateStaticParams() {
+  const params = await Promise.all(
+    ACTIVE_SUBJECTS.map(async (s) => {
+      const counts = await quizCounts(s.id, s.chapters.map((c) => c.number));
+      return s.chapters.filter((c) => counts[c.number]).map((c) => ({ mon: s.id, so: String(c.number) }));
+    }),
   );
+  return params.flat();
 }
 
 type Params = PageProps<"/on-tap/[mon]/chuong/[so]/trac-nghiem">["params"];
@@ -32,7 +36,7 @@ async function load(params: Params) {
   const { mon, so } = await params;
   const subject = getSubject(mon);
   const chapter = subject?.chapters.find((c) => c.number === Number(so));
-  const bank = subject?.active && chapter ? getQuizBank(subject.id, chapter.number) : null;
+  const bank = subject?.active && chapter ? await getQuizBank(subject.id, chapter.number) : null;
   return subject && chapter && bank?.questions.length ? { subject, chapter, bank } : null;
 }
 

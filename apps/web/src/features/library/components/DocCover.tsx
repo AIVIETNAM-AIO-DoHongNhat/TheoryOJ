@@ -4,12 +4,12 @@ import { cn } from "@/lib/utils";
 import { coverCode, type DocKind, docYear, FORMAT_LABELS, type LibraryDoc } from "../types";
 
 /** Màu theo loại tài liệu, lấy từ token --kind-* ở globals.css. Viết đủ tên lớp để Tailwind sinh được. */
-export const KIND_COLORS: Record<DocKind, { bg: string; text: string }> = {
-  giao_trinh: { bg: "bg-kind-giao-trinh", text: "text-kind-giao-trinh" },
-  van_kien: { bg: "bg-kind-van-kien", text: "text-kind-van-kien" },
-  tham_khao: { bg: "bg-kind-tham-khao", text: "text-kind-tham-khao" },
-  cand: { bg: "bg-kind-cand", text: "text-kind-cand" },
-  so_lieu: { bg: "bg-kind-so-lieu", text: "text-kind-so-lieu" },
+export const KIND_COLORS: Record<DocKind, { bg: string; text: string; soft: string }> = {
+  giao_trinh: { bg: "bg-kind-giao-trinh", text: "text-kind-giao-trinh", soft: "bg-kind-giao-trinh/10 dark:bg-kind-giao-trinh/25" },
+  van_kien: { bg: "bg-kind-van-kien", text: "text-kind-van-kien", soft: "bg-kind-van-kien/8 dark:bg-kind-van-kien/25" },
+  tham_khao: { bg: "bg-kind-tham-khao", text: "text-kind-tham-khao", soft: "bg-kind-tham-khao/10 dark:bg-kind-tham-khao/25" },
+  cand: { bg: "bg-kind-cand", text: "text-kind-cand", soft: "bg-kind-cand/8 dark:bg-kind-cand/25" },
+  so_lieu: { bg: "bg-kind-so-lieu", text: "text-kind-so-lieu", soft: "bg-kind-so-lieu/10 dark:bg-kind-so-lieu/25" },
 };
 
 const COVER_LABELS: Record<DocKind, string> = {

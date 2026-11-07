@@ -8,15 +8,17 @@ const onVercel = Boolean(process.env.VERCEL);
 
 // Header bảo mật (PLAN.md mục 9). HSTS do Caddy đặt vì chỉ có nghĩa trên HTTPS.
 // Next.js chèn script nội tuyến khi hydrate nên cần 'unsafe-inline'; pdf.js cần worker blob và WebAssembly.
+// Tab Video của Thư viện (/thu-vien/video) nhúng trình phát Facebook và YouTube trong iframe (src/features/video/embed.ts), bìa video lấy ảnh thu nhỏ từ i.ytimg.com.
+// web.facebook.com là bản Facebook chuyển hướng tới ở một số mạng.
 const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${dev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  "img-src 'self' data: blob: https://i.ytimg.com",
   "font-src 'self' data:",
   "connect-src 'self'",
   "worker-src 'self' blob:",
-  "frame-src 'self'",
+  "frame-src 'self' https://www.facebook.com https://web.facebook.com https://www.youtube-nocookie.com https://www.youtube.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

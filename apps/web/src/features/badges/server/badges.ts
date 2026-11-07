@@ -44,8 +44,9 @@ async function badgeStats(visitorId: string): Promise<BadgeStats> {
   const solved = attempts.filter((a) => a.kind === "exercise" && a.total > 0 && a.score === a.total);
   const mastered = states.filter((s) => s.intervalDays >= MASTERED_DAYS);
 
-  const subjects = ACTIVE_SUBJECTS.map((subject) => {
-    const counts = quizCounts(subject.id, subject.chapters.map((c) => c.number));
+  const allCounts = await Promise.all(ACTIVE_SUBJECTS.map((s) => quizCounts(s.id, s.chapters.map((c) => c.number))));
+  const subjects = ACTIVE_SUBJECTS.map((subject, i) => {
+    const counts = allCounts[i];
     const chapters = subject.chapters
       .filter((c) => counts[c.number])
       .map((c) => {

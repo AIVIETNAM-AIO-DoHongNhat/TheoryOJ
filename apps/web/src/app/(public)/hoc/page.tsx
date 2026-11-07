@@ -1,5 +1,5 @@
 import {
-  ArrowRight, BookOpen, CircleCheckBig, Flame, GalleryVerticalEnd, ListChecks, MessageSquareText, Plus, Sparkles,
+  ArrowRight, BookOpen, CircleCheckBig, ClipboardList, Flame, GalleryVerticalEnd, ListChecks, MessageSquareText, Plus, Sparkles,
 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -17,6 +17,8 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { ACTIVE_SUBJECTS } from "@/config/subjects";
 import { BadgeSummary } from "@/features/badges/components/BadgeSummary";
+import { listStudentExams } from "@/features/exams/server/exams";
+import { formatVnTime } from "@/features/exams/time";
 import { syncBadges } from "@/features/badges/server/badges";
 import { printedPage } from "@/features/library/types";
 import { getToday, type SubjectToday } from "@/features/progress/server/today";
@@ -123,7 +125,9 @@ async function TodayContent() {
   if (!user) redirect("/dang-nhap?tiep=/hoc");
   if (user.role === "giang-vien") redirect("/quan-tri");
   await connection();
-  const [today, badges] = await Promise.all([getToday(user.visitorId), syncBadges(user.visitorId)]);
+  const [today, badges, exams] = await Promise.all([getToday(user.visitorId), syncBadges(user.visitorId), listStudentExams(user)]);
+  // Đề đang mở mà học viên còn lượt làm, hoặc đang làm dở.
+  const openExams = exams.filter((e) => e.phase === "dang-mo" && (e.inProgress || e.attemptsUsed < e.maxAttempts));
   const many = ACTIVE_SUBJECTS.length > 1;
   const tasks = today.subjects.flatMap((s) => tasksOf(s, many ? `${s.subject.shortName}: ` : ""));
   const name = user.fullName.trim().split(/\s+/).at(-1);
@@ -153,6 +157,31 @@ async function TodayContent() {
 
       <div className="mx-auto grid max-w-6xl items-start gap-8 px-4 py-10 sm:py-12 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <section className="flex flex-col gap-4">
+          {openExams.length > 0 && (
+            <Card size="sm" className="bg-warn-soft ring-warn/40">
+              <CardHeader>
+                <CardDescription className="flex items-center gap-1.5 text-warn">
+                  <ClipboardList className="size-4" />
+                  Đề thi đang mở
+                </CardDescription>
+                <CardTitle className="leading-snug">
+                  {openExams.length === 1 ? openExams[0].title : `${openExams.length} đề thi đang chờ đồng chí làm`}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
+                <span>
+                  {openExams.some((e) => e.inProgress)
+                    ? "Có bài đang làm dở, đồng hồ vẫn đang chạy."
+                    : openExams[0].closesAt
+                      ? `Hạn gần nhất: ${formatVnTime(openExams.map((e) => e.closesAt).filter(Boolean).sort()[0] ?? null)}`
+                      : "Đề không có hạn nộp."}
+                </span>
+                <Button size="sm" render={<Link href={openExams.length === 1 ? `/de-thi/${openExams[0].id}` : "/de-thi"} />} nativeButton={false}>
+                  {openExams.some((e) => e.inProgress) ? "Làm tiếp" : "Vào làm bài"}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
           <h2 className="font-sans text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Việc hôm nay</h2>
           {tasks.length ? (
             <Card className="gap-0 py-0">

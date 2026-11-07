@@ -12,6 +12,8 @@ const WHERE: Record<ReviewFilter, ReturnType<typeof sql>> = {
   "gan-co": sql`m.flagged`,
   "danh-gia": sql`f.rating = -1`,
   "tu-choi": sql`m.refused is not null and not m.flagged`,
+  // Câu trả lời không hoàn toàn dựa vào tài liệu: giảng viên cần soát vì không có nguồn để đối chiếu.
+  "kien-thuc-chung": sql`m.grounding in ('mot_phan', 'kien_thuc_chung')`,
   "tat-ca": sql`true`,
 };
 
@@ -22,7 +24,7 @@ export async function getReviewLog(opts: {
   page: number;
 }): Promise<{ items: ReviewItem[]; hasMore: boolean }> {
   const rows = await db.execute<Record<string, unknown>>(sql`
-    select m.id, m.created_at, m.question, m.content, m.mode, m.chapters, m.label, m.refused, m.flagged,
+    select m.id, m.created_at, m.question, m.content, m.mode, m.chapters, m.label, m.refused, m.grounding, m.flagged,
            m.reviewed_at, m.max_score, c.subject,
            u.student_code, u.full_name, u.class_name,
            f.rating, f.reason, f.comment
@@ -48,6 +50,7 @@ export async function getReviewLog(opts: {
       chapters: (r.chapters as number[] | null) ?? [],
       label: r.label ? String(r.label) : null,
       refused: r.refused ? String(r.refused) : null,
+      grounding: r.grounding ? String(r.grounding) : null,
       flagged: Boolean(r.flagged),
       reviewed: r.reviewed_at !== null,
       maxScore: r.max_score === null ? null : Number(r.max_score),
@@ -69,12 +72,14 @@ export async function getReviewCounts(): Promise<Record<ReviewFilter, number>> {
       count(*) filter (where m.flagged) as gan_co,
       count(*) filter (where exists (select 1 from feedback f where f.message_id = m.id and f.rating = -1)) as danh_gia,
       count(*) filter (where m.refused is not null and not m.flagged) as tu_choi,
+      count(*) filter (where m.grounding in ('mot_phan', 'kien_thuc_chung')) as kien_thuc_chung,
       count(*) as tat_ca
     from messages m where m.role = 'assistant' and m.reviewed_at is null`);
   return {
     "gan-co": Number(r.gan_co ?? 0),
     "danh-gia": Number(r.danh_gia ?? 0),
     "tu-choi": Number(r.tu_choi ?? 0),
+    "kien-thuc-chung": Number(r.kien_thuc_chung ?? 0),
     "tat-ca": Number(r.tat_ca ?? 0),
   };
 }

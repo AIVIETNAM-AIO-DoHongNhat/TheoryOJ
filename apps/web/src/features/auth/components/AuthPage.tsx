@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { site } from "@/features/landing/content";
 import { cn } from "@/lib/utils";
 
-// Hình minh họa vẽ bằng SVG (sách, ngôi sao, thẻ tiến độ), sắc nét ở mọi kích thước màn hình.
+// Hình minh họa SVG "Con đường chinh phục kiến thức" (đường lên đỉnh qua 6 cột mốc chương, sao trên đỉnh), sắc nét
+// ở mọi kích thước màn hình. Sinh bằng scripts/gen-nen-dang-nhap.mjs.
 const PHOTO = "/anh-khoa/nen-dang-nhap.svg";
 
 interface Perk {

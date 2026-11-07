@@ -22,7 +22,7 @@
   color-scheme: light;
   --radius: 0.75rem;
 
-  --background: #ffffff;
+  --background: #f8fbf9;
   --foreground: #0a1a10;
   --card: #ffffff;
   --card-foreground: #0a1a10;
@@ -73,6 +73,11 @@
   --kind-so-lieu: #92400e;
   /* Màu giấy của minh họa tài liệu (DocCover), giữ nguyên ở cả nền sáng lẫn tối. */
   --paper: #fcfaf5;
+}
+
+/* Nền đọc "Sáng" giữ trắng tinh; nền trang chung ánh xanh nhẹ, kèm quầng sáng ở body bên dưới. */
+[data-reader-theme="sang"] {
+  --background: #ffffff;
 }
 
 /*
@@ -260,6 +265,15 @@
     75% { transform: scale(0.96) rotate(-3deg); }
   }
 
+  /* Bàn tay vẫy chào ở màn đăng xuất: lắc vài nhịp rồi nghỉ (dùng kèm `motion-safe:`). */
+  --animate-wave: wave 1.6s ease-in-out infinite;
+
+  @keyframes wave {
+    0%, 60%, 100% { transform: rotate(0deg); }
+    10%, 30% { transform: rotate(16deg); }
+    20%, 40% { transform: rotate(-10deg); }
+  }
+
   /*
    * Trợ lý: tin nhắn mới trồi lên, vòng sáng quanh ảnh đại diện khi đang trả lời, ba chấm "đang soạn",
    * vệt sáng chạy trên ô nhập khi chờ. Các vòng lặp dùng kèm `motion-safe:`.
@@ -288,6 +302,33 @@
     from { transform: translateX(-100%); }
     to { transform: translateX(250%); }
   }
+
+  /*
+   * Màn chuyển cảnh đăng nhập, đăng xuất (features/auth/components/AuthTransition.tsx): lớp phủ loang tròn từ chỗ vừa bấm
+   * (--ox, --oy), tia lấp lánh bắn ra quanh linh vật (--dx, --dy), thanh chờ đầy dần trong --fill-ms rồi chạy nốt khi chuyển trang.
+   */
+  --animate-curtain-in: curtain-in 0.7s cubic-bezier(0.65, 0, 0.35, 1) both;
+  --animate-spark: spark 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-bar-fill: bar-fill var(--fill-ms, 1.3s) cubic-bezier(0.3, 0.6, 0.3, 1) both;
+  --animate-bar-finish: bar-finish 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+
+  @keyframes curtain-in {
+    from { clip-path: circle(0 at var(--ox, 50%) var(--oy, 50%)); }
+    to { clip-path: circle(150vmax at var(--ox, 50%) var(--oy, 50%)); }
+  }
+  @keyframes spark {
+    from { opacity: 0; transform: translate(0, 0) scale(0.3); }
+    25% { opacity: 1; }
+    to { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1); }
+  }
+  @keyframes bar-fill {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(0.86); }
+  }
+  @keyframes bar-finish {
+    from { transform: scaleX(0.86); }
+    to { transform: scaleX(1); }
+  }
 }
 
 /* Độ trễ animation theo mili giây: anim-delay-300. */
@@ -305,6 +346,20 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  /*
+   * Quầng sáng đan xen trái phải từ trên xuống: bạc hà, xanh chanh, ngọc lục bảo. Đứng yên khi cuộn, chỉ ở
+   * giao diện sáng. Vùng giữa màn hình để trống để nội dung vẫn sạch.
+   */
+  html:not(.dark) body {
+    background-image:
+      radial-gradient(55% 50% at 0% 0%, rgb(134 239 172 / 0.32), transparent 70%),
+      radial-gradient(45% 40% at 100% 8%, rgb(190 242 100 / 0.22), transparent 70%),
+      radial-gradient(40% 38% at 100% 58%, rgb(52 211 153 / 0.16), transparent 70%),
+      radial-gradient(42% 40% at 0% 45%, rgb(190 242 100 / 0.16), transparent 70%),
+      radial-gradient(50% 45% at 8% 100%, rgb(52 211 153 / 0.18), transparent 70%),
+      radial-gradient(45% 42% at 92% 100%, rgb(134 239 172 / 0.26), transparent 70%);
+    background-attachment: fixed;
   }
   h1, h2, h3 {
     font-family: var(--font-heading);

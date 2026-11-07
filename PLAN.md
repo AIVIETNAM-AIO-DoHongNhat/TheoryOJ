@@ -123,6 +123,16 @@ Làm ngày 01/11/2026 theo yêu cầu cho học viên học trên nhiều thiế
 - **Vai trò giảng viên.** Cột `users.role` (`hoc-vien`, `giang-vien`). Giảng viên không tự đăng ký quyền: người phát triển chạy `npm run cap-quyen -- <mã> [--tao "Họ tên"] [--thu]`. Giảng viên đặt lại mật khẩu học viên ngay trên trang quản trị.
 - **Chưa làm.** Xác minh mã học viên với danh sách lớp; nhập danh sách lớp từ Excel.
 
+### 2.8. Nâng cấp trợ lý: câu hỏi ngoài tài liệu và tóm tắt
+
+Làm ngày 06/11/2026. Trước đó trợ lý từ chối mọi câu có điểm reranker dưới `REFUSAL_THRESHOLD`, kể cả câu thuộc môn mà giáo trình không viết trực tiếp. Trợ lý cũng không tóm tắt được: mọi yêu cầu đều đi cùng một đường (top 5 đoạn, 1.500 token), nên "Tóm tắt chương 3" chỉ nhận năm đoạn rời rạc hoặc bị từ chối vì điểm thấp.
+
+- **Bộ định tuyến** (`features/chat/server/router.ts`) thay cho hai bước viết lại câu hỏi và phân loại. Một lệnh gọi `LLM_FAST_MODEL` trả về JSON gồm nhãn (bốn nhãn cũ), ý định (`hoi_dap`, `tom_tat`, `tro_chuyen`), phạm vi tóm tắt (chương, khoảng trang, văn kiện, cuộc trao đổi, chủ đề) và câu tìm kiếm độc lập. Luật chặn chèn lệnh vẫn chạy trước. Mô hình trả sai cấu trúc thì quay về hai bước cũ. Phạm vi được kiểm tra lại: chương phải có trong môn, văn kiện phải có trong `manifest.yaml`, tối đa 40 trang.
+- **Ba mức căn cứ.** Câu `hop_le` có điểm từ `REFUSAL_THRESHOLD` trở lên trả lời như cũ (`tai_lieu`). Điểm từ `GENERAL_FLOOR` (0,15) đến dưới ngưỡng thì dùng tài liệu cho phần có, kiến thức chung cho phần còn lại (`mot_phan`). Điểm thấp hơn nữa thì trả lời bằng kiến thức chung, không đưa đoạn nào vào để mô hình không gán [n] cho đoạn lạc đề (`kien_thuc_chung`). Nhãn cảnh báo do giao diện gắn theo `data-status`, không để mô hình tự viết. Chỉ cho hai mức sau khi nhãn `hop_le` do mô hình gán, không phải nhãn mặc định khi bộ phân loại trả lời lạc đề. `CHAT_GENERAL_ANSWERS=false` thì quay về từ chối như cũ. Câu khiêu khích, ngoài môn, chèn lệnh vẫn bị chặn ở bước định tuyến.
+- **Tóm tắt.** Chương và văn kiện có bản sinh sẵn ở `content/<môn>/tom-tat/` (`npm run tom-tat`, giảng viên soát rồi đổi `status` thành `da-duyet`) thì mỗi phần của bản đó thành một khối trích dẫn. Chưa có thì lấy nguyên văn theo thứ tự `ord` từ bảng `chunks` (`lib/search/range.ts`), gom theo trang PDF (giáo trình) hoặc mục cấp một (văn kiện). Một chương giáo trình dài 32–93 nghìn ký tự nên đưa nguyên văn được trong một lượt; trên 100 nghìn ký tự (Báo cáo tổng kết 40 năm đổi mới) thì tóm lược từng lô 30 nghìn ký tự bằng mô hình nhanh trước. Tóm tắt chủ đề dùng tìm kiếm với 10 đoạn. "Tóm tắt lại ý trên" dùng lịch sử và trích dẫn của câu trả lời trước (đọc từ DB, không lấy từ client). Các đoạn giáo trình không có trường `section`, nên "tóm tắt mục X" của giáo trình đi theo chủ đề hoặc khoảng trang.
+- **Lưu và xem lại.** Bảng `messages` thêm cột `intent` và `grounding` (migration `0011`). Trang `/quan-tri/hoi-dap` có tab "Kiến thức chung" để giảng viên soát các câu trả lời không có nguồn.
+- **Mô hình.** `qwen-2.5-7b` yếu với văn bản dài và đầu ra JSON. Kết quả đo với mô hình mới ở bảng dưới.
+
 ---
 
 ## 3. Kiến trúc

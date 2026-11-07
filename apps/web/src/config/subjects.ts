@@ -77,6 +77,15 @@ export const SUBJECTS: Subject[] = [
     modes: THEORY_MODES,
     chapters: [],
   },
+  {
+    id: "tlh",
+    name: "Tâm lý học",
+    shortName: "Tâm lý học",
+    description: "Bản chất của hiện tượng tâm lý người, hoạt động nhận thức, nhân cách và sự hình thành, phát triển tâm lý.",
+    active: false,
+    modes: THEORY_MODES,
+    chapters: [],
+  },
 ];
 
 export const ACTIVE_SUBJECTS = SUBJECTS.filter((s) => s.active);

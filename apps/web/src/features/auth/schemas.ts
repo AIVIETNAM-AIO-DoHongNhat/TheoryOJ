@@ -50,6 +50,9 @@ export interface FormState {
   ok?: boolean;
   /** Giá trị đã nhập (trừ mật khẩu) để điền lại khi báo lỗi. */
   values?: Record<string, string>;
+  /** Đăng nhập, đăng ký thành công: trang chuyển tới và họ tên để màn chào mừng gọi tên. */
+  to?: string;
+  fullName?: string;
 }
 
 export function fieldErrors(error: z.ZodError): Record<string, string> {

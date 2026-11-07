@@ -45,8 +45,12 @@ const STEPS = [0.5, 0.67, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3];
 const GAP = 16;
 /** Số trang vẽ thêm phía trên, phía dưới vùng nhìn để cuộn không thấy trang trống. */
 const OVERSCAN = 2;
+/** Trang đã vẽ chỉ bị gỡ khi cách vùng nhìn quá số trang này, để cuộn qua lại không phải vẽ lại. */
+const KEEP = 5;
 /** Dừng phóng bao lâu thì vẽ lại cho nét, ms. */
 const SETTLE_MS = 220;
+/** Dừng cuộn bao lâu thì coi là đã đứng yên (mới dựng lớp chữ cho các trang mới), ms. */
+const SCROLL_IDLE_MS = 150;
 
 export interface PdfReaderProps {
   slug: string;
@@ -93,7 +97,13 @@ export function PdfReader({ slug, title, subject, pages, pageOffset, chapters, p
     zoomRef.current = zoom;
   }, [zoom]);
   const [stage, setStage] = useState({ width: 0, height: 0 });
-  const [scrollTop, setScrollTop] = useState(0);
+  /** Dải trang đang gắn vào DOM. Chỉ đổi khi cuộn sang dải khác, không đổi theo từng pixel cuộn. */
+  const [range, setRange] = useState({ first: 1, last: 1 });
+  /** Đang cuộn: tạm hoãn dựng lớp chữ (việc nặng trên luồng chính) cho trang mới tới khi dừng tay. */
+  const [scrolling, setScrolling] = useState(false);
+  const scrollingRef = useRef(false);
+  const idleTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => () => clearTimeout(idleTimer.current), []);
   const [tocOpen, setTocOpen] = useState(false);
   const [resumedAt, setResumedAt] = useState<number | null>(null);
   /** Chế độ đọc toàn màn hình: tài liệu phủ cả cửa sổ, không đầu trang và chân trang của web. */
@@ -171,17 +181,47 @@ export function PdfReader({ slug, title, subject, pages, pageOffset, chapters, p
     setTarget(null);
   }, [target, span, numPages, ready]);
 
+  // Dải trang gắn vào DOM: luôn phủ vùng nhìn ± OVERSCAN, và chỉ thu lại khi trang đã cách vùng nhìn quá KEEP.
+  const updateRange = useCallback(() => {
+    const el = stageRef.current;
+    if (!el || !span) return;
+    const vf = Math.floor(el.scrollTop / span) + 1;
+    const vl = Math.ceil((el.scrollTop + el.clientHeight) / span);
+    setRange((r) => {
+      // Phần dải cũ còn giữ được, và phần bắt buộc phải có. Hai phần liền nhau thì gộp; nhảy xa thì chỉ lấy phần mới.
+      const kf = Math.max(r.first, vf - KEEP);
+      const kl = Math.min(r.last, vl + KEEP);
+      const wf = vf - OVERSCAN;
+      const wl = vl + OVERSCAN;
+      const joined = kf <= kl && kf <= wl + 1 && kl >= wf - 1;
+      const first = Math.max(1, joined ? Math.min(kf, wf) : wf);
+      const last = Math.min(total, joined ? Math.max(kl, wl) : wl);
+      return first === r.first && last === r.last ? r : { first, last };
+    });
+  }, [span, total]);
+  // Đổi mức phóng, khổ khung: tính lại dải sau khi các hiệu ứng ở trên đã đặt lại vị trí cuộn.
+  useLayoutEffect(updateRange, [updateRange, stage.height, ready]);
+
   const onScroll = useCallback(() => {
     const el = stageRef.current;
     // Chưa có nội dung cao hơn khung (đang đổi kích thước): không phải người đọc cuộn, giữ nguyên vị trí đã nhớ.
     if (!el || !span || el.scrollHeight <= el.clientHeight) return;
     anchorRef.current = el.scrollTop / span;
-    setScrollTop(el.scrollTop);
+    updateRange();
+    if (!scrollingRef.current) {
+      scrollingRef.current = true;
+      setScrolling(true);
+    }
+    clearTimeout(idleTimer.current);
+    idleTimer.current = setTimeout(() => {
+      scrollingRef.current = false;
+      setScrolling(false);
+    }, SCROLL_IDLE_MS);
     // Trang hiện tại là trang chiếm điểm cách đỉnh khung một phần ba chiều cao.
     const n = Math.min(total, Math.max(1, Math.floor((el.scrollTop + el.clientHeight / 3) / span) + 1));
     setPage(n);
     if (document.activeElement?.getAttribute("aria-label") !== "Trang PDF") setPageInput(String(n));
-  }, [span, total]);
+  }, [span, total, updateRange]);
 
   // Ghi ?trang= lên địa chỉ để sao chép, chia sẻ đúng trang.
   useEffect(() => {
@@ -319,8 +359,8 @@ export function PdfReader({ slug, title, subject, pages, pageOffset, chapters, p
   }, []);
 
   // Chỉ vẽ các trang trong vùng nhìn và vài trang lân cận.
-  const first = span ? Math.max(1, Math.floor(scrollTop / span) + 1 - OVERSCAN) : 1;
-  const last = span ? Math.min(total, Math.ceil((scrollTop + stage.height) / span) + OVERSCAN) : 1;
+  const first = Math.min(range.first, total);
+  const last = Math.min(Math.max(range.last, first), total);
 
   const current = chapters.find((c) => page >= c.from && page <= c.to);
   const links = current && practice[current.number];
@@ -560,6 +600,7 @@ export function PdfReader({ slug, title, subject, pages, pageOffset, chapters, p
                     height={pageH}
                     renderWidth={renderW}
                     dpr={dpr}
+                    allowText={!scrolling}
                     filter={PAGE_FILTER[theme]}
                     notes={notesByPage.get(n)?.length ?? 0}
                     onTextLayer={repaint}
@@ -618,15 +659,19 @@ export function PdfReader({ slug, title, subject, pages, pageOffset, chapters, p
  * bản mới vẽ ẩn phía trên bản cũ và chỉ thay khi đã vẽ xong, nên không chớp trắng.
  */
 const PageSlot = memo(function PageSlot({
-  n, top, width, height, renderWidth, dpr, filter, notes, onTextLayer,
+  n, top, width, height, renderWidth, dpr, allowText, filter, notes, onTextLayer,
 }: {
   n: number; top: number; width: number; height: number; renderWidth: number; dpr: number; filter?: string;
+  /** Được phép dựng lớp chữ (không đang cuộn). Đã dựng thì giữ, kể cả khi cuộn tiếp. */
+  allowText: boolean;
   /** Số ghi chú trên trang, hiện dấu ở góc trang. */
   notes: number;
   onTextLayer: () => void;
 }) {
   /** Độ rộng của bản vẽ đã hoàn tất gần nhất. */
   const [shown, setShown] = useState<number | null>(null);
+  const [withText, setWithText] = useState(allowText);
+  if (allowText && !withText) setWithText(true);
   const layers = shown !== null && shown !== renderWidth ? [shown, renderWidth] : [renderWidth];
   return (
     <div
@@ -651,8 +696,8 @@ const PageSlot = memo(function PageSlot({
             width={w}
             devicePixelRatio={dpr}
             renderAnnotationLayer={false}
-            // Lớp chữ (để bôi đen, sao chép) chỉ dựng cho bản vẽ đang dùng.
-            renderTextLayer={w === renderWidth}
+            // Lớp chữ (để bôi đen, sao chép) chỉ dựng cho bản vẽ đang dùng, và hoãn tới khi dừng cuộn.
+            renderTextLayer={withText && w === renderWidth}
             loading={null}
             onRenderSuccess={() => setShown(w)}
             onRenderTextLayerSuccess={onTextLayer}
