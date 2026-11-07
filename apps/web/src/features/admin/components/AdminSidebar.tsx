@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, ChartColumnBig, ClipboardList, LayoutDashboard, Library, LogOut, MessagesSquare, Users } from "lucide-react";
+import { ArrowUpRight, ChartColumnBig, ClipboardList, LayoutDashboard, Library, LogOut, MessagesSquare, PenLine, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -19,6 +19,7 @@ export const ADMIN_NAV = [
   { href: "/quan-tri/hoc-vien", label: "Học viên", icon: Users, group: "Theo dõi" },
   { href: "/quan-tri/lop", label: "Theo lớp", icon: ChartColumnBig, group: "Theo dõi" },
   { href: "/quan-tri/hoi-dap", label: "Hỏi đáp", icon: MessagesSquare, group: "Theo dõi" },
+  { href: "/quan-tri/cham-bai", label: "Chấm bài", icon: PenLine, group: "Theo dõi" },
   { href: "/quan-tri/cau-hoi", label: "Ngân hàng câu hỏi", icon: Library, group: "Nội dung" },
   { href: "/quan-tri/de-thi", label: "Đề thi", icon: ClipboardList, group: "Nội dung" },
 ];

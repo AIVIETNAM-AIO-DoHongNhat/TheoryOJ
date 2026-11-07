@@ -1,0 +1,20 @@
+# Câu tự luận chương 5. Người phát triển soạn từ giáo trình, chờ giảng viên duyệt. Quy ước ở _mau.yaml.
+subject: ktct
+chapter: 5
+status: nhap
+questions:
+  - id: tl5-01
+    q: Phân tích tính tất yếu khách quan của việc phát triển kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam.
+    rubric:
+      - { id: y1, y: "Khái niệm: nền kinh tế vận hành theo các quy luật của thị trường, hướng tới dân giàu, nước mạnh, dân chủ, công bằng, văn minh, có sự điều tiết của Nhà nước do Đảng lãnh đạo", diem: 2, page: 104 }
+      - { id: y2, y: "Phù hợp với xu hướng phát triển khách quan của Việt Nam trong bối cảnh thế giới hiện nay", diem: 3, page: 104 }
+      - { id: y3, y: "Do tính ưu việt của kinh tế thị trường trong thúc đẩy phát triển", diem: 2.5, page: 106 }
+      - { id: y4, y: "Phù hợp với nguyện vọng mong muốn dân giàu, nước mạnh, dân chủ, công bằng, văn minh của nhân dân", diem: 2.5, page: 106 }
+  - id: tl5-02
+    q: Trình bày các đặc trưng của kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam.
+    rubric:
+      - { id: y1, y: "Về mục tiêu: phát triển lực lượng sản xuất, xây dựng cơ sở vật chất kỹ thuật của chủ nghĩa xã hội, nâng cao đời sống nhân dân", diem: 2, page: 107 }
+      - { id: y2, y: "Về sở hữu và thành phần kinh tế: nhiều hình thức sở hữu, nhiều thành phần kinh tế; kinh tế nhà nước giữ vai trò chủ đạo, kinh tế tư nhân là một động lực quan trọng", diem: 2, page: 108 }
+      - { id: y3, y: "Về quản lý: Đảng lãnh đạo, Nhà nước quản lý bằng pháp luật, chiến lược, chính sách, nhân dân làm chủ", diem: 2, page: 110 }
+      - { id: y4, y: "Về phân phối: phân phối theo kết quả lao động, hiệu quả kinh tế, mức đóng góp vốn và qua phúc lợi xã hội", diem: 2, page: 111 }
+      - { id: y5, y: "Gắn tăng trưởng kinh tế với công bằng xã hội ngay trong từng chính sách, từng bước phát triển", diem: 2, page: 112 }

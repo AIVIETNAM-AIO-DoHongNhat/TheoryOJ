@@ -4,14 +4,20 @@
  * để đường dẫn và breadcrumb luôn cho biết người dùng đang ở nhánh nào.
  * Đường dẫn cũ /mon/<môn>/chuong/<n>/<hoạt động> được chuyển hướng ở next.config.ts.
  */
-export const REVIEW_ACTIVITIES = ["the-ghi-nho", "trac-nghiem", "bai-tap"] as const;
+export const REVIEW_ACTIVITIES = ["the-ghi-nho", "trac-nghiem", "bai-tap", "tu-luan"] as const;
 export type ReviewActivity = (typeof REVIEW_ACTIVITIES)[number];
 
 export const ACTIVITY_LABELS: Record<ReviewActivity, string> = {
   "the-ghi-nho": "Thẻ ghi nhớ",
   "trac-nghiem": "Trắc nghiệm",
   "bai-tap": "Bài tập",
+  "tu-luan": "Tự luận",
 };
+
+/** Đấu trường phản bác của môn, hoặc một luận điệu trong đó. */
+export function rebuttalHref(subject: string, id?: string) {
+  return id ? `/on-tap/${subject}/phan-bac/${id}` : `/on-tap/${subject}/phan-bac`;
+}
 
 /** Trang ôn của môn, một chương trong trang đó, hoặc một hoạt động luyện của chương. */
 export function reviewHref(subject: string, chapter?: number, activity?: ReviewActivity) {

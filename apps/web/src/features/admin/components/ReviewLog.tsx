@@ -1,6 +1,6 @@
 "use client";
 
-import { Ban, BookAlert, Check, CheckCheck, ChevronDown, Flag, Inbox, MessageSquareQuote, RotateCcw, ThumbsDown, ThumbsUp } from "lucide-react";
+import { Ban, BookAlert, Check, CheckCheck, ChevronDown, ClipboardCopy, Flag, Inbox, MessageSquareQuote, RotateCcw, ThumbsDown, ThumbsUp } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -139,6 +139,51 @@ function Tag({ tone = "neutral", icon: Icon, children }: { tone?: "danger" | "wa
   );
 }
 
+/** Bản nháp YAML cho content/<môn>/phan-bac/: giảng viên viết lại luận điệu theo bài phản bác đã đăng, điền nguồn và barem. */
+function rebuttalDraft(item: ReviewItem): string {
+  const chapter = item.chapters[0] ?? "<số chương>";
+  const claim = item.question.replace(/\s+/g, " ").trim();
+  return [
+    `  # Từ câu hỏi bị gắn cờ khiêu khích ngày ${dateTime(item.createdAt)}. Viết lại luận điệu đúng như bài phản bác đã đăng,`,
+    `  # điền nguồn và barem rồi thêm vào content/${item.subject}/phan-bac/chuong-${chapter}.yaml (quy ước ở _mau.yaml).`,
+    `  - id: pb${chapter}-xx`,
+    `    tieu_de: ""`,
+    `    luan_dieu: >-`,
+    `      ${claim}`,
+    `    nguon_phan_bac:`,
+    `      - { ten: "", bao: "", url: "https://" }`,
+    `    ngay_bien:`,
+    `      - `,
+    `    rubric:`,
+    `      ly_luan:`,
+    `        - { id: l1, y: "", diem: 5, page: }`,
+    `      van_kien:`,
+    `        - { id: v1, y: "", diem: 3, document: "" }`,
+    `      thuc_tien:`,
+    `        - { id: t1, y: "", diem: 2 }`,
+  ].join("\n");
+}
+
+/** Biến câu khiêu khích bị chặn thành đề luyện phản bác: chép bản nháp YAML để giảng viên hoàn thiện. */
+function CopyRebuttalDraft({ item }: { item: ReviewItem }) {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(rebuttalDraft(item));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      setCopied(false);
+    }
+  };
+  return (
+    <Button variant="ghost" size="sm" className="text-muted-foreground" onClick={copy} title="Chép bản nháp YAML cho Đấu trường phản bác">
+      {copied ? <Check data-icon="inline-start" /> : <ClipboardCopy data-icon="inline-start" />}
+      {copied ? "Đã chép bản nháp" : "Đề xuất thành luận điệu luyện tập"}
+    </Button>
+  );
+}
+
 function ReviewCard({ item }: { item: ReviewItem }) {
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -218,6 +263,7 @@ function ReviewCard({ item }: { item: ReviewItem }) {
             <ChevronDown data-icon="inline-start" className={cn("transition-transform", open && "rotate-180")} />
             {open ? "Ẩn câu trả lời" : "Xem câu trả lời của trợ lý"}
           </CollapsibleTrigger>
+          {item.label === "khieu_khich" && <CopyRebuttalDraft item={item} />}
           <Button
             variant={item.reviewed ? "ghost" : "outline"}
             size="sm"

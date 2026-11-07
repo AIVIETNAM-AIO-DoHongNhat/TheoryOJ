@@ -1,5 +1,6 @@
 /**
- * Báo cáo số liệu cho hồ sơ sáng kiến (PLAN.md mục 10): mức độ sử dụng, hiệu quả ôn tập, khảo sát trước và sau.
+ * Báo cáo số liệu cho hồ sơ sáng kiến (PLAN.md mục 10): mức độ sử dụng, hiệu quả ôn tập, chấm tự luận và phản bác,
+ * khảo sát trước và sau.
  * In ra Markdown, chép thẳng vào hồ sơ được.
  *
  *   npx tsx scripts/report.mts                                  # toàn bộ dữ liệu
@@ -11,6 +12,7 @@ import { parseArgs } from "node:util";
 
 import postgres from "postgres";
 
+import { agreement, to10 } from "@/features/open-answer/agreement";
 import { questionsFor, ROLE_LABELS, type SurveyPhase, type SurveyRole } from "@/features/survey/questions";
 import { env } from "@/lib/env";
 
@@ -132,11 +134,57 @@ async function learning() {
   line();
 }
 
+async function openAnswers() {
+  // Chỉ bài của học viên (lượt thử của giảng viên không tính). Lượt hỏi vặn không tính là bài.
+  const rows = await sql`
+    select a.kind, a.visitor_id, a.item_id, a.score, a.max_score, a.lecturer_score, a.flagged, a.created_at,
+           a.result->>stance as stance, a.result->>flagReason as flag_reason
+    from open_answer_attempts a
+    left join users u on u.visitor_id = a.visitor_id
+    where a.kind in (tu_luan, phan_bac) and coalesce(u.role, hoc-vien) = hoc-vien
+      and a.created_at >= ${from} and a.created_at < ${to}
+    order by a.created_at`;
+  line("## 3. Tự luận và phản bác có chấm điểm");
+  line();
+  if (!rows.length) {
+    line("Chưa có bài tự luận hay phản bác nào.");
+    line();
+    return;
+  }
+  line("Điểm quy về thang 10. \"Lượt đầu → lượt cuối\" chỉ tính người làm cùng một câu từ hai lượt trở lên. Đồng thuận tính trên bài giảng viên đã chấm lại.");
+  line();
+  const KIND = { tu_luan: "Tự luận", phan_bac: "Phản bác" } as const;
+  const body = (Object.keys(KIND) as (keyof typeof KIND)[]).map((kind) => {
+    const list = rows.filter((r) => r.kind === kind);
+    const ten = (r: postgres.Row) => to10(Number(r.score), Number(r.max_score));
+    // Lượt đầu và lượt cuối của mỗi người ở mỗi câu.
+    const groups = new Map<string, postgres.Row[]>();
+    for (const r of list) groups.set(`${r.visitor_id}|${r.item_id}`, [...(groups.get(`${r.visitor_id}|${r.item_id}`) ?? []), r]);
+    const repeat = [...groups.values()].filter((g) => g.length >= 2);
+    const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
+    const a = agreement(list.filter((r) => r.lecturer_score !== null).map((r) => ({ ai: ten(r), lecturer: to10(Number(r.lecturer_score), Number(r.max_score)) })));
+    return [
+      KIND[kind],
+      n(list.length),
+      n(new Set(list.map((r) => r.visitor_id)).size),
+      dec(avg(list.map(ten))),
+      `${dec(avg(repeat.map((g) => ten(g[0]))))} → ${dec(avg(repeat.map((g) => ten(g[g.length - 1]))))} (${n(repeat.length)})`,
+      a.n ? `${dec(a.spearman)} / ${dec(a.mae)} (${n(a.n)} bài)` : "—",
+      n(list.filter((r) => r.flagged).length),
+    ];
+  });
+  table(["Loại", "Bài", "Người làm", "Điểm TB", "Lượt đầu → lượt cuối (số người)", "Spearman / lệch TB với giảng viên", "Gắn cờ"], body);
+  const wrong = rows.filter((r) => r.kind === "phan_bac" && r.stance === "sai").length;
+  const injected = rows.filter((r) => r.flag_reason === "chen_lenh").length;
+  line(`Bài phản bác sai lập trường bị chặn và chuyển giảng viên: ${n(wrong)}. Bài có câu điều khiển người chấm bị chặn: ${n(injected)}.`);
+  line();
+}
+
 async function survey() {
   const rows = await sql`
     select phase, role, answers, comment from survey_responses
     where updated_at >= ${from} and updated_at < ${to}`;
-  line("## 3. Khảo sát thang 5 điểm");
+  line("## 4. Khảo sát thang 5 điểm");
   line();
   if (!rows.length) {
     line("Chưa có phiếu khảo sát.");
@@ -181,6 +229,7 @@ try {
   line();
   await usage();
   await learning();
+  await openAnswers();
   await survey();
   console.log(out.join("\n"));
 } finally {

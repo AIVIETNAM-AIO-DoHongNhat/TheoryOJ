@@ -329,3 +329,41 @@ export const examAttempts = pgTable("exam_attempts", {
   // Mỗi học viên chỉ một lượt đang làm của một đề, kể cả khi bấm "Bắt đầu" hai lần liền.
   uniqueIndex("exam_attempts_open_idx").on(t.examId, t.userId).where(sql`${t.submittedAt} is null`),
 ]);
+
+/**
+ * Một lượt chấm câu hỏi mở (features/open-answer): tự luận theo barem, phản bác luận điệu sai trái, hoặc câu hỏi vặn
+ * sau một lượt chấm. Barem chụp nguyên vào `rubric` lúc chấm, để sửa ngân hàng sau đó không đổi bài đã chấm.
+ * Điểm do code tính từ mức đạt của từng ý; giảng viên có thể chấm lại (`lecturer_score`) để đo độ đồng thuận.
+ */
+export const openAnswerAttempts = pgTable("open_answer_attempts", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  visitorId: text("visitor_id").notNull(),
+  userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
+  subject: text("subject").notNull(),
+  chapter: integer("chapter").notNull(),
+  kind: text("kind", { enum: ["tu_luan", "phan_bac", "hoi_vat"] }).notNull(),
+  /** Mã câu tự luận (tl3-01), mã luận điệu (pb5-01), hoặc mã ý barem với lượt hỏi vặn. */
+  itemId: text("item_id").notNull(),
+  /** Lượt gốc của câu hỏi vặn. */
+  parentId: integer("parent_id"),
+  answer: text("answer").notNull(),
+  /** `GradedRubric` ở features/open-answer/types.ts. */
+  rubric: jsonb("rubric").notNull(),
+  /** `GradeResult` ở features/open-answer/types.ts. */
+  result: jsonb("result").notNull(),
+  citations: jsonb("citations").notNull().default([]),
+  score: real("score").notNull(),
+  maxScore: real("max_score").notNull(),
+  /** Lập trường sai hoặc dao động, chèn lệnh: giảng viên cần xem. */
+  flagged: boolean("flagged").notNull().default(false),
+  model: text("model"),
+  latencyMs: integer("latency_ms"),
+  lecturerScore: real("lecturer_score"),
+  lecturerNote: text("lecturer_note"),
+  reviewedBy: text("reviewed_by").references(() => users.id, { onDelete: "set null" }),
+  reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index("open_answer_visitor_idx").on(t.visitorId, t.subject, t.chapter),
+  index("open_answer_review_idx").on(t.kind, t.createdAt),
+]);

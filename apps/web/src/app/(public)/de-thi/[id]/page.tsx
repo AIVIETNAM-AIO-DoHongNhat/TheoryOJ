@@ -21,6 +21,9 @@ import { readerHref } from "@/features/library/types";
 import { getCurrentUser, isStudent } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
 
+// Đề thi gắn với từng học viên và mã đề tùy ý, không có phần nào dựng sẵn được.
+export const instant = false;
+
 export const metadata: Metadata = { title: "Làm đề thi" };
 
 type Params = Promise<{ id: string }>;

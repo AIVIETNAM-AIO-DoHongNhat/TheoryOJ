@@ -1,0 +1,24 @@
+# Luận điệu cần phản bác, chương 3. Người phát triển soạn, chờ Khoa duyệt. Quy ước ở _mau.yaml.
+subject: ktct
+chapter: 3
+status: nhap
+items:
+  - id: pb3-01
+    tieu_de: "\"Chủ nghĩa tư bản hiện đại không còn bóc lột\""
+    luan_dieu: >-
+      Công nhân ở các nước tư bản phát triển nay có thu nhập cao và được mua cổ phần của doanh nghiệp, nên chủ nghĩa
+      tư bản hiện đại không còn bóc lột và học thuyết giá trị thặng dư của C.Mác đã lỗi thời.
+    nguon_phan_bac:
+      - { ten: "Học thuyết giá trị thặng dư và giá trị của nó trong nền kinh tế tri thức", bao: "Tạp chí Công Thương", url: "https://tapchicongthuong.vn/hoc-thuyet-gia-tri-thang-du-va-gia-tri-cua-no-trong-nen-kinh-te-tri-thuc-74484.htm" }
+      - { ten: "Ý nghĩa của học thuyết giá trị thặng dư trong xây dựng kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam hiện nay", bao: "Tạp chí Công Thương", url: "https://tapchicongthuong.vn/y-nghia-cua-hoc-thuyet-gia-tri-thang-du-trong-xay-dung-kinh-te-thi-truong-dinh-huong-xa-hoi-chu-nghia-o-viet-nam-hien-nay-123278.htm" }
+    ngay_bien:
+      - Lấy mức sống tăng lên để phủ nhận quan hệ chiếm đoạt giá trị thặng dư
+      - Coi việc người lao động có vài cổ phần là xóa bỏ quan hệ sở hữu tư bản chủ nghĩa (thuyết "chủ nghĩa tư bản nhân dân")
+    rubric:
+      ly_luan:
+        - { id: l1, y: "Giá trị thặng dư là phần giá trị mới dôi ra ngoài giá trị sức lao động, do người lao động tạo ra và bị chiếm không; nguồn gốc là lao động không được trả công", diem: 2.5, page: 53 }
+        - { id: l2, y: "Tiền công là giá cả của hàng hóa sức lao động, che giấu quan hệ bóc lột: tiền công cao hơn không có nghĩa là hết bóc lột", diem: 2, page: 56 }
+        - { id: l3, y: "Sản xuất giá trị thặng dư tương đối: tăng năng suất có thể nâng mức sống mà tỷ suất giá trị thặng dư vẫn tăng", diem: 2, page: 61 }
+        - { id: l4, y: "Tích lũy tư bản dẫn tới tích tụ, tập trung tư bản và phân hóa giàu nghèo ngày càng sâu", diem: 1.5, page: 65 }
+      thuc_tien:
+        - { id: t1, y: "Dẫn chứng bất bình đẳng thu nhập và tài sản gia tăng ở các nước tư bản phát triển; tỷ trọng cổ phần của người lao động rất nhỏ so với các tập đoàn", diem: 2 }

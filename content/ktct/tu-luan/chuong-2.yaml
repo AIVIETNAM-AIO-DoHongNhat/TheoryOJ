@@ -1,0 +1,22 @@
+# Câu tự luận chương 2. Người phát triển soạn từ giáo trình, chờ giảng viên duyệt. Quy ước ở _mau.yaml.
+subject: ktct
+chapter: 2
+status: nhap
+questions:
+  - id: tl2-01
+    q: Phân tích hai thuộc tính của hàng hóa và tính hai mặt của lao động sản xuất hàng hóa. Nêu mối quan hệ giữa hai vấn đề này.
+    rubric:
+      - { id: y1, y: "Hàng hóa là sản phẩm của lao động, thỏa mãn nhu cầu của con người thông qua trao đổi, mua bán", diem: 1, page: 19 }
+      - { id: y2, y: "Giá trị sử dụng là công dụng của sản phẩm, thỏa mãn nhu cầu nào đó của con người; là giá trị sử dụng cho người mua", diem: 2, page: 20 }
+      - { id: y3, y: "Giá trị là lao động xã hội, trừu tượng của người sản xuất kết tinh trong hàng hóa", diem: 2, page: 23 }
+      - { id: y4, y: "Lao động cụ thể là lao động có ích dưới hình thức cụ thể của một nghề nghiệp, tạo ra giá trị sử dụng", diem: 2, page: 21 }
+      - { id: y5, y: "Lao động trừu tượng là hao phí sức lao động nói chung, tạo ra giá trị của hàng hóa", diem: 2, page: 22 }
+      - { id: y6, y: "Tính hai mặt của lao động sản xuất hàng hóa quyết định hai thuộc tính của hàng hóa", diem: 1, page: 21 }
+  - id: tl2-02
+    q: Trình bày nội dung và tác động của quy luật giá trị trong nền kinh tế thị trường.
+    rubric:
+      - { id: y1, y: "Sản xuất và trao đổi hàng hóa phải dựa trên hao phí lao động xã hội cần thiết; hao phí lao động cá biệt phải nhỏ hơn hoặc bằng hao phí xã hội cần thiết", diem: 2, page: 38 }
+      - { id: y2, y: "Trao đổi theo nguyên tắc ngang giá; giá cả lên xuống xoay quanh giá trị", diem: 2, page: 38 }
+      - { id: y3, y: "Tác động điều tiết sản xuất và lưu thông hàng hóa", diem: 2, page: 38 }
+      - { id: y4, y: "Tác động kích thích cải tiến kỹ thuật, hợp lý hóa sản xuất, tăng năng suất lao động", diem: 2, page: 39 }
+      - { id: y5, y: "Tác động phân hóa người sản xuất thành người giàu, người nghèo", diem: 2, page: 39 }

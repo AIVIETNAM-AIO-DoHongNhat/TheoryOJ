@@ -20,6 +20,8 @@ import { getDeck } from "@/features/flashcards/server/deck";
 import { getStates } from "@/features/flashcards/server/states";
 import { userCardIds } from "@/features/flashcards/server/user-cards";
 import { noteCounts } from "@/features/notes/server/notes";
+import { openAnswerSummary } from "@/features/open-answer/server/attempts";
+import { essayCounts } from "@/features/open-answer/server/bank";
 import { type ChapterProgress, getProgress } from "@/features/progress/server/progress";
 import { pickNextChapter } from "@/features/progress/today";
 import { reviewHref } from "@/features/review/paths";
@@ -59,12 +61,16 @@ function NoProgress() {
 
 async function SubjectProgress({ subject, visitorId }: { subject: Subject; visitorId: string }) {
   const numbers = subject.chapters.map((c) => c.number);
-  const [progress, cardStates, ownCards, notes] = await Promise.all([
+  const [progress, cardStates, ownCards, notes, openAnswers] = await Promise.all([
     getProgress(visitorId, subject.id, numbers),
     getStates(visitorId, subject.id),
     userCardIds(visitorId, subject.id),
     noteCounts(visitorId, subject.id),
+    openAnswerSummary(visitorId, subject.id),
   ]);
+  const essays = essayCounts(subject.id, numbers);
+  const openOf = (n: number, kind: "tu_luan" | "phan_bac") => openAnswers.find((o) => o.chapter === n && o.kind === kind);
+  const fmt10 = (x: number) => x.toLocaleString("vi-VN", { maximumFractionDigits: 2 });
   // Trạng thái thẻ (đến hạn, đã thuộc) tính theo thời điểm mở trang.
   await connection();
   const now = new Date();
@@ -89,7 +95,7 @@ async function SubjectProgress({ subject, visitorId }: { subject: Subject; visit
   const asked = rows.reduce((s, c) => s + c.questions, 0);
   const nextChapter = pickNextChapter(subject.chapters, rows, counts);
 
-  if (quizzes + exercises + asked + cardStates.size + noteTotal === 0) return <NoProgress />;
+  if (quizzes + exercises + asked + cardStates.size + noteTotal + openAnswers.length === 0) return <NoProgress />;
 
   const tiles = [
     { icon: Trophy, label: "Chương đã đạt", value: `${passed}/${Object.keys(counts).length}`, hint: `Đúng từ ${score(PASS_RATIO)} trở lên` },
@@ -170,6 +176,19 @@ async function SubjectProgress({ subject, visitorId }: { subject: Subject; visit
                           : "chưa ôn"}
                       </span>
                     )}
+                    {essays[chapter.number] && (
+                      <span>
+                        Tự luận:{" "}
+                        {openOf(chapter.number, "tu_luan")
+                          ? `cao nhất ${fmt10(openOf(chapter.number, "tu_luan")!.best)}/10, ${openOf(chapter.number, "tu_luan")!.items}/${essays[chapter.number]} câu`
+                          : "chưa làm"}
+                      </span>
+                    )}
+                    {openOf(chapter.number, "phan_bac") && (
+                      <span>
+                        Phản bác: cao nhất {fmt10(openOf(chapter.number, "phan_bac")!.best)}/10, {openOf(chapter.number, "phan_bac")!.items} luận điệu
+                      </span>
+                    )}
                     {c.questions > 0 && <span>Đã hỏi trợ lý {c.questions} câu</span>}
                     {notes[chapter.number] > 0 && (
                       <Link href={`/mon/${subject.id}/chuong/${chapter.number}`} className="hover:text-primary hover:underline">
@@ -197,6 +216,11 @@ async function SubjectProgress({ subject, visitorId }: { subject: Subject; visit
                   {hasExercises && (
                     <Button size="sm" variant="outline" render={<Link href={reviewHref(subject.id, chapter.number, "bai-tap")} />} nativeButton={false}>
                       Bài tập
+                    </Button>
+                  )}
+                  {essays[chapter.number] && (
+                    <Button size="sm" variant="outline" render={<Link href={reviewHref(subject.id, chapter.number, "tu-luan")} />} nativeButton={false}>
+                      Tự luận
                     </Button>
                   )}
                 </div>

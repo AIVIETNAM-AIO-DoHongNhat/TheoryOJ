@@ -23,6 +23,8 @@ const stats = (over: Partial<BadgeStats> = {}): BadgeStats => ({
   ownCards: 0,
   questions: 0,
   notes: 0,
+  essaysPassed: 0,
+  rebuttalsPassed: 0,
   subjects: [{ id: "ktct", shortName: "KTCT", chapters: [chapter({ number: 1 }), chapter({ number: 2 })] }],
   ...over,
 });

@@ -1,0 +1,24 @@
+# Mẫu ngân hàng câu tự luận. Mỗi chương một file chuong-<số>.yaml, cùng thư mục với file này.
+#
+# Quy ước:
+# - id: mã câu không trùng trong chương, ví dụ tl3-02. Đã có người làm thì không đổi mã (kết quả lưu theo mã).
+# - rubric: barem chấm, mỗi ý một dòng. Tổng `diem` của một câu bằng 10.
+#   - id: mã ý không trùng trong câu (y1, y2...).
+#   - y: nội dung ý cần có, viết ngắn gọn như đáp án của giảng viên.
+#   - page: trang in giáo trình chứa ý này. Hệ thống lấy nguyên văn trang này làm căn cứ chấm và trích dẫn,
+#     nên ghi đúng trang. Ý liên hệ thực tiễn không có trang thì bỏ trống.
+#   - document: thay cho page khi ý dựa vào văn kiện, ghi đường dẫn như trong manifest.yaml
+#     (ví dụ van-kien/14-NQ-68-NQ-TW-2025.md).
+# - status: nhap khi chưa duyệt; giảng viên duyệt xong cả chương thì đổi thành da-duyet.
+#
+# Học viên không thấy barem trước khi nộp. Sau khi nộp, mỗi ý hiện mức đạt, câu trích từ bài làm và trang giáo trình.
+subject: ktct
+chapter: 3
+status: nhap
+questions:
+  - id: tl3-99
+    q: Câu hỏi tự luận viết ở đây?
+    rubric:
+      - { id: y1, y: "Ý thứ nhất cần có", diem: 4, page: 53 }
+      - { id: y2, y: "Ý thứ hai cần có", diem: 4, page: 54 }
+      - { id: y3, y: "Liên hệ thực tiễn", diem: 2 }

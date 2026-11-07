@@ -1,0 +1,27 @@
+# Luận điệu cần phản bác, chương 6. Người phát triển soạn, chờ Khoa duyệt. Quy ước ở _mau.yaml.
+subject: ktct
+chapter: 6
+status: nhap
+items:
+  - id: pb6-01
+    tieu_de: "\"Hội nhập sâu rộng thì tất yếu mất độc lập, tự chủ\""
+    luan_dieu: >-
+      Hội nhập kinh tế quốc tế sâu rộng thì Việt Nam tất yếu bị lệ thuộc và "hòa tan"; muốn hội nhập thành công
+      phải từ bỏ độc lập, tự chủ và "phi chính trị hóa" kinh tế.
+    nguon_phan_bac:
+      - { ten: "Nhận diện và phản bác các quan điểm sai trái, thù địch về chủ trương hội nhập quốc tế sâu rộng của Việt Nam", bao: "Tạp chí Khoa học Chính trị (VJOL)", url: "https://vjol.info.vn/khct/article/view/139474" }
+      - { ten: "Đường lối đối ngoại độc lập, tự chủ của Đảng trong đấu tranh bảo vệ nền tảng tư tưởng hiện nay", bao: "Tạp chí Quản lý nhà nước", url: "https://www.quanlynhanuoc.vn/?p=67097" }
+      - { ten: "Phát triển nền kinh tế độc lập, tự chủ gắn với hội nhập quốc tế: Từ cơ sở lý luận đến giá trị thực tiễn", bao: "Tạp chí Kinh tế – Tài chính", url: "https://nghiencuu.tapchikinhtetaichinh.vn/phat-trien-nen-kinh-te-doc-lap-tu-chu-gan-voi-hoi-nhap-quoc-te-tu-co-so-ly-luan-den-gia-tri-thuc-tien-170855.html" }
+    ngay_bien:
+      - Đặt độc lập, tự chủ và hội nhập quốc tế đối lập nhau, trong khi đó là hai mặt của một thể thống nhất
+      - Tuyệt đối hóa tác động tiêu cực của hội nhập, bỏ qua vai trò chủ động của quốc gia
+    rubric:
+      ly_luan:
+        - { id: l1, y: "Hội nhập kinh tế quốc tế là tất yếu khách quan trong bối cảnh toàn cầu hóa và là phương thức phát triển phổ biến", diem: 2, page: 157 }
+        - { id: l2, y: "Nhận thức đầy đủ cả tác động tích cực và tiêu cực của hội nhập để chủ động phòng ngừa, không tuyệt đối hóa mặt nào", diem: 2, page: 161 }
+        - { id: l3, y: "Xây dựng nền kinh tế độc lập, tự chủ là điều kiện để hội nhập hiệu quả; độc lập tự chủ và hội nhập gắn bó với nhau", diem: 3, page: 168 }
+        - { id: l4, y: "Kết hợp chặt chẽ kinh tế với quốc phòng, an ninh và đối ngoại trong hội nhập", diem: 1, page: 170 }
+      van_kien:
+        - { id: v1, y: "Dẫn Báo cáo tổng kết 40 năm đổi mới về đường lối độc lập, tự chủ, đa phương hóa, đa dạng hóa quan hệ đối ngoại", diem: 1, document: "van-kien/21-Bao-cao-tong-ket-40-nam-doi-moi.docx" }
+      thuc_tien:
+        - { id: t1, y: "Dẫn chứng các hiệp định thương mại tự do, vị thế quốc tế của Việt Nam tăng lên mà vẫn giữ vững chủ quyền, an ninh", diem: 1 }

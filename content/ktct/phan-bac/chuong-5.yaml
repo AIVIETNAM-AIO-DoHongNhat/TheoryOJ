@@ -1,0 +1,69 @@
+# Luận điệu cần phản bác, chương 5. Người phát triển soạn, chờ Khoa duyệt. Quy ước ở _mau.yaml.
+subject: ktct
+chapter: 5
+status: nhap
+items:
+  - id: pb5-01
+    tieu_de: "\"Không thể có kinh tế thị trường định hướng xã hội chủ nghĩa\""
+    luan_dieu: >-
+      Kinh tế thị trường là sản phẩm riêng của chủ nghĩa tư bản. Nói "kinh tế thị trường định hướng xã hội chủ nghĩa"
+      là khiên cưỡng, vì đã theo thị trường thì không thể đi lên chủ nghĩa xã hội.
+    nguon_phan_bac:
+      - { ten: "Nhận diện và đấu tranh chống quan điểm sai trái về kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam hiện nay", bao: "Tạp chí Giáo chức Việt Nam (VJOL)", url: "https://vjol.info.vn/giaochuc/vi/article/view/263435" }
+      - { ten: "Phản bác quan điểm sai trái, xuyên tạc dự thảo các văn kiện của Đảng về các thành phần kinh tế", bao: "Báo Lào Cai", url: "https://baolaocai.vn/phan-bac-quan-diem-sai-trai-xuyen-tac-du-thao-cac-van-kien-cua-dang-ve-cac-thanh-phan-kinh-te-post648209.html" }
+    ngay_bien:
+      - Đồng nhất kinh tế thị trường, một thành tựu phát triển chung của nhân loại, với chế độ tư bản chủ nghĩa
+      - Tuyệt đối hóa một mô hình kinh tế thị trường, phủ nhận sự đa dạng mô hình theo điều kiện từng quốc gia
+    rubric:
+      ly_luan:
+        - { id: l1, y: "Khái niệm kinh tế thị trường định hướng xã hội chủ nghĩa: vận hành theo quy luật thị trường, hướng tới dân giàu, nước mạnh, dân chủ, công bằng, văn minh, có sự điều tiết của Nhà nước do Đảng lãnh đạo", diem: 2, page: 104 }
+        - { id: l2, y: "Kinh tế thị trường là kinh tế hàng hóa phát triển ở trình độ cao, hình thành khách quan khi có đủ điều kiện, không phải sản phẩm riêng của chủ nghĩa tư bản", diem: 2.5, page: 105 }
+        - { id: l3, y: "Các đặc trưng về mục tiêu, sở hữu, quản lý, phân phối bảo đảm định hướng xã hội chủ nghĩa", diem: 2, page: 107 }
+      van_kien:
+        - { id: v1, y: "Dẫn Nghị quyết 11-NQ/TW về hoàn thiện thể chế kinh tế thị trường định hướng xã hội chủ nghĩa", diem: 1.5, document: "van-kien/13-NQ-11-NQ-TW-2017.md" }
+        - { id: v2, y: "Dẫn bài viết của Tổng Bí thư Nguyễn Phú Trọng (2021) về kinh tế thị trường định hướng xã hội chủ nghĩa là đột phá lý luận", diem: 1, document: "tham-khao/18-TBT-Nguyen-Phu-Trong-CNXH-2021.md" }
+      thuc_tien:
+        - { id: t1, y: "Dẫn thành tựu 40 năm đổi mới: tăng trưởng, giảm nghèo, nâng cao đời sống nhân dân", diem: 1, document: "van-kien/21-Bao-cao-tong-ket-40-nam-doi-moi.docx" }
+
+  - id: pb5-02
+    tieu_de: "\"Phát triển kinh tế tư nhân là tư bản hóa\""
+    luan_dieu: >-
+      Nghị quyết 68-NQ/TW coi kinh tế tư nhân là động lực quan trọng nhất của nền kinh tế, chứng tỏ Việt Nam đang
+      "tư bản hóa", từ bỏ định hướng xã hội chủ nghĩa.
+    nguon_phan_bac:
+      - { ten: "Kinh tế tư nhân là động lực, không phải \"chệch hướng\" – Bài 1: Nhận diện các luận điệu xuyên tạc", bao: "Cổng thông tin Bộ Công Thương", url: "https://moit.gov.vn/bao-ve-nen-tang-tu-tuong-cua-dang/kinh-te-tu-nhan-la-dong-luc-khong-phai-chech-huong-bai-1-nhan-dien-cac-luan-dieu-xuyen-tac.html" }
+      - { ten: "Nhận diện và phản bác quan điểm sai trái thù địch về phát triển kinh tế tư nhân", bao: "Tạp chí Quản lý nhà nước", url: "https://www.quanlynhanuoc.vn/?p=61462" }
+      - { ten: "Phản bác luận điệu sai trái, thù địch về phát triển kinh tế tư nhân của Việt Nam", bao: "Tạp chí Khoa học Chính trị (VJOL)", url: "https://vjol.info.vn/khct/article/view/139511" }
+    ngay_bien:
+      - Đồng nhất phát triển kinh tế tư nhân với tư nhân hóa, với chủ nghĩa tư bản
+      - Tách rời kinh tế tư nhân khỏi sự lãnh đạo của Đảng, quản lý của Nhà nước và vai trò chủ đạo của kinh tế nhà nước
+    rubric:
+      ly_luan:
+        - { id: l1, y: "Nền kinh tế có nhiều hình thức sở hữu, nhiều thành phần kinh tế, bình đẳng trước pháp luật, cùng phát triển lâu dài, hợp tác và cạnh tranh lành mạnh", diem: 2.5, page: 108 }
+        - { id: l2, y: "Kinh tế nhà nước giữ vai trò chủ đạo, kinh tế tư nhân là một động lực quan trọng của nền kinh tế", diem: 2, page: 109 }
+        - { id: l3, y: "Đảng lãnh đạo, Nhà nước quản lý bằng pháp luật, chiến lược, chính sách bảo đảm định hướng xã hội chủ nghĩa", diem: 1.5, page: 110 }
+      van_kien:
+        - { id: v1, y: "Dẫn Nghị quyết 68-NQ/TW: phát triển kinh tế tư nhân trong nền kinh tế thị trường định hướng xã hội chủ nghĩa, vì mục tiêu dân giàu, nước mạnh", diem: 2.5, document: "van-kien/14-NQ-68-NQ-TW-2025.md" }
+      thuc_tien:
+        - { id: t1, y: "Dẫn chứng đóng góp của kinh tế tư nhân vào GDP, việc làm, thu ngân sách", diem: 1.5 }
+
+  - id: pb5-03
+    tieu_de: "\"Kinh tế nhà nước chủ đạo là trái quy luật thị trường\""
+    luan_dieu: >-
+      Để kinh tế nhà nước giữ vai trò chủ đạo là trái quy luật thị trường và kìm hãm phát triển; muốn phát triển
+      thì phải để thị trường tự điều tiết hoàn toàn.
+    nguon_phan_bac:
+      - { ten: "Nhận diện và phản bác các luận điệu phủ định vai trò chủ đạo của kinh tế nhà nước", bao: "Cổng thông tin Bộ Công Thương", url: "https://moit.gov.vn/bao-ve-nen-tang-tu-tuong-cua-dang/nhan-dien-va-phan-bac-cac-luan-dieu-phu-dinh-vai-tro-chu-dao-cua-kinh-te-nha-nuoc-trong-xay-dung-va-phat-trien-kinh-te-t.html" }
+      - { ten: "Đập tan luận điệu sai trái về sự đối kháng giữa kinh tế nhà nước và kinh tế tư nhân ở Việt Nam", bao: "Tạp chí Quản lý nhà nước", url: "https://www.quanlynhanuoc.vn/?p=64371" }
+    ngay_bien:
+      - Đồng nhất "vai trò chủ đạo" với độc quyền, bao cấp, ôm đồm mọi hoạt động sản xuất kinh doanh
+      - Tuyệt đối hóa thị trường tự do, phớt lờ các khuyết tật của kinh tế thị trường
+    rubric:
+      ly_luan:
+        - { id: l1, y: "Kinh tế thị trường có khuyết tật: tiềm ẩn khủng hoảng, không tự khắc phục cạn kiệt tài nguyên, ô nhiễm, phân hóa giàu nghèo, nên cần nhà nước điều tiết", diem: 2.5, page: 37 }
+        - { id: l2, y: "Kinh tế nhà nước giữ vai trò chủ đạo, cùng các thành phần kinh tế khác bình đẳng, hợp tác và cạnh tranh", diem: 2, page: 109 }
+        - { id: l3, y: "Vai trò của Nhà nước trong bảo đảm hài hòa các quan hệ lợi ích kinh tế", diem: 1.5, page: 129 }
+      van_kien:
+        - { id: v1, y: "Dẫn Nghị quyết 11-NQ/TW về hoàn thiện thể chế kinh tế thị trường định hướng xã hội chủ nghĩa", diem: 2, document: "van-kien/13-NQ-11-NQ-TW-2017.md" }
+      thuc_tien:
+        - { id: t1, y: "Dẫn chứng vai trò \"trụ đỡ\" của kinh tế nhà nước khi thị trường gặp cú sốc (đại dịch, thiên tai), bảo đảm cân đối lớn và an ninh năng lượng", diem: 2 }

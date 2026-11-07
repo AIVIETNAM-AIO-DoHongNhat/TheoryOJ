@@ -1,0 +1,20 @@
+# Câu tự luận chương 1. Người phát triển soạn từ giáo trình, chờ giảng viên duyệt. Quy ước ở _mau.yaml.
+subject: ktct
+chapter: 1
+status: nhap
+questions:
+  - id: tl1-01
+    q: Trình bày đối tượng nghiên cứu và mục đích nghiên cứu của kinh tế chính trị Mác – Lênin.
+    rubric:
+      - { id: y1, y: "Đối tượng nghiên cứu là các quan hệ xã hội của sản xuất và trao đổi", diem: 3, page: 11 }
+      - { id: y2, y: "Các quan hệ này được đặt trong liên hệ biện chứng với trình độ phát triển của lực lượng sản xuất và kiến trúc thượng tầng tương ứng", diem: 2, page: 11 }
+      - { id: y3, y: "Nêu các bộ phận biểu hiện của quan hệ sản xuất và trao đổi: sở hữu, quản lý, phân phối, lưu thông, tiêu dùng", diem: 2, page: 11 }
+      - { id: y4, y: "Mục đích cao nhất là phát hiện các quy luật chi phối quan hệ giữa người với người trong sản xuất và trao đổi, để vận dụng các quy luật đó, giải quyết các quan hệ lợi ích", diem: 3, page: 12 }
+  - id: tl1-02
+    q: Phân tích các chức năng của kinh tế chính trị Mác – Lênin. Liên hệ ý nghĩa của việc học tập môn học đối với học viên Công an nhân dân.
+    rubric:
+      - { id: y1, y: "Chức năng nhận thức: nhận thức bản chất các hiện tượng, quá trình kinh tế và các quy luật kinh tế", diem: 2, page: 14 }
+      - { id: y2, y: "Chức năng thực tiễn: hình thành năng lực vận dụng quy luật kinh tế vào lao động và quản trị quốc gia, cải tạo thực tiễn", diem: 2, page: 15 }
+      - { id: y3, y: "Chức năng tư tưởng: xây dựng nền tảng tư tưởng mới, củng cố niềm tin vào mục tiêu dân giàu, nước mạnh, dân chủ, công bằng, văn minh", diem: 2, page: 16 }
+      - { id: y4, y: "Chức năng phương pháp luận: là nền tảng lý luận để tiếp cận các khoa học kinh tế chuyên ngành", diem: 2, page: 16 }
+      - { id: y5, y: "Liên hệ với học viên Công an nhân dân: hiểu quy luật kinh tế để bảo vệ an ninh kinh tế, củng cố bản lĩnh chính trị", diem: 2 }

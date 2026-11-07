@@ -1,0 +1,25 @@
+# Luận điệu cần phản bác, chương 2. Người phát triển soạn, chờ Khoa duyệt. Quy ước ở _mau.yaml.
+subject: ktct
+chapter: 2
+status: nhap
+items:
+  - id: pb2-01
+    tieu_de: "\"Lý luận giá trị lao động đã lỗi thời trong kinh tế tri thức\""
+    luan_dieu: >-
+      Trong nền kinh tế tri thức, giá trị do máy móc, công nghệ và thông tin tạo ra chứ không phải do lao động;
+      vì vậy lý luận giá trị lao động của C.Mác đã lỗi thời.
+    nguon_phan_bac:
+      - { ten: "Học thuyết giá trị thặng dư và giá trị của nó trong nền kinh tế tri thức", bao: "Tạp chí Công Thương", url: "https://tapchicongthuong.vn/hoc-thuyet-gia-tri-thang-du-va-gia-tri-cua-no-trong-nen-kinh-te-tri-thuc-74484.htm" }
+      - { ten: "Học thuyết giá trị lao động: một số vấn đề cần quan tâm", bao: "Tạp chí Khoa học xã hội Việt Nam (VJOL)", url: "https://vjol.info.vn/khxhvn/article/view/40434" }
+    ngay_bien:
+      - Đồng nhất nguồn gốc của giá trị với các yếu tố vật chất của sản xuất (máy móc, công nghệ), bỏ qua vai trò của lao động sống
+      - Đánh tráo giữa của cải (giá trị sử dụng) và giá trị của hàng hóa
+    rubric:
+      ly_luan:
+        - { id: l1, y: "Giá trị là lao động xã hội, trừu tượng kết tinh trong hàng hóa; máy móc, công nghệ chỉ chuyển giá trị của chúng vào sản phẩm", diem: 3, page: 23 }
+        - { id: l2, y: "Lao động phức tạp (lao động trí tuệ, được đào tạo) tạo ra nhiều giá trị hơn lao động giản đơn trong cùng thời gian, nên kinh tế tri thức làm nổi bật chứ không phủ định vai trò của lao động", diem: 3, page: 25 }
+        - { id: l3, y: "Năng suất lao động tăng làm tăng của cải nhưng giảm lượng giá trị của một đơn vị hàng hóa: phân biệt của cải với giá trị", diem: 1, page: 23 }
+      van_kien:
+        - { id: v1, y: "Dẫn Nghị quyết 57-NQ/TW: khoa học, công nghệ, đổi mới sáng tạo dựa trên nguồn nhân lực chất lượng cao, con người là trung tâm", diem: 1.5, document: "van-kien/15-NQ-57-NQ-TW-2024.md" }
+      thuc_tien:
+        - { id: t1, y: "Dẫn chứng tri thức, công nghệ đều là kết quả của lao động trí tuệ của con người; vai trò quyết định của nguồn nhân lực chất lượng cao", diem: 1.5 }

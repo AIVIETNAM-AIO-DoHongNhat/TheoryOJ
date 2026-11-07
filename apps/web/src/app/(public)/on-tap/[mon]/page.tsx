@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUpRight, BookOpen, CircleHelp } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BookOpen, CircleHelp, Swords } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -14,12 +14,13 @@ import { MODE_ICONS } from "@/features/chat/mode-icons";
 import { MODES } from "@/features/chat/modes";
 import { deckCounts } from "@/features/flashcards/server/deck";
 import { getLibrary } from "@/features/library/server/catalog";
+import { essayCounts } from "@/features/open-answer/server/bank";
 import { type LibraryDoc, printedPage, readerHref } from "@/features/library/types";
 import { quizCounts } from "@/features/quiz/server/bank";
 import { QUIZ_SIZE } from "@/features/quiz/types";
 import { type OutlineItem, ReviewOutline } from "@/features/review/components/ReviewOutline";
 import { StepBadge, STEPS } from "@/features/review/components/steps";
-import { learnHref, type ReviewActivity, reviewHref } from "@/features/review/paths";
+import { learnHref, rebuttalHref, type ReviewActivity, reviewHref } from "@/features/review/paths";
 import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
@@ -68,13 +69,14 @@ function StepCell({ step, href, hint }: { step: number; href?: string; hint: str
 }
 
 function ChapterBlock({
-  subject, chapter, textbook, decks, quiz, hasExercise,
+  subject, chapter, textbook, decks, quiz, essays, hasExercise,
 }: {
   subject: Subject;
   chapter: Subject["chapters"][number];
   textbook?: LibraryDoc;
   decks?: number;
   quiz?: number;
+  essays?: number;
   hasExercise: boolean;
 }) {
   const range = textbook?.chapters.find((r) => r.number === chapter.number);
@@ -117,7 +119,11 @@ function ChapterBlock({
           <StepCell step={2} href={hasExercise ? practice("bai-tap") : undefined} hint={hasExercise ? "Số liệu đổi mỗi lần" : "Chương không có công thức"} />
         </li>
         <li>
-          <StepCell step={3} href={`/tro-ly?mon=${subject.id}&che-do=review&chuong=${chapter.number}`} hint={`Câu hỏi tự luận chương ${chapter.number}`} />
+          <StepCell
+            step={3}
+            href={essays ? practice("tu-luan") : `/tro-ly?mon=${subject.id}&che-do=review&chuong=${chapter.number}`}
+            hint={essays ? `${essays} câu, chấm theo barem` : `Ôn tự luận với trợ lý`}
+          />
         </li>
       </ol>
     </li>
@@ -152,6 +158,7 @@ async function ReviewSubjectContent({ params }: PageProps<"/on-tap/[mon]">) {
   const numbers = subject.chapters.map((c) => c.number);
   const quiz = await quizCounts(subject.id, numbers);
   const decks = deckCounts(subject.id, numbers);
+  const essays = essayCounts(subject.id, numbers);
   const exercises = numbers.filter((n) => EXERCISES[subject.id]?.[n]);
   const stats = [
     { label: "Chương", value: subject.chapters.length },
@@ -172,6 +179,10 @@ async function ReviewSubjectContent({ params }: PageProps<"/on-tap/[mon]">) {
             <Button render={<Link href={`/tro-ly?mon=${subject.id}&che-do=review`} />} nativeButton={false}>
               <ReviewIcon data-icon="inline-start" />
               {MODES.review.label} cả môn
+            </Button>
+            <Button variant="outline" className="bg-card" render={<Link href={rebuttalHref(subject.id)} />} nativeButton={false}>
+              <Swords data-icon="inline-start" />
+              Đấu trường phản bác
             </Button>
             <Button variant="outline" className="bg-card" render={<Link href={learnHref(subject.id)} />} nativeButton={false}>
               Lộ trình học của môn
@@ -211,6 +222,7 @@ async function ReviewSubjectContent({ params }: PageProps<"/on-tap/[mon]">) {
                   textbook={textbook}
                   decks={decks[c.number]}
                   quiz={quiz[c.number]}
+                  essays={essays[c.number]}
                   hasExercise={exercises.includes(c.number)}
                 />
               ))}

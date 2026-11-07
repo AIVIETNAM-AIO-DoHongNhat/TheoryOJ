@@ -1,0 +1,37 @@
+# Mẫu ngân hàng luận điệu cần phản bác ("Đấu trường phản bác"). Mỗi chương một file chuong-<số>.yaml.
+#
+# Nguyên tắc an toàn nội dung:
+# - Chỉ đưa luận điệu đã bị báo chí, tạp chí chính thống phản bác công khai. Mỗi luận điệu BẮT BUỘC có ít nhất
+#   một bài phản bác trong `nguon_phan_bac` (tên bài, báo hoặc tạp chí, đường dẫn).
+# - Viết luận điệu ngắn gọn, đúng nội dung đã được nêu trong bài phản bác; không thêm chi tiết kích động.
+# - Hệ thống không bao giờ tự sinh luận điệu. Học viên chỉ thấy chương có `status: da-duyet`;
+#   khi còn `nhap` thì chỉ tài khoản giảng viên thấy để thử.
+#
+# Quy ước:
+# - id: mã không trùng, ví dụ pb5-01. Đã có người làm thì không đổi mã.
+# - tieu_de: tên ngắn hiện trong danh sách.
+# - ngay_bien: các lỗi lập luận (đánh tráo khái niệm, tuyệt đối hóa...) mà bài phản bác cần chỉ ra.
+# - rubric: ba trục, tổng điểm bằng 10. Mỗi ý có `page` (trang in giáo trình) hoặc `document` (đường dẫn trong
+#   manifest.yaml) để hệ thống lấy nguyên văn làm căn cứ; ý dẫn chứng thực tiễn có thể bỏ trống.
+#   - ly_luan: căn cứ lý luận trong giáo trình.
+#   - van_kien: căn cứ trong văn kiện của Đảng.
+#   - thuc_tien: dẫn chứng thực tiễn.
+# Bài làm đồng tình hoặc chỉ nhắc lại luận điệu được 0 điểm và gắn cờ cho giảng viên xem.
+subject: ktct
+chapter: 5
+status: nhap
+items:
+  - id: pb5-99
+    tieu_de: Tên ngắn của luận điệu
+    luan_dieu: Nội dung luận điệu, viết đúng như đã được nêu trong bài phản bác.
+    nguon_phan_bac:
+      - { ten: "Tên bài phản bác", bao: "Tên báo, tạp chí", url: "https://..." }
+    ngay_bien:
+      - Lỗi lập luận thứ nhất
+    rubric:
+      ly_luan:
+        - { id: l1, y: "Căn cứ lý luận", diem: 5, page: 104 }
+      van_kien:
+        - { id: v1, y: "Căn cứ văn kiện", diem: 3, document: "van-kien/13-NQ-11-NQ-TW-2017.md" }
+      thuc_tien:
+        - { id: t1, y: "Dẫn chứng thực tiễn", diem: 2 }

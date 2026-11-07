@@ -1,0 +1,23 @@
+# Câu tự luận chương 4. Người phát triển soạn từ giáo trình, chờ giảng viên duyệt. Quy ước ở _mau.yaml.
+subject: ktct
+chapter: 4
+status: nhap
+questions:
+  - id: tl4-01
+    q: Phân tích nguyên nhân hình thành độc quyền và tác động của độc quyền trong nền kinh tế thị trường.
+    rubric:
+      - { id: y1, y: "Sự phát triển của lực lượng sản xuất đòi hỏi các doanh nghiệp phải tích tụ, tập trung với quy mô lớn", diem: 2, page: 75 }
+      - { id: y2, y: "Cạnh tranh gay gắt buộc các doanh nghiệp tích tụ, tập trung hoặc liên kết với nhau", diem: 1.5, page: 76 }
+      - { id: y3, y: "Khủng hoảng kinh tế và sự phát triển của hệ thống tín dụng thúc đẩy tập trung sản xuất", diem: 1.5, page: 76 }
+      - { id: y4, y: "Tác động tích cực: khả năng nghiên cứu, triển khai tiến bộ kỹ thuật; tăng năng suất lao động; thúc đẩy nền kinh tế phát triển theo hướng sản xuất lớn", diem: 2.5, page: 80 }
+      - { id: y5, y: "Tác động tiêu cực: cạnh tranh không hoàn hảo gây thiệt hại cho người tiêu dùng; có thể kìm hãm tiến bộ kỹ thuật; nhóm lợi ích chi phối làm tăng phân hóa giàu nghèo", diem: 2.5, page: 81 }
+  - id: tl4-02
+    q: Trình bày nguyên nhân hình thành và các đặc điểm kinh tế của độc quyền nhà nước trong chủ nghĩa tư bản theo lý luận của V.I. Lênin.
+    rubric:
+      - { id: y1, y: "Tích tụ và tập trung vốn càng lớn càng đòi hỏi sự điều tiết xã hội đối với sản xuất và phân phối", diem: 1.5, page: 78 }
+      - { id: y2, y: "Phân công lao động xã hội làm xuất hiện các ngành cần vốn lớn, ít lợi nhuận mà tư nhân không muốn đầu tư", diem: 1, page: 78 }
+      - { id: y3, y: "Sự thống trị của độc quyền tư nhân làm gia tăng phân hóa, mâu thuẫn giai cấp, đòi hỏi nhà nước can thiệp", diem: 1, page: 78 }
+      - { id: y4, y: "Quốc tế hóa đời sống kinh tế và bành trướng của độc quyền cần nhà nước hỗ trợ trên thị trường thế giới", diem: 1, page: 79 }
+      - { id: y5, y: "Sự kết hợp về nhân sự giữa tổ chức độc quyền và nhà nước", diem: 2, page: 87 }
+      - { id: y6, y: "Sự hình thành, phát triển sở hữu nhà nước", diem: 2, page: 88 }
+      - { id: y7, y: "Độc quyền nhà nước trở thành công cụ để nhà nước điều tiết nền kinh tế", diem: 1.5, page: 89 }

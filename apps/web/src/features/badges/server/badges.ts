@@ -13,14 +13,14 @@ import { longestStreak } from "@/features/progress/today";
 import { quizCounts } from "@/features/quiz/server/bank";
 import { db } from "@/lib/db";
 import {
-  conversations, flashcardStates, messages, notebookPages, practiceAttempts, readerNotes, userBadges, userFlashcards,
+  conversations, flashcardStates, messages, notebookPages, openAnswerAttempts, practiceAttempts, readerNotes, userBadges, userFlashcards,
 } from "@/lib/db/schema";
 
-import { type Badge, type BadgeStats, evaluateBadges } from "../catalog";
+import { type Badge, type BadgeStats, ESSAY_PASS, evaluateBadges, REBUTTAL_PASS } from "../catalog";
 
 /** Gom số liệu học tập của một học viên để xét huy hiệu. Dữ liệu mỗi người ít nên gộp trong bộ nhớ như trang Tiến độ. */
 async function badgeStats(visitorId: string): Promise<BadgeStats> {
-  const [attempts, states, [own], [asked], [notes], [pages], days] = await Promise.all([
+  const [attempts, states, [own], [asked], [notes], [pages], days, open] = await Promise.all([
     db
       .select({ subject: practiceAttempts.subject, chapter: practiceAttempts.chapter, kind: practiceAttempts.kind, score: practiceAttempts.score, total: practiceAttempts.total })
       .from(practiceAttempts)
@@ -38,7 +38,18 @@ async function badgeStats(visitorId: string): Promise<BadgeStats> {
     db.select({ n: count() }).from(readerNotes).where(eq(readerNotes.visitorId, visitorId)),
     db.select({ n: count() }).from(notebookPages).where(and(eq(notebookPages.visitorId, visitorId), ne(notebookPages.body, ""))),
     activityDays(visitorId),
+    db
+      .select({ kind: openAnswerAttempts.kind, itemId: openAnswerAttempts.itemId, score: openAnswerAttempts.score, maxScore: openAnswerAttempts.maxScore, lecturerScore: openAnswerAttempts.lecturerScore, flagged: openAnswerAttempts.flagged })
+      .from(openAnswerAttempts)
+      .where(eq(openAnswerAttempts.visitorId, visitorId)),
   ]);
+  // Điểm giảng viên (nếu có) thay điểm hệ thống; bài phản bác gắn cờ lập trường không tính.
+  const passedItems = (kind: "tu_luan" | "phan_bac", pass: number) =>
+    new Set(
+      open
+        .filter((a) => a.kind === kind && !(kind === "phan_bac" && a.flagged) && a.maxScore > 0 && ((a.lecturerScore ?? a.score) / a.maxScore) * 10 >= pass)
+        .map((a) => a.itemId),
+    ).size;
 
   const quizzes = attempts.filter((a) => a.kind === "quiz");
   const solved = attempts.filter((a) => a.kind === "exercise" && a.total > 0 && a.score === a.total);
@@ -77,6 +88,8 @@ async function badgeStats(visitorId: string): Promise<BadgeStats> {
     ownCards: own.n,
     questions: asked.n,
     notes: notes.n + pages.n,
+    essaysPassed: passedItems("tu_luan", ESSAY_PASS),
+    rebuttalsPassed: passedItems("phan_bac", REBUTTAL_PASS),
     subjects,
   };
 }

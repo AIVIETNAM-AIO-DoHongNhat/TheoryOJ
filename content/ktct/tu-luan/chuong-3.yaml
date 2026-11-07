@@ -1,0 +1,21 @@
+# Câu tự luận chương 3. Người phát triển soạn từ giáo trình, chờ giảng viên duyệt. Quy ước ở _mau.yaml.
+subject: ktct
+chapter: 3
+status: nhap
+questions:
+  - id: tl3-01
+    q: Phân tích nguồn gốc của giá trị thặng dư. Vì sao hàng hóa sức lao động là chìa khóa giải thích nguồn gốc đó?
+    rubric:
+      - { id: y1, y: "Công thức chung của tư bản T – H – T’ và mâu thuẫn: mua bán ngang giá hay không ngang giá trong lưu thông đều không tạo ra giá trị tăng thêm", diem: 2, page: 49 }
+      - { id: y2, y: "Hai điều kiện để sức lao động trở thành hàng hóa: người lao động tự do về thân thể và không có đủ tư liệu sản xuất", diem: 2, page: 50 }
+      - { id: y3, y: "Giá trị sử dụng đặc biệt của hàng hóa sức lao động: khi sử dụng tạo ra lượng giá trị mới lớn hơn giá trị của bản thân nó", diem: 2, page: 51 }
+      - { id: y4, y: "Giá trị thặng dư là bộ phận giá trị mới dôi ra ngoài giá trị sức lao động do công nhân tạo ra, bị nhà tư bản chiếm không", diem: 2, page: 53 }
+      - { id: y5, y: "Phân biệt tư bản bất biến (c) không tạo ra giá trị thặng dư và tư bản khả biến (v) là nguồn gốc của giá trị thặng dư", diem: 2, page: 54 }
+  - id: tl3-02
+    q: So sánh hai phương pháp sản xuất giá trị thặng dư. Giá trị thặng dư siêu ngạch là gì và có ý nghĩa như thế nào?
+    rubric:
+      - { id: y1, y: "Giá trị thặng dư tuyệt đối: thu được do kéo dài ngày lao động vượt quá thời gian lao động tất yếu, khi năng suất lao động và giá trị sức lao động không đổi", diem: 3, page: 60 }
+      - { id: y2, y: "Giá trị thặng dư tương đối: thu được nhờ rút ngắn thời gian lao động tất yếu, kéo dài thời gian lao động thặng dư khi ngày lao động không đổi", diem: 3, page: 61 }
+      - { id: y3, y: "Muốn hạ giá trị sức lao động phải tăng năng suất lao động xã hội trong các ngành sản xuất tư liệu sinh hoạt và tư liệu sản xuất liên quan", diem: 1, page: 61 }
+      - { id: y4, y: "Giá trị thặng dư siêu ngạch do năng suất lao động cá biệt cao hơn năng suất lao động xã hội; tạm thời với từng nhà tư bản, thường xuyên với toàn xã hội", diem: 2, page: 61 }
+      - { id: y5, y: "Giá trị thặng dư siêu ngạch là động lực thúc đẩy cải tiến kỹ thuật, tăng năng suất lao động", diem: 1, page: 61 }

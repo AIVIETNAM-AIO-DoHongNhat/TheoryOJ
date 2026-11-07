@@ -38,9 +38,10 @@ export async function updateProfile(userId: string, input: { fullName: string; c
 export async function mergeVisitor(from: string, into: string) {
   if (from === into) return;
   await db.transaction(async (tx) => {
-    const { conversations, practiceAttempts, feedback, surveyResponses, flashcardStates } = schema;
+    const { conversations, practiceAttempts, feedback, surveyResponses, flashcardStates, openAnswerAttempts } = schema;
     await tx.update(conversations).set({ visitorId: into }).where(eq(conversations.visitorId, from));
     await tx.update(practiceAttempts).set({ visitorId: into }).where(eq(practiceAttempts.visitorId, from));
+    await tx.update(openAnswerAttempts).set({ visitorId: into }).where(eq(openAnswerAttempts.visitorId, from));
     await tx.update(feedback).set({ visitorId: into }).where(eq(feedback.visitorId, from));
     const taken = tx.select({ phase: surveyResponses.phase }).from(surveyResponses).where(eq(surveyResponses.visitorId, into));
     await tx

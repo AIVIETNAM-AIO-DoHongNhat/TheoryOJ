@@ -13,12 +13,13 @@ export type BadgeIcon =
   | "flame" | "calendar" | "list" | "target" | "crosshair" | "calculator" | "cards" | "brain" | "pen"
   | "message" | "notebook" | "graduation" | "chapter" | "award";
 
-export type CategoryId = "chuong" | "chuoi" | "luyen-tap" | "ghi-nho" | "tim-toi";
+export type CategoryId = "chuong" | "chuoi" | "luyen-tap" | "lap-luan" | "ghi-nho" | "tim-toi";
 
 export const CATEGORIES: { id: CategoryId; title: string; description: string }[] = [
   { id: "chuong", title: "Chương học", description: "Đạt trắc nghiệm để nhận huy chương của chương. Thuộc thẻ, làm đúng bài tập và đạt điểm tuyệt đối để thêm sao." },
   { id: "chuoi", title: "Chuỗi ngày học", description: "Tính theo chuỗi dài nhất đồng chí từng giữ, chuỗi đứt cũng không mất huy hiệu." },
   { id: "luyen-tap", title: "Trắc nghiệm và bài tập", description: "Luyện đề đều đặn và làm đúng bài tập tính toán." },
+  { id: "lap-luan", title: "Tự luận và phản bác", description: "Viết bài tự luận đạt từ 7 điểm và phản bác đúng lập trường các luận điệu sai trái." },
   { id: "ghi-nho", title: "Thẻ ghi nhớ", description: "Ôn thẻ đúng hẹn. Thẻ có khoảng ôn từ 21 ngày trở lên tính là đã thuộc." },
   { id: "tim-toi", title: "Hỏi và ghi chép", description: "Hỏi trợ lý khi băn khoăn, ghi chú khi đọc giáo trình." },
 ];
@@ -40,6 +41,10 @@ export interface BadgeStats {
   questions: number;
   /** Ghi chú trong trình đọc cộng trang sổ ghi chép có nội dung. */
   notes: number;
+  /** Số câu tự luận khác nhau đạt từ ESSAY_PASS điểm (thang 10), tính điểm giảng viên nếu có. */
+  essaysPassed: number;
+  /** Số luận điệu khác nhau đã phản bác đúng lập trường, đạt từ REBUTTAL_PASS điểm. */
+  rebuttalsPassed: number;
   subjects: SubjectStats[];
 }
 
@@ -106,6 +111,10 @@ const STREAK_BADGES: Record<(typeof STREAK_MILESTONES)[number], { name: string; 
   100: { name: "Trăm ngày rèn luyện", tier: "vang" },
 };
 
+/** Ngưỡng đạt (thang 10) của bài tự luận và bài phản bác khi xét huy hiệu. */
+export const ESSAY_PASS = 7;
+export const REBUTTAL_PASS = 6;
+
 const hasExercises = (s: BadgeStats) => s.subjects.some((x) => x.chapters.some((c) => c.hasExercises));
 
 const ACHIEVEMENTS: Achievement[] = [
@@ -129,6 +138,11 @@ const ACHIEVEMENTS: Achievement[] = [
   { id: "bt-1", series: "bt", category: "luyen-tap", name: "Tính đúng bài đầu", description: "Làm đúng hết một bài tập tính toán.", tier: "dong", icon: "calculator", unit: "bài", target: 1, metric: (s) => s.exercisesSolved, when: hasExercises },
   { id: "bt-10", series: "bt", category: "luyen-tap", name: "Tay tính vững", description: "Làm đúng hết 10 bài tập tính toán.", tier: "bac", icon: "calculator", unit: "bài", target: 10, metric: (s) => s.exercisesSolved, when: hasExercises },
   { id: "bt-30", series: "bt", category: "luyen-tap", name: "Thạo công thức", description: "Làm đúng hết 30 bài tập tính toán.", tier: "vang", icon: "calculator", unit: "bài", target: 30, metric: (s) => s.exercisesSolved, when: hasExercises },
+
+  { id: "tl-1", series: "tl", category: "lap-luan", name: "Ngòi bút vững", description: `Một câu tự luận đạt từ ${ESSAY_PASS} điểm.`, tier: "dong", icon: "pen", unit: "câu", target: 1, metric: (s) => s.essaysPassed },
+  { id: "tl-6", series: "tl", category: "lap-luan", name: "Sẵn sàng thi viết", description: `Sáu câu tự luận khác nhau đạt từ ${ESSAY_PASS} điểm.`, tier: "bac", icon: "pen", unit: "câu", target: 6, metric: (s) => s.essaysPassed },
+  { id: "pb-1", series: "pb", category: "lap-luan", name: "Lá chắn đầu tiên", description: "Phản bác đúng lập trường một luận điệu sai trái.", tier: "bac", icon: "award", unit: "luận điệu", target: 1, metric: (s) => s.rebuttalsPassed },
+  { id: "pb-5", series: "pb", category: "lap-luan", name: "Bảo vệ nền tảng tư tưởng", description: "Phản bác đúng lập trường năm luận điệu sai trái.", tier: "vang", icon: "award", unit: "luận điệu", target: 5, metric: (s) => s.rebuttalsPassed },
 
   { id: "the-50", series: "the", category: "ghi-nho", name: "Lật thẻ đều tay", description: "Chấm 50 lượt thẻ ghi nhớ.", tier: "dong", icon: "cards", unit: "lượt", target: 50, metric: (s) => s.cardReviews },
   { id: "the-300", series: "the", category: "ghi-nho", name: "Ôn không bỏ hẹn", description: "Chấm 300 lượt thẻ ghi nhớ.", tier: "bac", icon: "cards", unit: "lượt", target: 300, metric: (s) => s.cardReviews },
