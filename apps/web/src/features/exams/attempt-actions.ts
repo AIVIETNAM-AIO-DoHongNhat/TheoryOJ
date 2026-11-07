@@ -13,6 +13,9 @@ import { getExam, questionsOf } from "./server/exams";
 
 const { exams, examAttempts } = schema;
 
+/** Giảng viên đưa đề về bản nháp giữa chừng: không nhận lưu, nộp nữa; phần đã lưu được chấm khi hết giờ. */
+const RECALLED = "Giảng viên đã thu hồi đề này. Phần đáp án đã lưu sẽ được chấm khi hết giờ.";
+
 const Answers = z.record(z.string().max(80), z.number().int().min(0).max(5)).refine((a) => Object.keys(a).length <= 200);
 
 /** Bắt đầu một lượt làm. Đang có lượt dở thì dùng lại lượt đó (bấm hai lần, mở hai tab). */
@@ -72,6 +75,7 @@ export async function saveExamAnswers(input: { attemptId: number; answers: Recor
   const row = await openAttempt(attemptId, user.id);
   if (!row) return { ok: false, error: "Không tìm thấy bài làm." };
   if (row.attempt.submittedAt) return { ok: false, error: "Bài đã nộp." };
+  if (row.exam.status !== "da-giao") return { ok: false, error: RECALLED };
   if (Date.now() > effectiveDeadline(row.attempt.deadline, row.exam.closesAt).getTime() + GRACE_MS) {
     return { ok: true, expired: true };
   }
@@ -90,6 +94,7 @@ export async function submitExam(input: { attemptId: number; answers: Record<str
   const row = await openAttempt(attemptId, user.id);
   if (!row) return { ok: false, error: "Không tìm thấy bài làm." };
   const { attempt, exam } = row;
+  if (!attempt.submittedAt && exam.status !== "da-giao") return { ok: false, error: RECALLED };
   if (!attempt.submittedAt) {
     const questions = questionsOf(exam);
     const deadline = effectiveDeadline(attempt.deadline, exam.closesAt);

@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { getSubject } from "@/config/subjects";
 import { getSubjectQuestions } from "@/features/question-bank/server/questions";
+import { normalizeClassName } from "@/features/roster/normalize";
 import type { ActionResult } from "@/lib/action-result";
 import { requireTeacher } from "@/lib/auth/session";
 import { db, schema } from "@/lib/db";
@@ -50,7 +51,7 @@ function refresh(id?: number) {
  * Đề đã có người làm thì giữ nguyên câu hỏi và cách trộn, chỉ đổi tên, thời gian, lớp, cách xem đáp án.
  */
 export async function saveExam(input: ExamInput): Promise<ActionResult<{ id: number }>> {
-  const user = await requireTeacher("/quan-tri/de-thi");
+  const user = await requireTeacher();
   const parsed = ExamInput.safeParse(input);
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Đề chưa hợp lệ." };
   const v = parsed.data;
@@ -87,7 +88,7 @@ export async function saveExam(input: ExamInput): Promise<ActionResult<{ id: num
     durationMin: v.durationMin,
     opensAt: v.opensAt ? new Date(v.opensAt) : null,
     closesAt: v.closesAt ? new Date(v.closesAt) : null,
-    classes: [...new Set(v.classes.map((c) => c.trim()))],
+    classes: [...new Set(v.classes.map(normalizeClassName))],
     maxAttempts: v.maxAttempts,
     shuffle: v.shuffle,
     reveal: v.reveal,
@@ -108,7 +109,7 @@ export async function saveExam(input: ExamInput): Promise<ActionResult<{ id: num
 
 /** Giao đề cho học viên hoặc đưa về bản nháp (học viên không thấy nữa; bài đã nộp vẫn giữ). */
 export async function setExamStatus(input: { id: number; status: "nhap" | "da-giao" }): Promise<ActionResult> {
-  await requireTeacher("/quan-tri/de-thi");
+  await requireTeacher();
   const { id, status } = z.object({ id: z.number().int().positive(), status: z.enum(["nhap", "da-giao"]) }).parse(input);
   const rows = await db.update(exams).set({ status, updatedAt: sql`now()` }).where(eq(exams.id, id)).returning({ id: exams.id });
   if (!rows.length) return { ok: false, error: "Không tìm thấy đề này." };
@@ -116,18 +117,28 @@ export async function setExamStatus(input: { id: number; status: "nhap" | "da-gi
   return { ok: true };
 }
 
-/** Đóng đề ngay: đặt giờ đóng là bây giờ. Bài đang làm được chấm theo phần đã lưu. */
+/**
+ * Đóng đề ngay: đặt giờ đóng là bây giờ. Bài đang làm được chấm theo phần đã lưu.
+ * Đề chưa tới giờ mở thì kéo giờ mở về bây giờ, để giờ đóng không đứng trước giờ mở.
+ */
 export async function closeExamNow(id: number): Promise<ActionResult> {
-  await requireTeacher("/quan-tri/de-thi");
+  await requireTeacher();
   const examId = z.number().int().positive().parse(id);
-  await db.update(exams).set({ closesAt: sql`now()`, updatedAt: sql`now()` }).where(eq(exams.id, examId));
+  await db
+    .update(exams)
+    .set({
+      closesAt: sql`now()`,
+      opensAt: sql`case when ${exams.opensAt} > now() then now() else ${exams.opensAt} end`,
+      updatedAt: sql`now()`,
+    })
+    .where(eq(exams.id, examId));
   refresh(examId);
   return { ok: true };
 }
 
 /** Bản sao ở trạng thái nháp, không kèm bài làm. Dùng để giao lại cho lớp khác hay sửa đề đã có người làm. */
 export async function duplicateExam(id: number): Promise<ActionResult<{ id: number }>> {
-  const user = await requireTeacher("/quan-tri/de-thi");
+  const user = await requireTeacher();
   const exam = await getExam(z.number().int().positive().parse(id));
   if (!exam) return { ok: false, error: "Không tìm thấy đề này." };
   const [row] = await db
@@ -154,7 +165,7 @@ export async function duplicateExam(id: number): Promise<ActionResult<{ id: numb
 
 /** Xóa đề cùng mọi bài làm. */
 export async function deleteExam(id: number): Promise<ActionResult> {
-  await requireTeacher("/quan-tri/de-thi");
+  await requireTeacher();
   const examId = z.number().int().positive().parse(id);
   await db.delete(exams).where(eq(exams.id, examId));
   refresh(examId);
@@ -163,7 +174,7 @@ export async function deleteExam(id: number): Promise<ActionResult> {
 
 /** Cho một học viên làm lại: xóa mọi lượt của học viên đó trong đề. */
 export async function resetStudentAttempts(input: { examId: number; userId: string }): Promise<ActionResult> {
-  await requireTeacher("/quan-tri/de-thi");
+  await requireTeacher();
   const { examId, userId } = z.object({ examId: z.number().int().positive(), userId: z.string().uuid() }).parse(input);
   await db.delete(examAttempts).where(and(eq(examAttempts.examId, examId), eq(examAttempts.userId, userId)));
   refresh(examId);

@@ -34,6 +34,8 @@ interface Run {
 /** Thời gian hiện tối thiểu, đủ để đọc lời chào; trang đích tải lâu hơn thì lớp phủ chờ theo. */
 const MIN_MS: Record<Kind, number> = { login: 1500, register: 2000, logout: 1400 };
 const LEAVE_MS = 450;
+/** Chuyển trang sau lời chào lâu hơn mốc này thì tải hẳn trang đích (xem chốt dự phòng trong AuthTransitionHost). */
+const NAV_TIMEOUT_MS = 8000;
 /** Cú bấm gần đây hơn mốc này mới dùng làm tâm loang (đăng nhập phải chờ Server Action nên có độ trễ). */
 const ORIGIN_FRESH_MS = 8000;
 
@@ -184,6 +186,16 @@ export function AuthTransitionHost() {
 
   // Lỗi khi làm việc, hoặc trang đích đã hiện (chuyển trang trong transition xong): mờ dần lớp phủ rồi gỡ hẳn.
   const leaving = phase === "leave" || (phase === "nav" && !navigating);
+
+  // Chốt dự phòng: chuyển trang phía client mãi chưa xong (máy chủ đang bận, đang biên dịch lại khi phát triển, mạng chập
+  // chờn) thì tải hẳn trang đích, để người dùng không phải tự bấm tải lại khi lớp phủ cứ quay. Phiên đã ghi vào cookie nên
+  // tải lại vẫn vào đúng trang của mình.
+  const stuckTarget = phase === "nav" && navigating ? run?.to : undefined;
+  useEffect(() => {
+    if (!stuckTarget) return;
+    const t = setTimeout(() => window.location.assign(stuckTarget), NAV_TIMEOUT_MS);
+    return () => clearTimeout(t);
+  }, [stuckTarget]);
 
   useEffect(() => {
     if (!leaving) return;

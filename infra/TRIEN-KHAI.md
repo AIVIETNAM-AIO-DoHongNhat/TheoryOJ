@@ -129,6 +129,7 @@ Trang chủ tự chuyển hàng số liệu sang số sử dụng thật (câu h
 | Thêm bài viết, tài liệu thư viện | Thêm file vào `content/` rồi `dc up -d --build web` (trang được build sẵn); tài liệu mới cần nạp lại: `dc exec rag python scripts/ingest_all.py` |
 | Sửa ngân hàng câu hỏi, thẻ ghi nhớ, câu hỏi gợi ý | Sửa `content/<môn>/question-bank/*.yaml`, `content/<môn>/the-ghi-nho/*.yaml` hoặc `content/<môn>/tro-ly.yaml`, rồi `dc up -d --build web` (trang thẻ được dựng sẵn) |
 | Cấp tài khoản giảng viên | `dc run --rm migrate npx tsx scripts/cap-quyen.mts <mã> --tao "Họ tên"` (in mật khẩu tạm), hoặc bỏ `--tao` để nâng tài khoản đã đăng ký; `--thu` để thu quyền. Giảng viên vào `/quan-tri` |
+| Danh sách học viên | Giảng viên dán danh sách (mã, họ tên, lớp chép từ Excel) ở `/quan-tri/danh-sach` trước khi học viên đăng ký. Chỉ mã có trong danh sách mới đăng ký được; nhập lại danh sách để chuyển lớp |
 | Học viên quên mật khẩu | Giảng viên bấm "Đặt lại mật khẩu" ở `/quan-tri/hoc-vien/<mã>`, hoặc `dc run --rm migrate npx tsx scripts/dat-lai-mat-khau.mts <mã học viên>`; báo mật khẩu tạm cho học viên |
 | Mở thêm môn | Theo `content/THEM-MON.md`, rồi `dc up -d --build web` và `dc exec rag python scripts/ingest_all.py <môn>` |
 | Sao lưu | Tự động mỗi ngày vào `infra/backups/`, giữ `BACKUP_KEEP_DAYS` ngày. Nên chép thêm ra máy khác |

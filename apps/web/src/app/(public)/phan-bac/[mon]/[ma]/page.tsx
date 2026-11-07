@@ -11,13 +11,14 @@ import { Badge } from "@/components/ui/badge";
 import { ACTIVE_SUBJECTS, getSubject } from "@/config/subjects";
 import { StudentGate } from "@/features/auth/components/StudentGate";
 import { AnswerRunner } from "@/features/open-answer/components/AnswerRunner";
-import { latestAttempts } from "@/features/open-answer/server/attempts";
+import { latestAttempts, toSubmission } from "@/features/open-answer/server/attempts";
 import { findRebuttal, rebuttalBanks } from "@/features/open-answer/server/bank";
-import { AXES, AXIS_LABELS, type GradeResponse } from "@/features/open-answer/types";
-import { rebuttalHref, reviewHref } from "@/features/review/paths";
+import { BetaBadge } from "@/features/open-answer/components/BetaNotice";
+import { AXES, AXIS_LABELS } from "@/features/open-answer/types";
+import { rebuttalHref } from "@/features/review/paths";
 import { getCurrentUser } from "@/lib/auth/session";
 
-type Props = PageProps<"/on-tap/[mon]/phan-bac/[ma]">;
+type Props = PageProps<"/phan-bac/[mon]/[ma]">;
 
 export const metadata: Metadata = { title: "Viết bài phản bác" };
 
@@ -40,39 +41,31 @@ async function RebuttalContent({ params }: Pick<Props, "params">) {
   const { bank, item } = found;
 
   const previous = user ? (await latestAttempts(user.visitorId, subject.id, "phan_bac", [item.id])).get(item.id) : undefined;
-  const initial: GradeResponse | null = previous
-    ? {
-        attemptId: previous.id,
-        result: previous.result,
-        rubric: previous.rubric,
-        citations: previous.citations,
-        published: item.published,
-        lecturerScore: previous.lecturerScore,
-        lecturerNote: previous.lecturerNote,
-      }
-    : null;
+  const initial = previous ? toSubmission(previous, item.published) : null;
   const axes = AXES.filter((a) => item.rubric.some((p) => p.axis === a));
 
   return (
     <>
       <PageHeader
         crumbs={[
-          { label: "Ôn tập", href: "/on-tap" },
-          { label: subject.shortName, href: reviewHref(subject.id) },
-          { label: "Đấu trường phản bác", href: rebuttalHref(subject.id) },
+          { label: "Đấu trường phản bác", href: rebuttalHref() },
           { label: item.title.replace(/^"|"$/g, "") },
         ]}
         title={
           <>
-            <span className="mb-2 block font-sans text-sm font-semibold uppercase tracking-[0.14em] text-primary">
-              Phản bác · Chương {bank.chapter}
+            <span className="mb-2 flex flex-wrap items-center gap-2 font-sans text-sm font-semibold uppercase tracking-[0.14em] text-primary">
+              Phản bác · {subject.shortName} chương {bank.chapter}
+              <BetaBadge />
             </span>
             {item.title}
           </>
         }
-        lead={`Bài phản bác được chấm theo ${axes.length} trục: ${axes.map((a) => AXIS_LABELS[a].toLowerCase()).join(", ")}, cùng các lỗi lập luận cần vạch trần. Bài đồng tình hoặc chỉ nhắc lại luận điệu được 0 điểm.`}
+        lead={`Giảng viên phụ trách môn chấm bài phản bác theo ${axes.length} trục: ${axes.map((a) => AXIS_LABELS[a].toLowerCase()).join(", ")}, cùng các lỗi lập luận cần vạch trần. Bài đồng tình hoặc chỉ nhắc lại luận điệu được 0 điểm.`}
       >
-        {!bank.reviewed && <Badge variant="outline" className="self-start bg-card">Bản nháp, chỉ giảng viên thấy</Badge>}
+        {!item.reviewed && <Badge variant="outline" className="self-start bg-card">Bản nháp, chỉ giảng viên thấy</Badge>}
+        <p className="text-xs text-muted-foreground">
+          Bản thử nghiệm: điểm và nhận xét của giảng viên giúp đồng chí rèn luyện, chưa tính vào kết quả học tập chính thức.
+        </p>
       </PageHeader>
 
       <div className="mx-auto flex max-w-4xl flex-col gap-5 px-4 py-10 sm:py-12">
@@ -91,14 +84,13 @@ async function RebuttalContent({ params }: Pick<Props, "params">) {
           <>
             {teacher && (
               <Alert>
-                <AlertDescription>Đồng chí đang thử bằng tài khoản giảng viên; lượt làm không tính vào số liệu học viên.</AlertDescription>
+                <AlertDescription>Đồng chí đang thử bằng tài khoản giảng viên; bài thử không vào hàng chờ chấm.</AlertDescription>
               </Alert>
             )}
             <AnswerRunner
               key={item.id}
               target={{ kind: "phan_bac", subject: subject.id, itemId: item.id }}
               initial={initial}
-              initialAnswer={previous?.answer}
               placeholder="Viết bài phản bác: chỉ ra luận điệu sai ở đâu, dùng lý luận trong giáo trình, dẫn văn kiện của Đảng và dẫn chứng thực tiễn."
             />
           </>

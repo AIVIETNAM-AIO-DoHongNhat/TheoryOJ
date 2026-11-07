@@ -42,6 +42,8 @@ const rebuttalFileSchema = z.object({
   status: statusSchema,
   items: z.array(z.object({
     id: z.string().min(1),
+    /** Duyệt riêng từng luận điệu; bỏ trống thì theo `status` của cả file. */
+    status: z.enum(["nhap", "da-duyet"]).optional(),
     /** Tên ngắn để hiện trong danh sách. */
     tieu_de: z.string().min(1),
     luan_dieu: z.string().min(1),
@@ -76,6 +78,8 @@ export interface EssayBank {
 
 export interface RebuttalItem {
   id: string;
+  /** Giảng viên đã duyệt: học viên thấy được. */
+  reviewed: boolean;
   title: string;
   claim: string;
   published: PublishedRebuttal[];
@@ -86,6 +90,7 @@ export interface RebuttalItem {
 export interface RebuttalBank {
   subject: string;
   chapter: number;
+  /** Mọi luận điệu của chương đều đã duyệt. */
   reviewed: boolean;
   items: RebuttalItem[];
 }
@@ -143,16 +148,19 @@ export function getRebuttalBank(subject: string, chapter: number): RebuttalBank 
   const items = data.items.map((i) => {
     const rubric = AXES.flatMap((axis: Axis) => i.rubric[axis].map((p) => ({ ...p, axis })));
     checkPoints(`${where} luận điệu ${i.id}`, subject, rubric);
-    return { id: i.id, title: i.tieu_de, claim: i.luan_dieu, published: i.nguon_phan_bac, fallacies: i.ngay_bien, rubric };
+    const reviewed = (i.status ?? data.status) === "da-duyet";
+    return { id: i.id, reviewed, title: i.tieu_de, claim: i.luan_dieu, published: i.nguon_phan_bac, fallacies: i.ngay_bien, rubric };
   });
-  return { subject, chapter, reviewed: data.status === "da-duyet", items };
+  return { subject, chapter, reviewed: items.every((i) => i.reviewed), items };
 }
 
-/** Mọi luận điệu của môn, theo chương. Học viên chỉ thấy chương đã duyệt; giảng viên thấy cả bản nháp. */
+/** Mọi luận điệu của môn, theo chương. Học viên chỉ thấy luận điệu đã duyệt; giảng viên thấy cả bản nháp. */
 export function rebuttalBanks(subject: string, chapters: number[], includeDrafts: boolean): RebuttalBank[] {
   return chapters
     .map((n) => getRebuttalBank(subject, n))
-    .filter((b): b is RebuttalBank => !!b && b.items.length > 0 && (b.reviewed || includeDrafts));
+    .filter((b): b is RebuttalBank => !!b)
+    .map((b) => (includeDrafts ? b : { ...b, items: b.items.filter((i) => i.reviewed) }))
+    .filter((b) => b.items.length > 0);
 }
 
 export function findRebuttal(subject: string, chapters: number[], id: string, includeDrafts: boolean) {

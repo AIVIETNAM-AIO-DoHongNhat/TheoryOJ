@@ -19,6 +19,8 @@ export interface AdminQuestion extends QuestionContent {
   code: string;
   source: QuestionSource;
   hidden: boolean;
+  /** Chỉ dùng cho đề thi: không hiện ở trắc nghiệm ôn tập. */
+  examOnly: boolean;
   /** Bản trong file trước khi sửa, để so và khôi phục. */
   original: QuestionContent | null;
   updatedAt: string | null;

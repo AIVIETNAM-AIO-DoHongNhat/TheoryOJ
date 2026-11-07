@@ -1,33 +1,22 @@
 "use client";
 
-import "katex/dist/katex.min.css";
+import { lazy, memo, type ReactNode, Suspense } from "react";
 
-import type { ReactNode } from "react";
-import ReactMarkdown from "react-markdown";
-import rehypeKatex from "rehype-katex";
-import remarkGfm from "remark-gfm";
-import remarkMath from "remark-math";
+import { hasMath, normalize } from "./normalize";
 
-const CITE_PREFIX = "#cite-";
+export { normalize } from "./normalize";
 
-/**
- * Chuẩn hóa đầu ra của mô hình trước khi render:
- * - \( \) và \[ \] thành $ $ và $$ $$ để remark-math nhận.
- * - [n] thành liên kết #cite-n để thay bằng thẻ trích dẫn.
- */
-export function normalize(text: string): string {
-  return text
-    .replace(/\\\[([\s\S]+?)\\\]/g, (_, m) => `\n$$\n${m.trim()}\n$$\n`)
-    .replace(/\\\(([\s\S]+?)\\\)/g, (_, m) => `$${m.trim()}$`)
-    .replace(/(?<!\\)\[(\d{1,2}(?:\s*[,;]\s*\d{1,2})*)\](?!\()/g, (_, list: string) =>
-      list.split(/\s*[,;]\s*/).map((n) => `[${n}](${CITE_PREFIX}${n})`).join(""));
-}
+// Bộ render Markdown (react-markdown) và KaTeX tải theo nhu cầu: trang trợ lý chưa có câu trả lời thì không tải gì,
+// câu trả lời không có công thức thì không tải KaTeX. Trong lúc tải hiện chữ thô để trang không trống, không nhảy.
+const PlainMarkdown = lazy(() => import("./PlainMarkdown"));
+const MathMarkdown = lazy(() => import("./MathMarkdown"));
 
 /**
- * `chat` (mặc định) chuẩn hóa đầu ra của mô hình như trên. `notes` (sổ ghi chép) để nguyên chữ của học viên:
+ * `chat` (mặc định) chuẩn hóa đầu ra của mô hình (normalize.ts). `notes` (sổ ghi chép) để nguyên chữ của học viên:
  * công thức viết bằng `$`, còn `[1]` hay `\[` là chữ thường.
+ * Bọc `memo`: hội thoại dài chỉ dựng lại câu đang chạy, không phân tích lại Markdown, công thức của mọi câu cũ.
  */
-export function Markdown({
+export const Markdown = memo(function Markdown({
   children,
   renderCitation,
   variant = "chat",
@@ -36,26 +25,13 @@ export function Markdown({
   renderCitation?: (n: number) => ReactNode;
   variant?: "chat" | "notes";
 }) {
+  const text = variant === "chat" ? normalize(children) : children;
+  const Renderer = hasMath(text) ? MathMarkdown : PlainMarkdown;
   return (
     <div className="prose-answer">
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[[rehypeKatex, { throwOnError: false, strict: "ignore" }]]}
-        components={{
-          a: ({ href, children, ...props }) => {
-            if (href?.startsWith(CITE_PREFIX) && renderCitation) {
-              return renderCitation(Number(href.slice(CITE_PREFIX.length)));
-            }
-            return (
-              <a href={href} target="_blank" rel="noreferrer noopener" className="text-primary underline" {...props}>
-                {children}
-              </a>
-            );
-          },
-        }}
-      >
-        {variant === "chat" ? normalize(children) : children}
-      </ReactMarkdown>
+      <Suspense fallback={<div className="whitespace-pre-wrap">{children}</div>}>
+        <Renderer text={text} renderCitation={renderCitation} />
+      </Suspense>
     </div>
   );
-}
+});

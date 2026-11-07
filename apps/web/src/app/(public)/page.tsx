@@ -1,7 +1,7 @@
 import { ACTIVE_SUBJECTS, DEFAULT_SUBJECT, SUBJECTS } from "@/config/subjects";
 import { getPosts } from "@/features/blog/server/posts";
 import {
-  AssistantShowcase, BentoSection, CtaPanel, FacultyGallery, HomeHero, LatestPosts, WordmarkBand,
+  AssistantShowcase, BentoSection, CtaPanel, FacultyGallery, HomeHero, LatestPosts, RebuttalArenaTeaser, WordmarkBand,
 } from "@/features/landing/components/Home";
 import { getUsageStats, MIN_ANSWERS } from "@/features/landing/server/usage";
 import { getProfile } from "@/features/learning/server/profile";
@@ -37,6 +37,7 @@ export default async function HomePage() {
       <HomeHero facts={facts} suggestions={getProfile(DEFAULT_SUBJECT).suggestions.slice(0, 3)} />
       <BentoSection library={library} postCount={posts.length} />
       <AssistantShowcase />
+      <RebuttalArenaTeaser />
       <LatestPosts posts={posts.slice(0, 3)} />
       <FacultyGallery />
       <CtaPanel />

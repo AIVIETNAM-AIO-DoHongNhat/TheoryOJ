@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { RegisterForm } from "@/features/auth/components/AuthForms";
 import { AuthPage } from "@/features/auth/components/AuthPage";
 import { RedirectIfSignedIn } from "@/features/auth/components/RedirectIfSignedIn";
+import { env } from "@/lib/env";
 
 export const metadata: Metadata = { title: "Đăng ký", robots: { index: false } };
 
@@ -18,7 +19,7 @@ export default function RegisterPage({ searchParams }: PageProps<"/dang-ky">) {
       <Suspense fallback={null}>
         <RedirectIfSignedIn searchParams={searchParams} />
       </Suspense>
-      <RegisterForm />
+      <RegisterForm open={env.REGISTRATION_OPEN} />
     </AuthPage>
   );
 }

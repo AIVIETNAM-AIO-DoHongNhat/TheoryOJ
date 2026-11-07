@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LETTERS } from "@/features/question-bank/schema";
+import { LETTERS } from "@/features/question-bank/letters";
 import { cn } from "@/lib/utils";
 
 import type { PickerQuestion } from "../types";
@@ -161,6 +161,7 @@ export function QuestionPicker({
                   <span className="flex min-w-0 flex-col gap-0.5">
                     <span className="text-[11px] text-muted-foreground">
                       Chương {x.chapter} · <span className="font-mono">{x.code}</span>
+                      {x.examOnly && <span className="text-primary"> · chỉ dùng cho đề thi</span>}
                     </span>
                     <span className="text-[13px] font-medium leading-snug">{x.q}</span>
                     <span className="line-clamp-1 text-[12px] text-primary">

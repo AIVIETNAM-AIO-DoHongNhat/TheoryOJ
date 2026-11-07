@@ -1,13 +1,24 @@
 import { describe, expect, it } from "vitest";
 
-import { homeFor, LoginInput, RegisterInput, safeNext } from "./schemas";
+import { homeFor, LoginInput, OpenRegisterInput, ProfileInput, RegisterInput, safeNext } from "./schemas";
 
 describe("đăng ký, đăng nhập", () => {
-  const ok = { studentCode: " b2k60-001 ", fullName: "Nguyễn Văn An", className: "B2K60", password: "12345678", confirm: "12345678" };
+  const ok = { studentCode: " b2k60-001 ", password: "12345678", confirm: "12345678" };
 
   it("mã học viên viết hoa, bỏ khoảng trắng", () => {
     expect(RegisterInput.parse(ok).studentCode).toBe("B2K60-001");
     expect(LoginInput.parse({ studentCode: "b2k60-001", password: "x" }).studentCode).toBe("B2K60-001");
+  });
+
+  it("đăng ký theo danh sách không nhận họ tên, lớp tự khai", () => {
+    const parsed = RegisterInput.parse({ ...ok, fullName: "Kẻ mạo danh", className: "LỚP KHÁC" });
+    expect(parsed).not.toHaveProperty("fullName");
+    expect(parsed).not.toHaveProperty("className");
+  });
+
+  it("đăng ký tự do chuẩn hóa tên lớp; sửa hồ sơ không đổi được lớp", () => {
+    expect(OpenRegisterInput.parse({ ...ok, fullName: "Nguyễn Văn An", className: " b2k60 " }).className).toBe("B2K60");
+    expect(ProfileInput.parse({ fullName: "Nguyễn Văn An", className: "LỚP KHÁC" })).toEqual({ fullName: "Nguyễn Văn An" });
   });
 
   it("chặn mã sai dạng, mật khẩu ngắn, nhập lại không khớp", () => {

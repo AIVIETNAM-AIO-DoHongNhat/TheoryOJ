@@ -162,18 +162,11 @@ export async function getExamResults(id: number): Promise<ExamResults | null> {
   const exam = await getExam(id);
   if (!exam) return null;
 
-  const [assigned, attempts] = await Promise.all([
+  const [students, attempts] = await Promise.all([
     db
       .select({ id: users.id, studentCode: users.studentCode, fullName: users.fullName, className: users.className })
       .from(users)
-      .where(
-        and(
-          eq(users.role, "hoc-vien"),
-          exam.classes.length
-            ? sql`upper(trim(${users.className})) in (${sql.join(exam.classes.map((c) => sql`${c.trim().toUpperCase()}`), sql`, `)})`
-            : undefined,
-        ),
-      )
+      .where(eq(users.role, "hoc-vien"))
       .orderBy(asc(users.className), asc(users.fullName)),
     db
       .select({ attempt: examAttempts, studentCode: users.studentCode, fullName: users.fullName, className: users.className })
@@ -183,6 +176,8 @@ export async function getExamResults(id: number): Promise<ExamResults | null> {
       .orderBy(asc(examAttempts.startedAt)),
   ]);
 
+  // Lọc lớp bằng cùng hàm với trang học viên (classMatches), để danh sách giảng viên thấy khớp đúng người được giao.
+  const assigned = students.filter((u) => classMatches(exam.classes, u.className));
   const byUser = new Map<string, StudentResult>();
   for (const u of assigned) {
     byUser.set(u.id, { userId: u.id, studentCode: u.studentCode, fullName: u.fullName, className: u.className, outsideClasses: false, attempts: [], best: null, inProgress: false });

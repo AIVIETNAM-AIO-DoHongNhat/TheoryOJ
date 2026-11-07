@@ -1,7 +1,7 @@
 "use client";
 
 import { BookAlert, FilePen, ShieldAlert } from "lucide-react";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 import { MinhMascot } from "@/components/brand/MinhMascot";
 import { Markdown } from "@/components/markdown/Markdown";
@@ -33,7 +33,11 @@ export interface MessageViewProps {
   feedback?: 1 | -1;
 }
 
-export function MessageView({ message, animate = false, ...rest }: MessageViewProps) {
+/**
+ * Bọc `memo`: thư viện chat giữ nguyên đối tượng của các tin nhắn cũ, nên khi câu trả lời đang chạy hay khi gõ vào ô nhập,
+ * chỉ tin nhắn cuối dựng lại; các câu cũ (Markdown, công thức) không phải phân tích lại.
+ */
+export const MessageView = memo(function MessageView({ message, animate = false, ...rest }: MessageViewProps) {
   if (message.role === "user") {
     return (
       <Message align="end" className={cn(animate && "origin-bottom-right motion-safe:animate-msg-in-end")}>
@@ -48,7 +52,7 @@ export function MessageView({ message, animate = false, ...rest }: MessageViewPr
     );
   }
   return <AssistantMessage message={message} {...rest} />;
-}
+});
 
 /** Ảnh đại diện của trợ lý: linh vật Minh. Khi đang trả lời có vòng sáng lan ra để báo hệ thống còn làm việc. */
 export function AssistantAvatar({ active = false }: { active?: boolean }) {

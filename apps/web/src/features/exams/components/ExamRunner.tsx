@@ -69,18 +69,30 @@ export function ExamRunner({
   const dirty = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Mỗi lúc chỉ một yêu cầu lưu: mạng chậm thì yêu cầu cũ về sau cũng không ghi đè đáp án mới hơn trên máy chủ.
+  const inFlight = useRef<Promise<void> | null>(null);
   const flush = useCallback(async () => {
+    while (inFlight.current) await inFlight.current;
     if (!dirty.current || submitted.current) return;
     dirty.current = false;
     setSaveState("saving");
-    try {
-      const res = await saveExamAnswers({ attemptId, answers: answersRef.current });
-      setSaveState(res.ok ? "saved" : "error");
-    } catch {
-      dirty.current = true;
-      setSaveState("error");
-    }
+    const request = (async () => {
+      try {
+        const res = await saveExamAnswers({ attemptId, answers: answersRef.current });
+        setSaveState(res.ok ? "saved" : "error");
+      } catch {
+        dirty.current = true;
+        setSaveState("error");
+      }
+    })();
+    inFlight.current = request;
+    await request;
+    inFlight.current = null;
   }, [attemptId]);
+
+  // Tự nộp khi hết giờ mà lỗi (mất mạng) thì thử lại thưa dần: 5 giây, 10 giây... tối đa 1 phút, không gửi mỗi giây.
+  const retryAt = useRef(0);
+  const retryDelay = useRef(5_000);
 
   const submit = useCallback(() => {
     if (submitted.current) return;
@@ -88,19 +100,20 @@ export function ExamRunner({
     setConfirmOpen(false);
     setError(null);
     if (timer.current) clearTimeout(timer.current);
+    const failed = (message: string) => {
+      submitted.current = false;
+      setError(message);
+      retryAt.current = Date.now() + retryDelay.current;
+      retryDelay.current = Math.min(retryDelay.current * 2, 60_000);
+    };
     startTransition(async () => {
       try {
         const res = await submitExam({ attemptId, answers: answersRef.current });
-        if (!res.ok) {
-          submitted.current = false;
-          setError(res.error);
-          return;
-        }
+        if (!res.ok) return failed(res.error);
         markStudied();
         window.scrollTo({ top: 0, behavior: "smooth" });
       } catch {
-        submitted.current = false;
-        setError("Chưa nộp được bài. Kiểm tra kết nối mạng rồi bấm nộp lại; đáp án đã chọn vẫn được giữ.");
+        failed("Chưa nộp được bài. Kiểm tra kết nối mạng rồi bấm nộp lại; đáp án đã chọn vẫn được giữ.");
       }
     });
   }, [attemptId]);
@@ -111,7 +124,7 @@ export function ExamRunner({
     const tick = () => {
       const left = deadlineMs - (Date.now() + skew.current!);
       setRemaining(left);
-      if (left <= 0) submit();
+      if (left <= 0 && Date.now() >= retryAt.current) submit();
     };
     tick();
     const id = setInterval(tick, 1000);

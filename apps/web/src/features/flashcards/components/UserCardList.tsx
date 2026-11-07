@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { errorMessage, unwrap } from "@/lib/action-result";
 
 import { editCard, removeCard } from "../actions";
 import { CARD_BACK_MAX, CARD_FRONT_MAX, type Flashcard } from "../types";
@@ -27,7 +28,7 @@ export function UserCardList({ cards }: { cards: Flashcard[] }) {
         setEditing(null);
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Không lưu được.");
+        setError(errorMessage(e, "Không lưu được."));
       }
     });
 
@@ -43,7 +44,7 @@ export function UserCardList({ cards }: { cards: Flashcard[] }) {
             <form
               key={c.id}
               className="flex flex-col gap-2 py-3"
-              action={(form) => run(() => editCard({ id: c.id, front: String(form.get("front") ?? ""), back: String(form.get("back") ?? "") }))}
+              action={(form) => run(async () => unwrap(await editCard({ id: c.id, front: String(form.get("front") ?? ""), back: String(form.get("back") ?? "") })))}
             >
               <Input name="front" defaultValue={c.front} required maxLength={CARD_FRONT_MAX} aria-label="Mặt trước" />
               <Textarea name="back" defaultValue={c.back} required maxLength={CARD_BACK_MAX} aria-label="Mặt sau" />
@@ -72,7 +73,7 @@ export function UserCardList({ cards }: { cards: Flashcard[] }) {
                 disabled={pending}
                 aria-label={`Xóa thẻ ${c.front}`}
                 onClick={() => {
-                  if (window.confirm("Xóa thẻ này cùng lịch ôn của nó?")) run(() => removeCard(c.id));
+                  if (window.confirm("Xóa thẻ này cùng lịch ôn của nó?")) run(async () => unwrap(await removeCard(c.id)));
                 }}
               >
                 <Trash2 />

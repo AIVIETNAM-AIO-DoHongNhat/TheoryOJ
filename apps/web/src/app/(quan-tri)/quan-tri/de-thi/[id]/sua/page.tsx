@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Sửa đề thi · Quản trị" };
 
 async function EditExam({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  await requireTeacher(`/quan-tri/de-thi/${id}/sua`);
+  await requireTeacher();
   const draft = /^\d+$/.test(id) ? await getExamDraft(Number(id)) : null;
   if (!draft) notFound();
   const data = await examFormData(draft.subject);

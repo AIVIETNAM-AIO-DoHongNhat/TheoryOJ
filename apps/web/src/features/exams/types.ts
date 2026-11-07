@@ -47,6 +47,8 @@ export interface PickerQuestion {
   q: string;
   options: string[];
   answer: number;
+  /** Câu chỉ dùng cho đề thi, không hiện ở trắc nghiệm ôn tập. */
+  examOnly: boolean;
 }
 
 /** Câu gửi xuống trình duyệt khi đang làm bài: không có đáp án, phương án đã xếp theo thứ tự của lượt. */

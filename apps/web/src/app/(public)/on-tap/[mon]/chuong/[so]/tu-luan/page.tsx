@@ -15,9 +15,8 @@ import { StudentGate } from "@/features/auth/components/StudentGate";
 import { docsForChapter } from "@/features/library/server/catalog";
 import { readerHref } from "@/features/library/types";
 import { AnswerRunner } from "@/features/open-answer/components/AnswerRunner";
-import { latestAttempts } from "@/features/open-answer/server/attempts";
+import { latestAttempts, toSubmission } from "@/features/open-answer/server/attempts";
 import { essayCounts, getEssayBank, pageSpan, rebuttalBanks } from "@/features/open-answer/server/bank";
-import type { GradeResponse } from "@/features/open-answer/types";
 import { rebuttalHref, reviewCrumbs, reviewHref } from "@/features/review/paths";
 import { getCurrentUser } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
@@ -54,16 +53,7 @@ async function EssayPageContent({ params, searchParams }: Props) {
   const user = await getCurrentUser();
   const latest = user ? await latestAttempts(user.visitorId, subject.id, "tu_luan", bank.questions.map((q) => q.id)) : new Map();
   const previous = latest.get(question.id);
-  const initial: GradeResponse | null = previous
-    ? {
-        attemptId: previous.id,
-        result: previous.result,
-        rubric: previous.rubric,
-        citations: previous.citations,
-        lecturerScore: previous.lecturerScore,
-        lecturerNote: previous.lecturerNote,
-      }
-    : null;
+  const initial = previous ? toSubmission(previous) : null;
 
   const textbook = docsForChapter(subject.id, chapter.number).find((d) => d.kind === "giao_trinh");
   const span = pageSpan(question.rubric);
@@ -82,7 +72,7 @@ async function EssayPageContent({ params, searchParams }: Props) {
             {chapter.title}
           </>
         }
-        lead="Viết bài như khi thi. Hệ thống chấm từng ý theo barem do Khoa duyệt, chỉ ra câu nào trong bài đạt ý, ý nào còn thiếu kèm trang giáo trình, rồi hỏi vặn ý yếu nhất như thi vấn đáp."
+        lead="Viết bài như khi thi rồi gửi giảng viên phụ trách môn. Giảng viên chấm từng ý theo barem do Khoa duyệt và nhận xét; kết quả hiện ngay tại trang này."
         actions={
           hasRebuttals ? (
             <Button variant="outline" className="bg-card" render={<Link href={rebuttalHref(subject.id)} />} nativeButton={false}>
@@ -115,7 +105,7 @@ async function EssayPageContent({ params, searchParams }: Props) {
                       Câu {i + 1}
                       {done && (
                         <span className="ml-auto tabular-nums text-muted-foreground">
-                          {(done.lecturerScore ?? done.result.score).toLocaleString("vi-VN")}/{done.result.maxScore}
+                          {done.gradedAt && done.score !== null ? `${done.score.toLocaleString("vi-VN")}/${done.maxScore}` : "Chờ chấm"}
                         </span>
                       )}
                     </span>
@@ -149,14 +139,13 @@ async function EssayPageContent({ params, searchParams }: Props) {
             <>
               {user.role === "giang-vien" && (
                 <Alert>
-                  <AlertDescription>Đồng chí đang thử bằng tài khoản giảng viên; lượt làm không tính vào số liệu học viên.</AlertDescription>
+                  <AlertDescription>Đồng chí đang thử bằng tài khoản giảng viên; bài thử không vào hàng chờ chấm.</AlertDescription>
                 </Alert>
               )}
               <AnswerRunner
                 key={question.id}
                 target={{ kind: "tu_luan", subject: subject.id, chapter: chapter.number, itemId: question.id }}
                 initial={initial}
-                initialAnswer={previous?.answer}
               />
             </>
           ) : (

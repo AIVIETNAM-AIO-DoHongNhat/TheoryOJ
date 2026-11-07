@@ -46,6 +46,8 @@ services:
       CHAT_LIMIT_VISITOR_DAY: ${CHAT_LIMIT_VISITOR_DAY:-200}
       CHAT_LIMIT_IP_10M: ${CHAT_LIMIT_IP_10M:-120}
       SURVEY_PHASE: ${SURVEY_PHASE:-truoc}
+      REGISTRATION_OPEN: ${REGISTRATION_OPEN:-false}
+      TRUSTED_IP_HEADER: ${TRUSTED_IP_HEADER:-}
     volumes:
       # Ngân hàng câu hỏi, PDF thư viện đọc lúc chạy. Bài viết và danh mục thư viện được build sẵn vào image.
       - ../content:/content:ro

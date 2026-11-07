@@ -68,6 +68,9 @@ const nextConfig: NextConfig = {
         destination: "/on-tap/:mon/chuong/:so/:hoatDong",
         permanent: true,
       },
+      // Đấu trường phản bác tách khỏi Ôn tập thành mục riêng /phan-bac.
+      { source: "/on-tap/:mon/phan-bac", destination: "/phan-bac", permanent: true },
+      { source: "/on-tap/:mon/phan-bac/:ma", destination: "/phan-bac/:mon/:ma", permanent: true },
     ];
   },
 };

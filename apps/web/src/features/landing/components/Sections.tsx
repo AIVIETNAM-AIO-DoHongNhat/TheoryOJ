@@ -1,4 +1,4 @@
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, BookOpenCheck, Check, Search } from "lucide-react";
 import Image from "next/image";
 
 import { AcademyLogo, SectionHeading } from "@/components/brand";
@@ -55,7 +55,7 @@ export function AboutSection() {
 /* ------------------------------ Về Khoa ------------------------------ */
 
 export function FacultySection() {
-  const [leadParagraph, ...paragraphs] = faculty.paragraphs;
+  const { need, answer } = faculty.story;
   const stats = [{ value: String(SUBJECTS.length), label: faculty.subjectsLabel }, ...faculty.stats.filter((s) => s.value)];
   return (
     <Section id="ve-khoa">
@@ -69,12 +69,50 @@ export function FacultySection() {
             {faculty.nameStart} <span className="text-primary sm:block">{faculty.nameAccent}</span>
           </h2>
         </Reveal>
-        <Reveal delay={100} className="flex flex-col gap-4 lg:col-span-5 lg:pb-2">
-          <p className="text-pretty text-lg leading-relaxed text-foreground/85">{leadParagraph}</p>
-          {paragraphs.map((p) => (
-            <p key={p} className="text-pretty text-[15px] leading-relaxed text-muted-foreground">{p}</p>
-          ))}
+        <Reveal delay={100} className="lg:col-span-5 lg:pb-2">
+          <p className="text-pretty text-lg leading-relaxed text-foreground/85">{faculty.lead}</p>
         </Reveal>
+      </div>
+
+      {/* Hai thẻ cao bằng nhau: nhu cầu (nền sáng) rồi lời giải (nền xanh đậm), mũi tên ở giữa chỉ chiều lập luận. */}
+      <div className="relative mt-14 grid gap-4 md:grid-cols-2 md:gap-6">
+        <Reveal className="h-full">
+          <article className="flex h-full flex-col gap-5 rounded-3xl border bg-card p-7 sm:p-10">
+            <span className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              <span className="grid size-9 place-items-center rounded-xl bg-subtle text-foreground">
+                <Search className="size-4" strokeWidth={2.25} />
+              </span>
+              {need.label}
+            </span>
+            <h3 className="text-balance text-2xl font-bold leading-snug tracking-tight">{need.title}</h3>
+            <p className="text-pretty text-[15px] leading-relaxed text-muted-foreground">{need.text}</p>
+          </article>
+        </Reveal>
+        <Reveal delay={120} className="h-full">
+          <article className="mesh-dark relative flex h-full flex-col gap-5 overflow-hidden rounded-3xl p-7 text-white sm:p-10">
+            <span className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.14em] text-mint">
+              <span className="grid size-9 place-items-center rounded-xl bg-white/10 text-mint">
+                <BookOpenCheck className="size-4" strokeWidth={2.25} />
+              </span>
+              {answer.label}
+            </span>
+            <h3 className="text-balance text-2xl font-bold leading-snug tracking-tight">{answer.title}</h3>
+            <p className="text-pretty text-[15px] leading-relaxed text-white/75">{answer.text}</p>
+            <a
+              href={answer.cta.href}
+              className="group/cta mt-auto inline-flex w-fit items-center gap-2 pt-2 text-sm font-semibold text-mint transition-colors hover:text-white"
+            >
+              {answer.cta.label}
+              <ArrowRight className="size-4 transition-transform group-hover/cta:translate-x-1" />
+            </a>
+          </article>
+        </Reveal>
+        <span
+          aria-hidden
+          className="absolute left-1/2 top-1/2 z-10 hidden size-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border bg-background text-primary shadow-sm md:grid"
+        >
+          <ArrowRight className="size-4" strokeWidth={2.5} />
+        </span>
       </div>
 
       <Reveal className="group mt-14 sm:mt-16">
@@ -166,7 +204,7 @@ function PortraitPlaceholder({ hint }: { hint: string }) {
  * Thẻ chân dung. Rê chuột: ảnh phóng nhẹ, nổi bóng và sáng viền; các thẻ còn lại lùi xuống, mờ đi (xem TeamSection).
  * Phóng to và bóng đổ đặt ở lớp ngoài, vì lớp `.reveal-mask` đã dùng transition riêng cho hiệu ứng hé mở.
  */
-function MemberCard({ member: m, index, total }: { member: Member; index: number; total: number }) {
+function MemberCard({ member: m, index }: { member: Member; index: number }) {
   return (
     <article className="group flex h-full flex-col">
       <div className="rounded-2xl transition duration-500 ease-out group-hover:scale-[1.04] group-hover:shadow-[0_30px_60px_-24px_rgb(0_0_0/0.85)]">
@@ -186,9 +224,8 @@ function MemberCard({ member: m, index, total }: { member: Member; index: number
           </div>
           <div aria-hidden className="absolute inset-x-0 top-0 h-1/4 bg-linear-to-b from-black/45 to-transparent" />
           <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-forest/60 to-transparent" />
-          <span className="absolute left-3.5 top-2.5 flex items-baseline gap-0.5 font-heading text-white [text-shadow:0_1px_8px_rgb(0_0_0/0.4)]">
-            <span className="text-[26px] font-extrabold leading-none tracking-tight">{pad(index + 1)}</span>
-            <span className="text-xs font-semibold text-white/60">/{pad(total)}</span>
+          <span className="absolute left-3.5 top-2.5 font-heading text-[26px] font-extrabold leading-none tracking-tight text-white [text-shadow:0_1px_8px_rgb(0_0_0/0.4)]">
+            {pad(index + 1)}
           </span>
           <span
             aria-hidden
@@ -224,7 +261,7 @@ export function TeamSection() {
               )}
             >
               <Reveal delay={i * 110} className="h-full">
-                <MemberCard member={m} index={i} total={team.members.length} />
+                <MemberCard member={m} index={i} />
               </Reveal>
             </li>
           ))}

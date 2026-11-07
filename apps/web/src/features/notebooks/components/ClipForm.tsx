@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import type { NoteAnchor, NoteSource } from "@/features/notes/types";
+import { errorMessage, unwrap } from "@/lib/action-result";
 import { cn } from "@/lib/utils";
 
 import { clipToNotebook, myNotebookPicks } from "../actions";
@@ -69,7 +70,7 @@ export function ClipForm({
     setPending(true);
     setError(null);
     try {
-      const r = await clipToNotebook({
+      const r = unwrap(await clipToNotebook({
         ...target,
         quote: anchor.quote,
         pdfPage: anchor.pdfPage,
@@ -77,13 +78,13 @@ export function ClipForm({
         note: String(form.get("note") ?? ""),
         notebookId,
         pageId: pageId === NEW ? null : Number(pageId),
-      });
+      }));
       try {
         localStorage.setItem(LAST_KEY, JSON.stringify({ notebookId: r.notebookId, pageId: r.pageId }));
       } catch {}
       onDone(`Đã chép vào “${r.pageTitle || UNTITLED_PAGE}”, sổ ${r.notebookTitle}.`);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Chưa chép được vào sổ.");
+      setError(errorMessage(e, "Chưa chép được vào sổ."));
     } finally {
       setPending(false);
     }

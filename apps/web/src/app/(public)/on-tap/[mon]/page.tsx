@@ -14,7 +14,7 @@ import { MODE_ICONS } from "@/features/chat/mode-icons";
 import { MODES } from "@/features/chat/modes";
 import { deckCounts } from "@/features/flashcards/server/deck";
 import { getLibrary } from "@/features/library/server/catalog";
-import { essayCounts } from "@/features/open-answer/server/bank";
+import { essayCounts, rebuttalBanks } from "@/features/open-answer/server/bank";
 import { type LibraryDoc, printedPage, readerHref } from "@/features/library/types";
 import { quizCounts } from "@/features/quiz/server/bank";
 import { QUIZ_SIZE } from "@/features/quiz/types";
@@ -69,7 +69,7 @@ function StepCell({ step, href, hint }: { step: number; href?: string; hint: str
 }
 
 function ChapterBlock({
-  subject, chapter, textbook, decks, quiz, essays, hasExercise,
+  subject, chapter, textbook, decks, quiz, essays, rebuttals, hasExercise,
 }: {
   subject: Subject;
   chapter: Subject["chapters"][number];
@@ -77,6 +77,8 @@ function ChapterBlock({
   decks?: number;
   quiz?: number;
   essays?: number;
+  /** Số luận điệu đã duyệt của chương ở Đấu trường phản bác. */
+  rebuttals?: number;
   hasExercise: boolean;
 }) {
   const range = textbook?.chapters.find((r) => r.number === chapter.number);
@@ -105,6 +107,12 @@ function ChapterBlock({
               Bài học của chương
               <ArrowRight className="size-3.5" aria-hidden />
             </Link>
+            {rebuttals ? (
+              <Link href={rebuttalHref(subject.id)} className="flex items-center gap-1.5 hover:text-primary">
+                <Swords className="size-3.5" aria-hidden />
+                {rebuttals} luận điệu cần phản bác
+              </Link>
+            ) : null}
           </div>
         </div>
       </div>
@@ -122,7 +130,7 @@ function ChapterBlock({
           <StepCell
             step={3}
             href={essays ? practice("tu-luan") : `/tro-ly?mon=${subject.id}&che-do=review&chuong=${chapter.number}`}
-            hint={essays ? `${essays} câu, chấm theo barem` : `Ôn tự luận với trợ lý`}
+            hint={essays ? `${essays} câu, giảng viên chấm` : `Ôn tự luận với trợ lý`}
           />
         </li>
       </ol>
@@ -159,6 +167,8 @@ async function ReviewSubjectContent({ params }: PageProps<"/on-tap/[mon]">) {
   const quiz = await quizCounts(subject.id, numbers);
   const decks = deckCounts(subject.id, numbers);
   const essays = essayCounts(subject.id, numbers);
+  // Trang dựng tĩnh nên chỉ đếm luận điệu đã duyệt (học viên thấy được).
+  const rebuttals = Object.fromEntries(rebuttalBanks(subject.id, numbers, false).map((b) => [b.chapter, b.items.length]));
   const exercises = numbers.filter((n) => EXERCISES[subject.id]?.[n]);
   const stats = [
     { label: "Chương", value: subject.chapters.length },
@@ -223,6 +233,7 @@ async function ReviewSubjectContent({ params }: PageProps<"/on-tap/[mon]">) {
                   decks={decks[c.number]}
                   quiz={quiz[c.number]}
                   essays={essays[c.number]}
+                  rebuttals={rebuttals[c.number]}
                   hasExercise={exercises.includes(c.number)}
                 />
               ))}

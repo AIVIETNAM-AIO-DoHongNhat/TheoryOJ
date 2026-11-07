@@ -9,6 +9,7 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
+import { errorMessage, unwrap } from "@/lib/action-result";
 import { cn } from "@/lib/utils";
 
 import { createPage, exportNotebook, loadPage, movePage, pinNotebook, pinPage, removePage, searchPages } from "../actions";
@@ -92,7 +93,7 @@ export function NotebookWorkspace({
     let alive = true;
     const t = setTimeout(() => {
       setSearching(true);
-      searchPages(notebook.id, q)
+      searchPages(notebook.id, q).then(unwrap)
         .then((r) => alive && setResults(r))
         .catch(() => alive && setFlash("Chưa tìm được. Thử lại sau ít phút."))
         .finally(() => alive && setSearching(false));
@@ -116,7 +117,7 @@ export function NotebookWorkspace({
       return;
     }
     setLoadingId(id);
-    loadPage(id)
+    loadPage(id).then(unwrap)
       .then((p) => {
         cache.current.set(id, p);
         if (wanted.current === id) setCurrent(p);
@@ -139,7 +140,7 @@ export function NotebookWorkspace({
     startTransition(async () => {
       try {
         await editor.current?.flush();
-        const p = await createPage({ notebookId: notebook.id });
+        const p = unwrap(await createPage({ notebookId: notebook.id }));
         cache.current.set(p.id, p);
         setPages((list) => [p, ...list]);
         setQuery("");
@@ -148,7 +149,7 @@ export function NotebookWorkspace({
         setView("page");
         showUrl(p.id);
       } catch (e) {
-        setFlash(e instanceof Error ? e.message : "Chưa tạo được trang.");
+        setFlash(errorMessage(e, "Chưa tạo được trang."));
       }
     });
 
@@ -167,35 +168,35 @@ export function NotebookWorkspace({
 
   const onPin = async (id: number, value: boolean) => {
     try {
-      await pinPage(id, value);
+      unwrap(await pinPage(id, value));
       const apply = (list: PageSummary[]) => list.map((p) => (p.id === id ? { ...p, pinned: value } : p));
       setPages(apply);
       setResults((r) => r && apply(r));
       const c = cache.current.get(id);
       if (c) cache.current.set(id, { ...c, pinned: value });
       setCurrent((c) => (c?.id === id ? { ...c, pinned: value } : c));
-    } catch {
-      setFlash("Chưa ghim được trang.");
+    } catch (e) {
+      setFlash(errorMessage(e, "Chưa ghim được trang."));
     }
   };
 
   const onMove = async (id: number, notebookId: number) => {
     try {
-      await movePage(id, notebookId);
+      unwrap(await movePage(id, notebookId));
       forget(id);
       setFlash(`Đã chuyển trang sang sổ “${otherNotebooks.find((n) => n.id === notebookId)?.title ?? ""}”.`);
     } catch (e) {
-      setFlash(e instanceof Error ? e.message : "Chưa chuyển được trang.");
+      setFlash(errorMessage(e, "Chưa chuyển được trang."));
     }
   };
 
   const onDelete = async (id: number) => {
     try {
-      await removePage(id);
+      unwrap(await removePage(id));
       forget(id);
       setFlash("Đã xóa trang.");
-    } catch {
-      setFlash("Chưa xóa được trang.");
+    } catch (e) {
+      setFlash(errorMessage(e, "Chưa xóa được trang."));
     }
   };
 
@@ -203,15 +204,15 @@ export function NotebookWorkspace({
     startTransition(async () => {
       try {
         await editor.current?.flush();
-        const { filename, markdown } = await exportNotebook(notebook.id);
+        const { filename, markdown } = unwrap(await exportNotebook(notebook.id));
         const a = Object.assign(document.createElement("a"), {
           href: URL.createObjectURL(new Blob([markdown], { type: "text/markdown;charset=utf-8" })),
           download: filename,
         });
         a.click();
         URL.revokeObjectURL(a.href);
-      } catch {
-        setFlash("Chưa tải được sổ.");
+      } catch (e) {
+        setFlash(errorMessage(e, "Chưa tải được sổ."));
       }
     });
 
@@ -219,7 +220,7 @@ export function NotebookWorkspace({
     const next = !pinned;
     setPinned(next);
     try {
-      await pinNotebook(notebook.id, next);
+      unwrap(await pinNotebook(notebook.id, next));
     } catch {
       setPinned(!next);
     }

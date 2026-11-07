@@ -8,6 +8,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { parse } from "yaml";
 import { z } from "zod";
 
+import { shuffled } from "@/features/exams/logic";
 import { CONTENT_ROOT } from "@/features/library/server/catalog";
 import { db, schema } from "@/lib/db";
 
@@ -90,6 +91,7 @@ export async function loadBankEdits(subject: string): Promise<BankEdits> {
         explain: schema.quizQuestions.explain,
         page: schema.quizQuestions.page,
         hidden: schema.quizQuestions.hidden,
+        examOnly: schema.quizQuestions.examOnly,
       })
       .from(schema.quizQuestions)
       .where(eq(schema.quizQuestions.subject, subject))
@@ -136,20 +138,11 @@ export async function quizCounts(subject: string, chapters: number[]): Promise<R
   return counts;
 }
 
-export function shuffle<T>(items: T[]): T[] {
-  const a = [...items];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
 /** Một đề: chọn ngẫu nhiên QUIZ_SIZE câu, trộn thứ tự phương án, bỏ đáp án và giải thích. */
 export function drawQuiz(bank: QuizBank): QuizQuestion[] {
-  return shuffle(bank.questions).slice(0, QUIZ_SIZE).map((q) => ({
+  return shuffled(bank.questions).slice(0, QUIZ_SIZE).map((q) => ({
     id: q.id,
     q: q.q,
-    options: shuffle(q.options.map((text, key) => ({ key, text }))),
+    options: shuffled(q.options.map((text, key) => ({ key, text }))),
   }));
 }

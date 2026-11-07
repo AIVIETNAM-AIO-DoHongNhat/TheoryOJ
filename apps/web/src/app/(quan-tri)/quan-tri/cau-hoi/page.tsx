@@ -19,7 +19,7 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
 async function Bank({ searchParams }: { searchParams: SearchParams }) {
-  await requireTeacher("/quan-tri/cau-hoi");
+  await requireTeacher();
   const params = await searchParams;
   const subject = getSubject(one(params.mon) ?? "")?.active ? getSubject(one(params.mon)!)! : ACTIVE_SUBJECTS[0];
   const requested = Number(one(params.chuong));

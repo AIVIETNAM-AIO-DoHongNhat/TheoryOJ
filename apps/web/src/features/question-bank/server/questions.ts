@@ -40,6 +40,7 @@ export async function getAdminChapter(subject: string, chapter: number): Promise
         explain: schema.quizQuestions.explain,
         page: schema.quizQuestions.page,
         hidden: schema.quizQuestions.hidden,
+        examOnly: schema.quizQuestions.examOnly,
         updatedAt: schema.quizQuestions.updatedAt,
         updatedBy: schema.users.fullName,
       })
@@ -78,6 +79,7 @@ export async function getAdminChapter(subject: string, chapter: number): Promise
       ...current,
       source: edited ? "da-sua" : "goc",
       hidden: r?.hidden ?? false,
+      examOnly: r?.examOnly ?? false,
       original: edited ? { q: q.q, options: q.options, answer: q.answer, explain: q.explain, page: q.page ?? null } : null,
       ...meta(q.id),
     });
@@ -92,6 +94,7 @@ export async function getAdminChapter(subject: string, chapter: number): Promise
       page: r.page,
       source: "moi",
       hidden: r.hidden,
+      examOnly: r.examOnly,
       original: null,
       ...meta(r.code),
     });
@@ -117,12 +120,12 @@ export async function getChapterSummaries(subject: Subject): Promise<ChapterBank
   });
 }
 
-/** Câu đang dùng của cả môn (đã ghép, bỏ câu ẩn), đọc thẳng DB. Dùng cho bộ chọn câu của đề thi. */
+/** Câu dùng được cho đề thi của cả môn (đã ghép, bỏ câu ẩn, giữ câu chỉ dùng cho đề thi), đọc thẳng DB. Dùng cho bộ chọn câu của đề thi. */
 export async function getSubjectQuestions(subjectId: string) {
   const subject = getSubject(subjectId);
   if (!subject) return [];
   const edits = await loadBankEdits(subjectId);
   return subject.chapters.flatMap((c) =>
-    (mergeBank(subjectId, c.number, getContentBank(subjectId, c.number), edits)?.questions ?? []).map((q) => ({ ...q, chapter: c.number })),
+    (mergeBank(subjectId, c.number, getContentBank(subjectId, c.number), edits, "exam")?.questions ?? []).map((q) => ({ ...q, chapter: c.number })),
   );
 }

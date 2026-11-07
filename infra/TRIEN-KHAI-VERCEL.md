@@ -74,6 +74,7 @@ Kiểm tra: `psql "<chuỗi direct>" -c "select index_name, count(*) from chunks
 | `CHAT_LIMIT_VISITOR_DAY` | gợi ý 30 để giữ credit OpenRouter |
 | `CHAT_LIMIT_IP_10M` | cả lớp chung một đường mạng thì đặt 1000 |
 | `SURVEY_PHASE` | `truoc`, `sau` hoặc `dong` |
+| `REGISTRATION_OPEN` | để trống (mặc định `false`): chỉ mã có trong danh sách học viên ở `/quan-tri/danh-sach` mới đăng ký được |
 
 **Không đặt `RAG_URL`.** Không cần đặt `REFUSAL_THRESHOLD` (mặc định 0,44, đã đo với `cohere/rerank-v3.5`), `EMBED_MODEL` hay `RERANK_MODEL`.
 
@@ -94,6 +95,7 @@ Rồi làm theo danh sách ở mục 3 của [TRIEN-KHAI.md](TRIEN-KHAI.md): m�
 | Sửa nội dung (bài viết, ngân hàng câu hỏi, thẻ ghi nhớ) | Sửa trong `content/`, commit, push. Vercel tự build lại |
 | Thêm tài liệu cho trợ lý tìm | Thêm file vào `content/<môn>/` và `manifest.yaml`, chạy `ingest_all.py` với `DATABASE_URL` trỏ vào Neon (mục 3a), rồi push |
 | Cấp quyền giảng viên | `DATABASE_URL="<chuỗi direct>" npm run cap-quyen -- <mã> --tao "Họ tên"` trong `apps/web` |
+| Danh sách học viên | Giảng viên nhập ở `/quan-tri/danh-sach` trước khi học viên đăng ký |
 | Đặt lại mật khẩu học viên | Giảng viên bấm ở `/quan-tri`, hoặc `DATABASE_URL="<chuỗi direct>" npm run dat-lai-mat-khau -- <mã>` |
 | Báo cáo số liệu cho hồ sơ | `DATABASE_URL="<chuỗi direct>" npx tsx scripts/report.mts --from <ngày> --to <ngày>` |
 | Sao lưu | Gói Free của Neon chỉ giữ lịch sử ngắn. Nên tự `pg_dump` bằng chuỗi direct định kỳ, nhất là trước và sau đợt thử nghiệm |

@@ -14,6 +14,7 @@ import { Kbd } from "@/components/ui/kbd";
 import { Progress } from "@/components/ui/progress";
 import { markStudied } from "@/features/progress/streak-event";
 import { reviewHref } from "@/features/review/paths";
+import { errorMessage, unwrap } from "@/lib/action-result";
 import { cn } from "@/lib/utils";
 
 import { reviewCard } from "../actions";
@@ -75,15 +76,15 @@ export function FlashcardSession(props: FlashcardSessionProps) {
       setError(null);
       startTransition(async () => {
         try {
-          const next = await reviewCard({ subject: props.subject, chapter: props.chapter, cardId: current.id, grade: g });
+          const next = unwrap(await reviewCard({ subject: props.subject, chapter: props.chapter, cardId: current.id, grade: g }));
           setStates((s) => ({ ...s, [current.id]: next }));
           markStudied();
           setDone((d) => ({ ...d, [g]: d[g] + 1 }));
           setQueue((q) => (g === "quen" ? [...q.slice(1), q[0]] : q.slice(1)));
           setFlipped(false);
           setRevealed(false);
-        } catch {
-          setError("Chưa lưu được kết quả. Đồng chí thử lại sau ít phút.");
+        } catch (e) {
+          setError(errorMessage(e, "Chưa lưu được kết quả. Đồng chí thử lại sau ít phút."));
         }
       });
     },

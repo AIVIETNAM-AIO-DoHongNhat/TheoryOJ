@@ -15,7 +15,8 @@ import { getDeck } from "@/features/flashcards/server/deck";
 import { docsForChapter } from "@/features/library/server/catalog";
 import { readerHref } from "@/features/library/types";
 import { QuizRunner } from "@/features/quiz/components/QuizRunner";
-import { drawQuiz, getQuizBank, quizCounts } from "@/features/quiz/server/bank";
+import { getQuizBank, quizCounts } from "@/features/quiz/server/bank";
+import { issueQuiz } from "@/features/quiz/server/draws";
 import { QUIZ_SIZE } from "@/features/quiz/types";
 import { reviewCrumbs, reviewHref } from "@/features/review/paths";
 import { getCurrentUser, isStudent } from "@/lib/auth/session";
@@ -51,9 +52,9 @@ async function QuizPageContent({ params }: { params: Params }) {
   const { subject, chapter, bank } = data;
   // Mỗi lần mở trang là một đề mới, nên trang không sinh tĩnh.
   await connection();
-  // Khách và giảng viên chỉ xem phần giới thiệu, không nhận đề.
+  // Khách và giảng viên chỉ xem phần giới thiệu, không nhận đề. Đề được ghi lại để lúc nộp máy chủ chỉ chấm đúng các câu này.
   const user = await getCurrentUser();
-  const questions = isStudent(user) ? drawQuiz(bank) : null;
+  const quiz = isStudent(user) ? await issueQuiz(user.visitorId, bank) : null;
   const textbook = docsForChapter(subject.id, chapter.number).find((d) => d.kind === "giao_trinh");
   const range = textbook?.chapters.find((c) => c.number === chapter.number);
 
@@ -82,11 +83,12 @@ async function QuizPageContent({ params }: { params: Params }) {
         {!bank.reviewed && <Badge variant="outline" className="self-start bg-card">Bộ câu hỏi đang chờ giảng viên duyệt</Badge>}
       </PageHeader>
       <div className="mx-auto max-w-6xl px-4 py-10 sm:py-12">
-        {questions ? (
+        {quiz ? (
           <QuizRunner
             subject={subject.id}
             chapter={chapter.number}
-            initialQuestions={questions}
+            initialDrawId={quiz.drawId}
+            initialQuestions={quiz.questions}
             textbook={textbook ? { href: readerHref(textbook.file), pageOffset: textbook.pageOffset } : null}
             flashcardsHref={getDeck(subject.id, chapter.number)?.cards.length ? reviewHref(subject.id, chapter.number, "the-ghi-nho") : null}
           />

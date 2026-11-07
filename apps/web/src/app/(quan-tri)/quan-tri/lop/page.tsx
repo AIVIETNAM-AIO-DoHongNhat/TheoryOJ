@@ -15,7 +15,7 @@ import { requireTeacher } from "@/lib/auth/session";
 export const metadata: Metadata = { title: "Theo lớp · Quản trị" };
 
 async function ClassStats({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  await requireTeacher("/quan-tri/lop");
+  await requireTeacher();
   const lop = (await searchParams).lop;
   const className = (Array.isArray(lop) ? lop[0] : lop) ?? null;
   const classes = await getClasses();

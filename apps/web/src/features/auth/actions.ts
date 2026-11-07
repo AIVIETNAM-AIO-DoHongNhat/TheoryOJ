@@ -3,13 +3,15 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { findRosterEntry } from "@/features/roster/server/roster";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { endOtherSessions, endSession, getCurrentUser, startSession } from "@/lib/auth/session";
+import { env } from "@/lib/env";
 import { clientIp, hitRateLimits } from "@/lib/rate-limit";
 import { anonymousVisitorId, VISITOR_COOKIE } from "@/lib/visitor";
 
 import {
-  ChangePasswordInput, fieldErrors, type FormState, homeFor, LoginInput, ProfileInput, RegisterInput,
+  ChangePasswordInput, fieldErrors, type FormState, homeFor, LoginInput, OpenRegisterInput, ProfileInput, RegisterInput,
 } from "./schemas";
 import { createUser, findUserByCode, mergeVisitor, touchLogin, updatePassword, updateProfile } from "./server/users";
 
@@ -28,17 +30,48 @@ async function signIn(user: { id: string; visitorId: string }) {
   await touchLogin(user.id);
 }
 
+type Registration =
+  | { errors: Record<string, string> }
+  | { studentCode: string; password: string; declared: { fullName: string; className: string } | null };
+
+function parseRegistration(raw: Record<string, unknown>): Registration {
+  if (env.REGISTRATION_OPEN) {
+    const p = OpenRegisterInput.safeParse(raw);
+    if (!p.success) return { errors: fieldErrors(p.error) };
+    const { studentCode, password, fullName, className } = p.data;
+    return { studentCode, password, declared: { fullName, className } };
+  }
+  const p = RegisterInput.safeParse(raw);
+  if (!p.success) return { errors: fieldErrors(p.error) };
+  return { studentCode: p.data.studentCode, password: p.data.password, declared: null };
+}
+
+/**
+ * Đăng ký. Mặc định chỉ nhận mã có trong danh sách học viên giảng viên đã nhập, họ tên và lớp lấy theo danh sách,
+ * nên không ai chiếm được mã của người khác hay tự khai lớp. REGISTRATION_OPEN bật thì học viên tự khai (khi phát triển).
+ */
 export async function register(_: FormState, form: FormData): Promise<FormState> {
   const raw = Object.fromEntries(form);
   const values = { studentCode: String(raw.studentCode ?? ""), fullName: String(raw.fullName ?? ""), className: String(raw.className ?? "") };
-  const parsed = RegisterInput.safeParse(raw);
-  if (!parsed.success) return { errors: fieldErrors(parsed.error), values };
+  const parsed = parseRegistration(raw);
+  if ("errors" in parsed) return { errors: parsed.errors, values };
 
   const wait = await hitRateLimits([{ key: `dk-ip:${clientIp(await headers())}`, windowSec: 3600, max: 300 }]);
   if (wait > 0) return { message: tooMany(wait), values };
 
-  const { studentCode, fullName, className, password } = parsed.data;
-  const user = await createUser({ studentCode, fullName, className, passwordHash: await hashPassword(password) });
+  const { studentCode, password, declared } = parsed;
+  const listed = await findRosterEntry(studentCode);
+  let profile: { fullName: string; className: string };
+  if (listed) profile = { fullName: listed.fullName, className: listed.className };
+  else if (declared) profile = { fullName: declared.fullName, className: declared.className };
+  else {
+    return {
+      errors: { studentCode: "Mã học viên này chưa có trong danh sách lớp. Đồng chí kiểm tra lại mã, hoặc báo giảng viên thêm vào danh sách." },
+      values,
+    };
+  }
+
+  const user = await createUser({ studentCode, ...profile, passwordHash: await hashPassword(password) });
   if (!user) {
     return { errors: { studentCode: "Mã học viên này đã được đăng ký. Nếu là của đồng chí, hãy đăng nhập." }, values };
   }
@@ -97,7 +130,7 @@ export async function saveProfile(_: FormState, form: FormData): Promise<FormSta
   const me = await getCurrentUser();
   if (!me) redirect("/dang-nhap?tiep=/tai-khoan");
   const raw = Object.fromEntries(form);
-  const values = { fullName: String(raw.fullName ?? ""), className: String(raw.className ?? "") };
+  const values = { fullName: String(raw.fullName ?? "") };
   const parsed = ProfileInput.safeParse(raw);
   if (!parsed.success) return { errors: fieldErrors(parsed.error), values };
   await updateProfile(me.id, parsed.data);

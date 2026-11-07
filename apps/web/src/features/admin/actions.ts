@@ -12,7 +12,7 @@ import { markReviewed } from "./server/review";
 
 /** Đánh dấu (hoặc bỏ đánh dấu) đã xem các câu trả lời trong nhật ký hỏi đáp. */
 export async function setReviewed(input: { ids: string[]; reviewed: boolean }): Promise<void> {
-  await requireTeacher("/quan-tri/hoi-dap");
+  await requireTeacher();
   const { ids, reviewed } = z.object({ ids: z.array(z.string().max(64)).max(100), reviewed: z.boolean() }).parse(input);
   await markReviewed(ids, reviewed);
   revalidatePath("/quan-tri", "layout");
@@ -23,7 +23,7 @@ export async function setReviewed(input: { ids: string[]; reviewed: boolean }): 
  * Mật khẩu tạm chỉ trả về một lần để giảng viên báo cho học viên; không lưu dạng rõ ở đâu.
  */
 export async function resetStudentPassword(userId: string): Promise<{ password: string }> {
-  await requireTeacher("/quan-tri/hoc-vien");
+  await requireTeacher();
   const id = z.string().uuid().parse(userId);
   const password = temporaryPassword();
   const [user] = await db

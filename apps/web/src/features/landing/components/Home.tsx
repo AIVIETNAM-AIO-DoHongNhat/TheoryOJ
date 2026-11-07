@@ -1,5 +1,5 @@
 import {
-  ArrowRight, ArrowUp, ArrowUpRight, BookOpen, FileText, Library, MessageSquareText, Newspaper, Search, Sparkles,
+  ArrowRight, ArrowUp, ArrowUpRight, BookOpen, FileText, Library, MessageSquareText, Newspaper, Search, Sparkles, Swords,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -17,7 +17,9 @@ import type { Suggestion } from "@/features/learning/types";
 import { DOC_KINDS, KIND_LABELS, type LibraryDoc } from "@/features/library/types";
 import { cn } from "@/lib/utils";
 
-import { assistantDemo, cta, facultySection, features, hero, latestPosts, photos, quickLinks } from "../content";
+import { BetaBadge } from "@/features/open-answer/components/BetaNotice";
+
+import { assistantDemo, cta, facultySection, features, hero, latestPosts, photos, quickLinks, rebuttalArena } from "../content";
 import { SpotlightWordmark } from "./SpotlightWordmark";
 
 const wrap = "mx-auto max-w-6xl px-4";
@@ -309,6 +311,46 @@ export function AssistantShowcase() {
         </Reveal>
         <Reveal delay={120}>
           <DemoChat />
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------ Đấu trường phản bác ------------------------------ */
+
+export function RebuttalArenaTeaser() {
+  return (
+    <section className="py-16 sm:py-24">
+      <div className={wrap}>
+        <Reveal>
+          <Link
+            href="/phan-bac"
+            className="group mesh-dark relative flex flex-col gap-8 overflow-hidden rounded-3xl p-7 text-white sm:p-10 lg:flex-row lg:items-end lg:justify-between"
+          >
+            <div className="flex max-w-2xl flex-col gap-4">
+              <span className="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-mint">
+                <Swords className="size-4" aria-hidden />
+                {rebuttalArena.overline}
+                <BetaBadge tone="dark" />
+              </span>
+              <h2 className="text-balance text-3xl font-bold leading-tight sm:text-4xl">{rebuttalArena.title}</h2>
+              <p className="text-pretty text-sm leading-relaxed text-white/75 sm:text-base">{rebuttalArena.lead}</p>
+              <ul className="grid gap-2 sm:grid-cols-3">
+                {rebuttalArena.axes.map((a) => (
+                  <li key={a.title} className="rounded-2xl bg-white/8 p-3 ring-1 ring-white/12">
+                    <span className="block text-sm font-semibold">{a.title}</span>
+                    <span className="text-xs leading-relaxed text-white/65">{a.text}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-xs text-white/55">{rebuttalArena.note}</p>
+            </div>
+            <span className="flex shrink-0 items-center gap-2 self-start rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-forest transition-transform group-hover:translate-x-0.5 lg:self-auto">
+              {rebuttalArena.cta}
+              <ArrowRight className="size-4" />
+            </span>
+          </Link>
         </Reveal>
       </div>
     </section>

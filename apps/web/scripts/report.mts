@@ -1,5 +1,5 @@
 /**
- * Báo cáo số liệu cho hồ sơ sáng kiến (PLAN.md mục 10): mức độ sử dụng, hiệu quả ôn tập, chấm tự luận và phản bác,
+ * Báo cáo số liệu cho hồ sơ sáng kiến (PLAN.md mục 10): mức độ sử dụng, hiệu quả ôn tập, tự luận và phản bác,
  * khảo sát trước và sau.
  * In ra Markdown, chép thẳng vào hồ sơ được.
  *
@@ -12,7 +12,6 @@ import { parseArgs } from "node:util";
 
 import postgres from "postgres";
 
-import { agreement, to10 } from "@/features/open-answer/agreement";
 import { questionsFor, ROLE_LABELS, type SurveyPhase, type SurveyRole } from "@/features/survey/questions";
 import { env } from "@/lib/env";
 
@@ -135,48 +134,49 @@ async function learning() {
 }
 
 async function openAnswers() {
-  // Chỉ bài của học viên (lượt thử của giảng viên không tính). Lượt hỏi vặn không tính là bài.
+  // Bài tự luận, phản bác của học viên (bài thử của giảng viên không tính). Giảng viên phụ trách môn chấm, không dùng AI.
   const rows = await sql`
-    select a.kind, a.visitor_id, a.item_id, a.score, a.max_score, a.lecturer_score, a.flagged, a.created_at,
-           a.result->>stance as stance, a.result->>flagReason as flag_reason
+    select a.kind, a.visitor_id, a.item_id, a.score, a.max_score, a.flagged, a.submitted_at, a.graded_at,
+           a.result->>'stance' as stance
     from open_answer_attempts a
     left join users u on u.visitor_id = a.visitor_id
-    where a.kind in (tu_luan, phan_bac) and coalesce(u.role, hoc-vien) = hoc-vien
-      and a.created_at >= ${from} and a.created_at < ${to}
-    order by a.created_at`;
-  line("## 3. Tự luận và phản bác có chấm điểm");
+    where a.kind in ('tu_luan', 'phan_bac') and coalesce(u.role, 'hoc-vien') = 'hoc-vien'
+      and a.submitted_at >= ${from} and a.submitted_at < ${to}
+    order by a.submitted_at`;
+  line("## 3. Tự luận và phản bác do giảng viên chấm");
   line();
   if (!rows.length) {
     line("Chưa có bài tự luận hay phản bác nào.");
     line();
     return;
   }
-  line("Điểm quy về thang 10. \"Lượt đầu → lượt cuối\" chỉ tính người làm cùng một câu từ hai lượt trở lên. Đồng thuận tính trên bài giảng viên đã chấm lại.");
+  line("Điểm quy về thang 10, chỉ tính bài đã chấm. \"Lượt đầu → lượt cuối\" chỉ tính người có từ hai bài được chấm ở cùng một câu. Thời gian chờ tính từ lúc nộp tới lúc giảng viên chấm.");
   line();
   const KIND = { tu_luan: "Tự luận", phan_bac: "Phản bác" } as const;
+  const ten = (r: postgres.Row) => (Number(r.max_score) > 0 ? (Number(r.score) / Number(r.max_score)) * 10 : 0);
+  const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
   const body = (Object.keys(KIND) as (keyof typeof KIND)[]).map((kind) => {
     const list = rows.filter((r) => r.kind === kind);
-    const ten = (r: postgres.Row) => to10(Number(r.score), Number(r.max_score));
-    // Lượt đầu và lượt cuối của mỗi người ở mỗi câu.
+    const graded = list.filter((r) => r.graded_at !== null && r.score !== null);
+    // Bài đầu và bài cuối được chấm của mỗi người ở mỗi câu.
     const groups = new Map<string, postgres.Row[]>();
-    for (const r of list) groups.set(`${r.visitor_id}|${r.item_id}`, [...(groups.get(`${r.visitor_id}|${r.item_id}`) ?? []), r]);
+    for (const r of graded) groups.set(`${r.visitor_id}|${r.item_id}`, [...(groups.get(`${r.visitor_id}|${r.item_id}`) ?? []), r]);
     const repeat = [...groups.values()].filter((g) => g.length >= 2);
-    const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
-    const a = agreement(list.filter((r) => r.lecturer_score !== null).map((r) => ({ ai: ten(r), lecturer: to10(Number(r.lecturer_score), Number(r.max_score)) })));
+    const waits = graded.map((r) => (new Date(r.graded_at).getTime() - new Date(r.submitted_at).getTime()) / 3_600_000);
     return [
       KIND[kind],
       n(list.length),
       n(new Set(list.map((r) => r.visitor_id)).size),
-      dec(avg(list.map(ten))),
+      `${n(graded.length)} (${pct(graded.length, list.length)})`,
+      dec(avg(graded.map(ten))),
       `${dec(avg(repeat.map((g) => ten(g[0]))))} → ${dec(avg(repeat.map((g) => ten(g[g.length - 1]))))} (${n(repeat.length)})`,
-      a.n ? `${dec(a.spearman)} / ${dec(a.mae)} (${n(a.n)} bài)` : "—",
-      n(list.filter((r) => r.flagged).length),
+      dec(avg(waits)),
     ];
   });
-  table(["Loại", "Bài", "Người làm", "Điểm TB", "Lượt đầu → lượt cuối (số người)", "Spearman / lệch TB với giảng viên", "Gắn cờ"], body);
+  table(["Loại", "Bài nộp", "Người nộp", "Đã chấm", "Điểm TB", "Lượt đầu → lượt cuối (số người)", "Chờ chấm TB (giờ)"], body);
   const wrong = rows.filter((r) => r.kind === "phan_bac" && r.stance === "sai").length;
-  const injected = rows.filter((r) => r.flag_reason === "chen_lenh").length;
-  line(`Bài phản bác sai lập trường bị chặn và chuyển giảng viên: ${n(wrong)}. Bài có câu điều khiển người chấm bị chặn: ${n(injected)}.`);
+  const wavering = rows.filter((r) => r.kind === "phan_bac" && r.stance === "dao_dong").length;
+  line(`Bài phản bác giảng viên đánh giá chưa phản bác được luận điệu: ${n(wrong)}; lập trường chưa vững: ${n(wavering)}.`);
   line();
 }
 

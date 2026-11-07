@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { normalizeClassName } from "@/features/roster/normalize";
 import { PASSWORD_MAX, PASSWORD_MIN } from "@/lib/auth/password";
 
 import { safeNext } from "./next";
@@ -19,14 +20,17 @@ const password = z
   .min(PASSWORD_MIN, `Mật khẩu tối thiểu ${PASSWORD_MIN} ký tự.`)
   .max(PASSWORD_MAX, `Mật khẩu tối đa ${PASSWORD_MAX} ký tự.`);
 
+const fullName = z.string().trim().min(2, "Nhập họ và tên.").max(80, "Họ tên tối đa 80 ký tự.");
+const className = z.string().trim().min(1, "Nhập lớp.").max(40, "Tên lớp tối đa 40 ký tự.").transform(normalizeClassName);
+
+/** Đăng ký theo danh sách học viên: họ tên, lớp lấy từ danh sách nên form chỉ hỏi mã và mật khẩu. */
 export const RegisterInput = z
-  .object({
-    studentCode,
-    fullName: z.string().trim().min(2, "Nhập họ và tên.").max(80, "Họ tên tối đa 80 ký tự."),
-    className: z.string().trim().min(1, "Nhập lớp.").max(40, "Tên lớp tối đa 40 ký tự."),
-    password,
-    confirm: z.string(),
-  })
+  .object({ studentCode, password, confirm: z.string() })
+  .refine((v) => v.password === v.confirm, { path: ["confirm"], message: "Mật khẩu nhập lại không khớp." });
+
+/** Đăng ký tự do (REGISTRATION_OPEN): học viên tự khai họ tên, lớp. */
+export const OpenRegisterInput = z
+  .object({ studentCode, fullName, className, password, confirm: z.string() })
   .refine((v) => v.password === v.confirm, { path: ["confirm"], message: "Mật khẩu nhập lại không khớp." });
 
 export const LoginInput = z.object({
@@ -38,10 +42,8 @@ export const ChangePasswordInput = z
   .object({ current: z.string().min(1, "Nhập mật khẩu hiện tại."), password, confirm: z.string() })
   .refine((v) => v.password === v.confirm, { path: ["confirm"], message: "Mật khẩu nhập lại không khớp." });
 
-export const ProfileInput = z.object({
-  fullName: z.string().trim().min(2, "Nhập họ và tên.").max(80, "Họ tên tối đa 80 ký tự."),
-  className: z.string().trim().min(1, "Nhập lớp.").max(40, "Tên lớp tối đa 40 ký tự."),
-});
+/** Học viên chỉ sửa được họ tên. Lớp do giảng viên quản lý qua danh sách học viên, để không tự đổi lớp mà vào đề lớp khác. */
+export const ProfileInput = z.object({ fullName });
 
 /** Kết quả trả về form: lỗi theo trường, lỗi chung, hoặc thông báo thành công. */
 export interface FormState {

@@ -11,7 +11,6 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "eval": "tsx --conditions=react-server scripts/eval-chat.mts",
-    "eval-cham": "tsx --conditions=react-server scripts/eval-cham.mts",
     "so-sanh-tim-kiem": "tsx --conditions=react-server scripts/so-sanh-tim-kiem.mts",
     "tom-tat": "tsx --conditions=react-server scripts/tom-tat.mts",
     "dat-lai-mat-khau": "tsx scripts/dat-lai-mat-khau.mts",

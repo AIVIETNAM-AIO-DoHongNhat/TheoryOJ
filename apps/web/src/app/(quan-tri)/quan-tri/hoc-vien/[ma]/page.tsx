@@ -28,7 +28,7 @@ type Params = Promise<{ ma: string }>;
 
 async function Detail({ params }: { params: Params }) {
   const { ma } = await params;
-  await requireTeacher(`/quan-tri/hoc-vien/${ma}`);
+  await requireTeacher();
   const student = await getStudent(decodeURIComponent(ma).toUpperCase());
   if (!student) notFound();
   await connection();

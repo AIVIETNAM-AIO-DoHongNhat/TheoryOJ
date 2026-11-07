@@ -17,7 +17,7 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
 async function Log({ searchParams }: { searchParams: SearchParams }) {
-  await requireTeacher("/quan-tri/hoi-dap");
+  await requireTeacher();
   const params = await searchParams;
   const loc = one(params.loc);
   const filter: ReviewFilter = REVIEW_FILTERS.includes(loc as ReviewFilter) ? (loc as ReviewFilter) : "gan-co";

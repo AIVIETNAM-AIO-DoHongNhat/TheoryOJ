@@ -85,7 +85,7 @@ describe("mergeBank", () => {
       { id: "c1-03", q: "Gốc 3", options: ["a", "b"], answer: 1, explain: "" },
     ],
   };
-  const edit = { chapter: 1, options: ["x", "y"], answer: 1, explain: "", page: null, hidden: false };
+  const edit = { chapter: 1, options: ["x", "y"], answer: 1, explain: "", page: null, hidden: false, examOnly: false };
 
   it("sửa, ẩn câu trong file và thêm câu mới sau cùng", () => {
     const bank = mergeBank("ktct", 1, content, {
@@ -103,6 +103,20 @@ describe("mergeBank", () => {
 
   it("chương chưa có file vẫn có ngân hàng nếu giảng viên đã soạn câu", () => {
     expect(mergeBank("ktct", 7, null, { questions: [], reviews: {} })).toBeNull();
+  });
+
+  it("câu chỉ dùng cho đề thi không hiện ở ôn tập, vẫn chọn được cho đề thi", () => {
+    const edits = {
+      questions: [
+        { ...edit, code: "c1-01", q: "Gốc 1", examOnly: true },
+        { ...edit, code: "gv1-de", q: "Câu đề thi", examOnly: true },
+        { ...edit, code: "gv1-an", q: "Câu ẩn", examOnly: true, hidden: true },
+      ],
+      reviews: {},
+    };
+    expect(mergeBank("ktct", 1, content, edits)?.questions.map((q) => q.id)).toEqual(["c1-02", "c1-03"]);
+    const exam = mergeBank("ktct", 1, content, edits, "exam")?.questions;
+    expect(exam?.map((q) => [q.id, !!q.examOnly])).toEqual([["c1-01", true], ["c1-02", false], ["c1-03", false], ["gv1-de", true]]);
     expect(mergeBank("ktct", 7, null, { questions: [{ ...edit, chapter: 7, code: "gv7-a", q: "Mới" }], reviews: {} })?.questions).toHaveLength(1);
   });
 });

@@ -5,7 +5,9 @@ import { z } from "zod";
 import { getPost } from "@/features/blog/server/posts";
 import { getDoc } from "@/features/library/server/catalog";
 import { getSubject } from "@/config/subjects";
+import { type DataResult, UserError } from "@/lib/action-result";
 import { getCurrentUser, isStudent, requireStudent } from "@/lib/auth/session";
+import { run } from "@/lib/run-action";
 
 import { countDocNotes, createNote, deleteNote, listDocNotes, updateNote } from "./server/notes";
 import { CONTEXT_LEN, NOTE_MAX, NOTES_PER_DOC, QUOTE_MAX, type ReaderNote } from "./types";
@@ -46,41 +48,47 @@ const SaveInput = Target.extend({
   chapter: z.number().int().positive().nullable().default(null),
 });
 
-export async function saveNote(input: z.input<typeof SaveInput>): Promise<ReaderNote> {
-  const { visitorId } = await requireStudent();
-  const data = SaveInput.parse(input);
-  const target = resolveTarget(data);
-  if (!target) throw new Error("Không có tài liệu này.");
-  if (data.pdfPage && (!target.pages || data.pdfPage > target.pages)) throw new Error("Trang không hợp lệ.");
-  if ((await countDocNotes(visitorId, data.source, data.slug)) >= NOTES_PER_DOC) {
-    throw new Error(`Mỗi tài liệu lưu tối đa ${NOTES_PER_DOC} ghi chú.`);
-  }
-  const chapter = data.chapter && target.chapters.includes(data.chapter) ? data.chapter : target.defaultChapter;
-  return createNote({
-    visitorId,
-    subject: target.subject,
-    source: data.source,
-    slug: data.slug,
-    chapter,
-    pdfPage: target.pages ? data.pdfPage : null,
-    quote: data.quote,
-    prefix: data.prefix,
-    suffix: data.suffix,
-    note: data.note,
+export async function saveNote(input: z.input<typeof SaveInput>): Promise<DataResult<ReaderNote>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    const data = SaveInput.parse(input);
+    const target = resolveTarget(data);
+    if (!target) throw new UserError("Không có tài liệu này.");
+    if (data.pdfPage && (!target.pages || data.pdfPage > target.pages)) throw new UserError("Trang không hợp lệ.");
+    if ((await countDocNotes(visitorId, data.source, data.slug)) >= NOTES_PER_DOC) {
+      throw new UserError(`Mỗi tài liệu lưu tối đa ${NOTES_PER_DOC} ghi chú.`);
+    }
+    const chapter = data.chapter && target.chapters.includes(data.chapter) ? data.chapter : target.defaultChapter;
+    return createNote({
+      visitorId,
+      subject: target.subject,
+      source: data.source,
+      slug: data.slug,
+      chapter,
+      pdfPage: target.pages ? data.pdfPage : null,
+      quote: data.quote,
+      prefix: data.prefix,
+      suffix: data.suffix,
+      note: data.note,
+    });
   });
 }
 
 const EditInput = z.object({ id: z.number().int().positive(), note: z.string().trim().max(NOTE_MAX) });
 
-export async function editNote(input: z.input<typeof EditInput>): Promise<ReaderNote> {
-  const { visitorId } = await requireStudent();
-  const { id, note } = EditInput.parse(input);
-  const updated = await updateNote(visitorId, id, note);
-  if (!updated) throw new Error("Không có ghi chú này.");
-  return updated;
+export async function editNote(input: z.input<typeof EditInput>): Promise<DataResult<ReaderNote>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    const { id, note } = EditInput.parse(input);
+    const updated = await updateNote(visitorId, id, note);
+    if (!updated) throw new UserError("Không có ghi chú này.");
+    return updated;
+  });
 }
 
-export async function removeNote(id: number): Promise<void> {
-  const { visitorId } = await requireStudent();
-  await deleteNote(visitorId, z.number().int().positive().parse(id));
+export async function removeNote(id: number): Promise<DataResult<void>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    await deleteNote(visitorId, z.number().int().positive().parse(id));
+  });
 }

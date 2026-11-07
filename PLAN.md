@@ -198,7 +198,7 @@ Giao diện không gắn với một môn: menu Học liệu, trang `/mon`, tran
 - **Thư viện** (`/thu-vien`, `/thu-vien/[slug]`): danh mục đọc trực tiếp từ `manifest.yaml`, lọc theo loại, tìm không dấu. PDF mở trong trình đọc pdf.js (`react-pdf`) có mục lục chương, số trang in, phóng to, tải về; `?trang=n` mở đúng trang PDF. Văn kiện `.md` và `.docx` (qua `mammoth`) hiển thị dạng văn bản. File gốc phục vụ qua `/api/tai-lieu/[slug]` có hỗ trợ Range. Trích dẫn của trợ lý có liên kết "Mở trong thư viện" tới đúng trang.
 - **Bài viết** (`/bai-viet`): mỗi bài là một file Markdown trong `content/bai-viet/` (mẫu ở `_mau.md`), giảng viên gửi bài, người phát triển đăng. Khi có giai đoạn 3 có thể chuyển sang trang quản trị.
 - **Ôn tập** (`/on-tap`, `/mon/[mon]/chuong/[so]/trac-nghiem`, `/mon/[mon]/chuong/[so]/bai-tap`, `/tien-do`): xem mục 4.3.
-- **Quản trị** (`/quan-tri`, giai đoạn 8): chỉ tài khoản giảng viên vào được; người khác chưa đăng nhập thì chuyển tới trang đăng nhập, học viên nhận trang 404, cả khung trang chỉ dựng sau khi kiểm tra quyền. Bốn mục: **Tổng quan** (học viên có tài khoản, người dùng hoạt động, câu hỏi, lượt trắc nghiệm và thẻ ôn trong 7 ngày, tỷ lệ hữu ích, số câu cần xem, bảng điểm theo chương có đánh dấu chương có tỷ lệ đạt thấp nhất); **Học viên** (tìm theo mã, tên, lọc lớp; trang từng người có tiến độ từng chương, thẻ đã thuộc, 15 câu hỏi gần nhất gửi trợ lý, nút đặt lại mật khẩu hiện mật khẩu tạm một lần); **Theo lớp** (điểm lượt đầu, điểm cao nhất, tỷ lệ đạt, thẻ đã thuộc theo chương của một lớp); **Hỏi đáp** (nhật ký câu trả lời cần xem, mục 2.6). Số liệu theo lớp chỉ tính học viên có tài khoản. Truy vấn ở `features/admin/server/`.
+- **Quản trị** (`/quan-tri`, giai đoạn 8): chỉ tài khoản giảng viên vào được; mọi người khác (khách, học viên, phiên hết hạn) nhận trang 404 như đường dẫn không tồn tại, không bị chuyển sang trang đăng nhập, để không lộ là trang quản trị có thật. `proxy.ts` chặn ở tầng định tuyến khi không có cookie phiên (mã 404 thật, không dựng gì của trang quản trị); `requireTeacher` kiểm tra phiên và vai trò ở mọi trang, Server Action. Giảng viên đăng nhập ở `/dang-nhap` rồi được đưa thẳng vào `/quan-tri`. Trang 404 chung ở `app/not-found.tsx` (cũng dùng cho mọi đường dẫn lạ). Cả khung trang chỉ dựng sau khi kiểm tra quyền. Bốn mục: **Tổng quan** (học viên có tài khoản, người dùng hoạt động, câu hỏi, lượt trắc nghiệm và thẻ ôn trong 7 ngày, tỷ lệ hữu ích, số câu cần xem, bảng điểm theo chương có đánh dấu chương có tỷ lệ đạt thấp nhất); **Học viên** (tìm theo mã, tên, lọc lớp; trang từng người có tiến độ từng chương, thẻ đã thuộc, 15 câu hỏi gần nhất gửi trợ lý, nút đặt lại mật khẩu hiện mật khẩu tạm một lần); **Theo lớp** (điểm lượt đầu, điểm cao nhất, tỷ lệ đạt, thẻ đã thuộc theo chương của một lớp); **Hỏi đáp** (nhật ký câu trả lời cần xem, mục 2.6). Số liệu theo lớp chỉ tính học viên có tài khoản. Truy vấn ở `features/admin/server/`.
 
 ### 4.3. Ôn tập và tiến độ
 
@@ -243,43 +243,23 @@ Bản hiện tại (dạng cổng thông tin): đầu trang một dòng dính �
 
 Trang được sinh tĩnh. Phần 8 và 9 làm mới mỗi giờ bằng `revalidate`. Toàn bộ câu chữ nằm trong `features/landing/content.ts` để Khoa sửa lời văn mà không chạm vào bố cục. Trang cần đạt Lighthouse từ 90 điểm trên điện thoại và có `metadata`, `opengraph-image.tsx`, `sitemap.ts`, `robots.ts`.
 
-### 4.5. Chấm câu hỏi mở: tự luận theo barem và Đấu trường phản bác
+### 4.5. Tự luận và Đấu trường phản bác, giảng viên chấm
 
-Làm ngày 07/11/2026 (giai đoạn 10). Hai khoảng trống dẫn tới phần này. Thứ nhất, kỳ thi thật của môn lý luận chính trị là tự luận hoặc vấn đáp, trong khi chế độ Ôn thi chỉ nhận xét dàn ý tự do, không có barem, không cho điểm, không đo được. Thứ hai, nhiệm vụ riêng của Khoa trong trường CAND là đấu tranh phản bác quan điểm sai trái (Nghị quyết 35-NQ/TW), nhưng hệ thống mới chỉ *chặn* câu khiêu khích, chưa *huấn luyện* học viên phản bác.
+Làm ngày 07/11/2026 (giai đoạn 10). Hai khoảng trống dẫn tới phần này. Thứ nhất, kỳ thi thật của môn lý luận chính trị là tự luận hoặc vấn đáp, trong khi chế độ Ôn thi chỉ nhận xét dàn ý tự do, không có barem, không cho điểm. Thứ hai, nhiệm vụ riêng của Khoa trong trường CAND là đấu tranh phản bác quan điểm sai trái (Nghị quyết 35-NQ/TW), nhưng hệ thống mới chỉ *chặn* câu khiêu khích, chưa *huấn luyện* học viên phản bác.
 
-Hai tính năng dùng chung một lõi chấm (`features/open-answer/`): câu hỏi mở, barem do giảng viên duyệt, mô hình xếp mức đạt từng ý, điểm do code tính. Nguyên tắc giống công cụ `tinh_ktct`: mô hình phán đoán, code tính toán.
+Bản đầu (cùng ngày) dùng AI chấm từng ý. Đã chốt bỏ hẳn AI ở phần này: bài viết của học viên, nhất là bài phản bác (đánh giá lập trường chính trị), do **giảng viên phụ trách môn** chấm theo barem. AI không tham gia bước chấm nào, kể cả hỏi vặn.
 
-- **Nội dung.** Câu tự luận ở `content/<môn>/tu-luan/chuong-<n>.yaml`, luận điệu cần phản bác ở `content/<môn>/phan-bac/chuong-<n>.yaml` (quy ước ở `_mau.yaml` của từng thư mục). Mỗi ý barem có `page` (trang in giáo trình) hoặc `document` (văn kiện trong manifest), tổng điểm bằng 10. KTCT có 12 câu tự luận (2 câu mỗi chương) và 6 luận điệu (chương 2, 3, 5, 6), người phát triển soạn, gắn `status: nhap` chờ Khoa duyệt. `open-answer/bank.test.ts` kiểm tra tổng điểm, trang nằm trong giáo trình, văn kiện có trong manifest, mỗi luận điệu có bài phản bác đã đăng.
-- **An toàn nội dung của Đấu trường.** Luận điệu chỉ lấy từ ngân hàng đã duyệt; hệ thống không bao giờ tự sinh luận điệu. Mỗi luận điệu bắt buộc có ít nhất một bài phản bác đã đăng trên báo, tạp chí chính thống (`nguon_phan_bac`), giới thiệu cho học viên sau khi nộp. Chương còn `nhap` chỉ tài khoản giảng viên thấy.
-- **Lấy căn cứ.** Với mỗi ý, lấy nguyên văn đúng trang giáo trình hoặc đoạn văn kiện khớp nhất (`fetchRange`), không phụ thuộc tìm kiếm; thêm 3 đoạn tìm theo bài làm để đối chiếu khẳng định của học viên (bỏ qua nếu dịch vụ tìm kiếm lỗi). Các đoạn được đánh số `[n]` như trợ lý.
-- **Chấm.** Một lệnh gọi `LLM_MODEL` trả JSON: mức từng ý (`dat`, `mot_phan`, `thieu`, `sai`), câu trích nguyên văn từ bài làm, nhận xét, căn cứ `[n]`; bài phản bác thêm lập trường (`dung`, `dao_dong`, `sai`) và lỗi lập luận đã chỉ ra. Sai cấu trúc thì gọi lại một lần, vẫn sai thì báo lỗi và không lưu điểm.
-- **Hậu kiểm bằng code** (`open-answer/grading.ts`, có kiểm thử):
-  - Ý "đạt" hoặc "một phần" phải có câu trích có thật trong bài làm (so sau khi bỏ dấu, chấp nhận chép gần đúng), nếu không thì hạ về "thiếu". Đây là chốt chặn chính chống mô hình cho điểm ý học viên chưa viết.
-  - `[n]` ngoài khối tài liệu bị bỏ.
-  - Điểm: đạt được đủ điểm, một phần được nửa, làm tròn 0,25.
-  - Bài phản bác sai lập trường, hoặc chỉ chép lại luận điệu (so cặp từ), được 0 điểm, gắn cờ và nhận nhận xét cố định. Lập trường dao động thì gắn cờ.
-  - Luật chặn chèn lệnh của trợ lý, cộng thêm luật bắt câu nhắn cho người chấm ("lưu ý cho người chấm", "cho bài này 10 điểm"): bài bị chặn trước khi gọi mô hình và gắn cờ.
-- **Hỏi vặn.** Sau khi chấm, nút Hỏi vặn đặt một câu vấn đáp (`LLM_FAST_MODEL`) nhắm vào ý còn thiếu có nhiều điểm nhất; câu trả lời được chấm riêng ý đó, lưu là lượt `hoi_vat` gắn với bài gốc. Giọng nói (nhận dạng chạy tại Học viện) để sau, dùng chung API này.
-- **Lưu.** Bảng `open_answer_attempts` (migration `0012`): bài làm, barem chụp lúc chấm, kết quả, trích dẫn, điểm, cờ, mô hình, thời gian, điểm và nhận xét của giảng viên. Gộp vào tài khoản khi đăng nhập như các bảng khác. Giới hạn 10 bài mỗi 10 phút, 60 bài mỗi ngày cho mỗi tài khoản, 120 bài mỗi 10 phút cho mỗi IP.
-- **Giao diện học viên.**
-  - `/on-tap/[mon]/chuong/[so]/tu-luan` là bước 4 "Ôn thi" của mỗi chương, thay cho chế độ chat.
-  - `/on-tap/[mon]/phan-bac` và `/on-tap/[mon]/phan-bac/[ma]` là Đấu trường phản bác: kết quả theo ba trục (lý luận, văn kiện, thực tiễn) và danh sách lỗi lập luận đã chỉ ra.
-  - Barem không gửi xuống trước khi nộp. Bài làm dở được lưu trong trình duyệt.
-  - Trang Tiến độ có điểm tự luận và phản bác theo chương; huy hiệu mới thuộc nhóm "Tự luận và phản bác".
-  - Giảng viên thử được, kể cả luận điệu nháp; lượt thử của giảng viên không tính vào số liệu.
-- **Quản trị** (`/quan-tri/cham-bai`).
-  - Danh sách bài chờ chấm, gắn cờ, đã chấm.
-  - Trang từng bài có bài làm, kết quả hệ thống, các lượt hỏi vặn và ô để giảng viên chấm lại. Học viên thấy điểm giảng viên khi có.
-  - Bảng đồng thuận giữa hệ thống và giảng viên: Spearman, Pearson, lệch trung bình, tỷ lệ lệch không quá 1 điểm, độ chệch.
-  - Ở `/quan-tri/hoi-dap`, câu bị gắn nhãn khiêu khích có nút chép bản nháp YAML luận điệu: chặn xong thì biến thành đề luyện.
-- **Đo.** `npm run eval-cham` chạy bộ bài mẫu `eval/<môn>/cham-bai.jsonl` (15 bài: tốt, thiếu ý, lạc đề, nêu sai, chung chung, chèn lệnh rõ và ngụy trang, nhại luận điệu, lập trường dao động), kiểm tra kỳ vọng từng bài và tính đồng thuận trên các bài có `diem_gv`. `scripts/report.mts` có thêm mục tự luận và phản bác.
-- **Kết quả thử đầu.** Thử bước chấm với `qwen-2.5-7b-instruct` qua OpenRouter, không có khối tài liệu vì máy phát triển chưa bật Postgres. Kết quả theo loại bài:
-  - Bài tốt được 8/10, bài thiếu ý 3/10, bài lạc đề và bài nêu sai 0.
-  - Bài phản bác tốt được 7/10, lập trường đúng. Bài nhại luận điệu được 0 và bị gắn cờ; bài dao động bị gắn cờ.
-  - Bài chèn lệnh ngụy trang lừa được mô hình bịa câu trích. Hậu kiểm hạ các ý bịa về "thiếu" và bài còn 3/10; sau đó đã thêm luật chặn trước.
-  - Một lần mô hình ghi `can_cu` là số thay vì mảng; lược đồ đã nới để đọc được.
-  - Chưa có điểm giảng viên nên chưa có số đồng thuận.
-- **Chưa làm.** Giảng viên duyệt câu tự luận, barem và luận điệu; giảng viên chấm `diem_gv` cho bộ bài mẫu; chạy `npm run eval-cham` đủ bộ khi có DB, so mô hình (mục 11.1); vấn đáp bằng giọng nói.
+- **Nội dung.** Câu tự luận ở `content/<môn>/tu-luan/chuong-<n>.yaml`, luận điệu cần phản bác ở `content/<môn>/phan-bac/chuong-<n>.yaml` (quy ước ở `_mau.yaml` của từng thư mục). Mỗi ý barem có `page` (trang in giáo trình) hoặc `document` (văn kiện trong manifest), tổng điểm bằng 10. KTCT có 12 câu tự luận (2 câu mỗi chương) và 6 luận điệu (chương 2, 3, 5, 6), người phát triển soạn, gắn `status: nhap` chờ Khoa duyệt; `status` đặt cho cả file hoặc riêng từng luận điệu. `open-answer/bank.test.ts` kiểm tra tổng điểm, trang nằm trong giáo trình, văn kiện có trong manifest, mỗi luận điệu có bài phản bác đã đăng.
+- **An toàn nội dung của Đấu trường.** Luận điệu chỉ lấy từ ngân hàng đã duyệt. Mỗi luận điệu bắt buộc có ít nhất một bài phản bác đã đăng trên báo, tạp chí chính thống (`nguon_phan_bac`), giới thiệu cho học viên kèm kết quả chấm. Luận điệu còn `nhap` chỉ tài khoản giảng viên thấy. Đã mở thử pb5-01 ("Không thể có kinh tế thị trường định hướng xã hội chủ nghĩa"), nguồn đã kiểm tra: bài của Tổng Bí thư Nguyễn Phú Trọng (Báo Nhân Dân, 16/05/2021) và bài trên Tạp chí Giáo chức Việt Nam số 204 (2024).
+- **Học viên nộp bài.** Bài vào hàng chờ của giảng viên phụ trách môn; học viên thấy "Đã gửi, chờ giảng viên chấm" và sửa được bài trong lúc chờ (ghi đè bài đang chờ). Barem chụp vào bài lúc nộp, chỉ hiện cho học viên sau khi chấm. Đã chấm thì nộp lại là một bài mới. Giới hạn 15 bài mỗi 10 phút, 60 bài mỗi ngày cho mỗi tài khoản. Bài thử của tài khoản giảng viên không vào hàng chờ.
+- **Giảng viên phụ trách môn.** Cột `users.subjects` (migration `0017`); `npm run cap-quyen -- <mã> --mon ktct,triet` gán môn, cấp quyền không ghi `--mon` thì nhận mọi môn đang mở. Giảng viên chỉ thấy, chỉ chấm bài của môn mình phụ trách; bài ngoài phạm vi trả 404.
+- **Chấm** (`/quan-tri/cham-bai`). Hàng chờ xếp bài nộp trước lên trước, lọc chờ chấm, đã chấm, cần trao đổi, theo loại bài; thanh bên quản trị có nhãn số bài chờ. Trang từng bài: đề, bài làm, form chấm. Giảng viên chọn mức đạt từng ý (Đạt, Đạt một phần, Còn thiếu, Nêu sai), thêm nhận xét từng ý nếu cần, nhận xét chung; bài phản bác thêm lập trường (đúng, chưa vững, đồng tình với luận điệu) và các lỗi lập luận bài đã chỉ ra. Tổng điểm do code tính (`open-answer/grading.ts`, có kiểm thử): đạt đủ điểm, một phần nửa điểm, làm tròn 0,25; lập trường đồng tình được 0 điểm; lập trường chưa vững hoặc đồng tình thì gắn cờ "cần trao đổi". Máy chủ tính lại điểm khi lưu, không nhận số do trình duyệt gửi. Chấm lại được.
+- **Kết quả cho học viên.** Điểm, mức đạt và nhận xét từng ý kèm trang giáo trình, nhận xét chung, tên giảng viên và thời điểm chấm; bài phản bác có thêm lập trường, lỗi lập luận đã và chưa chỉ ra, bài phản bác chính thống. Trang Tiến độ có điểm cao nhất đã chấm và số bài chờ chấm theo chương; huy hiệu nhóm "Tự luận và phản bác" chỉ tính bài đã chấm.
+- **Lưu.** Bảng `open_answer_attempts`: bài làm, barem chụp lúc nộp, `result` và `score` (null khi chưa chấm), `graded_by`, `graded_at`, `submitted_at`, cờ cần trao đổi. Migration `0016` bỏ các cột của bản AI (trích dẫn, mô hình, thời gian chấm, câu hỏi vặn, điểm chấm lại) và đưa bài đã được AI chấm về hàng chờ.
+- **Giao diện.** Tự luận là bước 4 "Ôn thi" của mỗi chương (`/on-tap/[mon]/chuong/[so]/tu-luan`). Đấu trường phản bác là mục **"Phản bác"** riêng trên menu chính (`/phan-bac`, `/phan-bac/[môn]/[mã]`), tách khỏi Ôn tập vì khác mục đích (rèn kỹ năng đấu tranh tư tưởng) và vì luận điệu thường liên môn; đường dẫn cũ `/on-tap/[môn]/phan-bac...` chuyển hướng sang đây. Trang Đấu trường, trang từng luận điệu và khối giới thiệu trên trang chủ có nhãn "Thử nghiệm" và lời giới thiệu bản thử nghiệm (`open-answer/components/BetaNotice.tsx`); menu chỉ ghi "Phản bác". Khi Khoa chốt dùng chính thức thì bỏ `BetaBadge`, `BetaNotice`.
+- **Khép vòng với trợ lý.** Ở `/quan-tri/hoi-dap`, câu bị gắn nhãn khiêu khích có nút chép bản nháp YAML luận điệu: câu bị chặn trở thành đề luyện sau khi giảng viên viết lại và điền nguồn.
+- **Số liệu.** `scripts/report.mts` có mục tự luận và phản bác: số bài nộp, tỷ lệ đã chấm, điểm trung bình, điểm bài đầu và bài cuối của người làm lại cùng câu, thời gian chờ chấm trung bình, số bài phản bác sai hoặc chưa vững lập trường. Trang quản trị có bài chờ chấm, bài chấm trong 7 ngày, thời gian chờ trung bình, điểm trung bình.
+- **Chưa làm.** Khoa duyệt câu tự luận, barem và các luận điệu còn lại; báo cho học viên khi bài được chấm (hiện học viên mở lại trang để xem); trang quản trị gán môn phụ trách thay cho lệnh `cap-quyen`.
 
 ---
 
@@ -327,7 +307,7 @@ TheoryOJ/
 │   │   │   ├── quiz/  exercise/  progress/   # Trắc nghiệm, bài tập, tiến độ
 │   │   │   ├── flashcards/            # Thẻ ghi nhớ, lịch ôn lặp lại ngắt quãng
 │   │   │   ├── admin/                 # Trang quản trị cho giảng viên (/quan-tri)
-│   │   │   ├── open-answer/           # Chấm tự luận, phản bác, hỏi vặn (mục 4.5)
+│   │   │   ├── open-answer/           # Tự luận, phản bác: nộp bài, giảng viên chấm (mục 4.5)
 │   │   ├── components/                # ui/ (shadcn), layout/, markdown/
 │   │   ├── lib/                       # env, visitor, rate-limit, llm, rag-client, db/schema/
 │   │   ├── domain/ktct/formulas.ts    # Công thức KTCT và kiểm thử
@@ -431,7 +411,7 @@ Lộ trình giả định một người phát triển chính trong khoảng 12 
 | 7. Thẻ ghi nhớ | Sau 12 | Đã xong phần mã nguồn: bộ thẻ YAML theo chương, lịch ôn lặp lại ngắt quãng, bảng `flashcard_states`, trang ôn thẻ có phím tắt, số liệu ở trang Tiến độ và báo cáo hồ sơ (mục 4.3). Còn lại: giảng viên duyệt 56 thẻ KTCT, bổ sung thẻ cho chương 1, 4, 5, 6 (hiện 4–7 thẻ). | Mỗi chương có bộ thẻ, kiểm thử nội dung thẻ chạy trong `npm test` |
 | 6. Mở rộng môn | Sau 12 | Đã xong phần mã nguồn: phần riêng của môn trong prompt, bộ phân loại và câu hỏi gợi ý chuyển sang `content/<môn>/tro-ly.yaml`; tên giáo trình trên thẻ trích dẫn lấy theo môn; mẫu môn ở `content/_mau-mon/` và `eval/_mau/`, hướng dẫn `content/THEM-MON.md`; `subjects.test.ts` kiểm tra môn đang mở có đủ manifest khớp chương, `tro-ly.yaml`, ngân hàng trắc nghiệm, bộ câu chuẩn; `make eval SUBJECT=<môn>`. Đã thử mở Triết học từ mẫu: trang chương, trắc nghiệm, thư viện, trợ lý chạy mà chỉ sửa `subjects.ts`. Còn lại: Khoa gửi giáo trình và nội dung của môn tiếp theo. | Không phải sửa code lõi |
 | 9. Trải nghiệm người dùng | Sau 12 | Đã xong đợt 1: trang **Hôm nay** (`/hoc`, học viên đăng nhập xong vào đây) gồm việc nên làm (thẻ đến hạn, chương nên làm trắc nghiệm, thẻ mới), chuỗi ngày học liên tiếp, đọc tiếp giáo trình, hội thoại gần đây (`features/progress/server/today.ts`, logic thuần ở `features/progress/today.ts`); trắc nghiệm lưu bài làm dở trong trình duyệt và hỏi làm tiếp, hỏi xác nhận khi nộp còn câu trống, nút **Ôn lại câu sai** (chấm nhưng không lưu vào tiến độ), "Hỏi trợ lý về câu này" dưới mỗi câu sai; trình đọc PDF nhớ trang đọc gần nhất theo tài khoản (bảng `reading_positions`, migration `0006`) và có lối sang trợ lý, trắc nghiệm, thẻ ghi nhớ của chương đang đọc. **Chế độ đọc** (`features/reader/`): trình đọc PDF cuộn liên tục, phóng to thu nhỏ không chớp, có chế độ toàn màn hình; bài viết và văn kiện văn bản có nút Chế độ đọc toàn màn hình, thanh tiến độ, chỉnh cỡ chữ, kiểu chữ có chân (Noto Serif), độ rộng dòng; ba nền Sáng, Vàng giấy, Tối dùng chung cho cả PDF và văn bản, lưu trong trình duyệt của người đọc. Còn lại: đợt 2 (PWA, thanh điều hướng dưới trên điện thoại, tìm kiếm Ctrl+K), đợt 3 (nhập danh sách lớp, kích hoạt tài khoản thay cho tự đăng ký). | Học viên mở trang là biết việc cần làm, không mất bài làm dở |
-| 10. Chấm câu hỏi mở | Sau 12 | Đã xong phần mã nguồn: lõi chấm theo barem có hậu kiểm câu trích, tự luận theo chương, Đấu trường phản bác, hỏi vặn, bảng `open_answer_attempts` (migration `0012`), trang `/quan-tri/cham-bai` có ô chấm của giảng viên và bảng đồng thuận, `npm run eval-cham`, mục báo cáo hồ sơ (mục 4.5). Còn lại: Khoa duyệt 12 câu tự luận và 6 luận điệu; giảng viên chấm bộ bài mẫu; chạy `eval-cham` đủ bộ với mô hình triển khai; vấn đáp bằng giọng nói. | Spearman giữa điểm hệ thống và điểm giảng viên từ 0,7 trên bộ bài mẫu đã chấm |
+| 10. Tự luận và phản bác | Sau 12 | Đã xong phần mã nguồn: tự luận theo chương, Đấu trường phản bác (mục Phản bác riêng, bản thử nghiệm), nộp bài vào hàng chờ, giảng viên phụ trách môn chấm từng ý theo barem trên `/quan-tri/cham-bai` (không dùng AI), `users.subjects` và `cap-quyen --mon`, migration `0016`, `0017`, mục báo cáo hồ sơ (mục 4.5). Còn lại: Khoa duyệt 12 câu tự luận và các luận điệu; báo học viên khi bài được chấm. | Bài nộp được chấm trong vòng 3 ngày làm việc |
 
 ---
 
@@ -447,10 +427,9 @@ Lộ trình giả định một người phát triển chính trong khoảng 12 
 | Tính toán | Bài tập có đáp số | 100 % |
 | Chất lượng chung | Giảng viên chấm thang 1–5 | Trung bình từ 4 |
 | Độ trễ | Thời gian tới token đầu tiên | Dưới 3 giây |
-| Đồng thuận chấm | Spearman giữa điểm hệ thống và điểm giảng viên trên bài tự luận, phản bác | Từ 0,7 |
-| Sai lệch chấm | Lệch tuyệt đối trung bình với điểm giảng viên, thang 10 | Không quá 1,5 |
-| Lập trường | Bài phản bác đồng tình hoặc nhắc lại luận điệu bị 0 điểm và gắn cờ | 100 % |
-| Trích bài làm | Ý được tính điểm có câu trích có thật trong bài làm | 100 % (bảo đảm bằng code) |
+| Thời gian chấm | Từ lúc học viên nộp bài tự luận, phản bác tới lúc giảng viên chấm | Trung bình không quá 3 ngày làm việc |
+| Bài được chấm | Tỷ lệ bài nộp đã được giảng viên chấm trong đợt | Từ 90 % |
+| Lập trường | Bài phản bác giảng viên đánh giá đồng tình với luận điệu được 0 điểm và gắn cờ cần trao đổi | 100 % (bảo đảm bằng code) |
 
 Các biện pháp bảo mật gồm:
 
@@ -471,9 +450,9 @@ Hồ sơ thường được xét theo tính mới, hiệu quả và khả năng 
 | Tiêu chí | Bằng chứng | Nguồn |
 |---|---|---|
 | Tính mới | Trợ lý trả lời mọi lúc, trích nguồn đến trang, liên hệ với nhiệm vụ CAND, so với hiện trạng tự tra cứu | Mô tả hiện trạng có Khoa xác nhận |
-| Tính mới | Chấm tự luận theo barem của Khoa với từng ý có câu trích từ bài làm và trang giáo trình; Đấu trường phản bác luyện đấu tranh với quan điểm sai trái theo Nghị quyết 35-NQ/TW; câu khiêu khích bị chặn trở thành đề luyện | Mục 4.5 |
-| Hiệu quả chấm | Độ đồng thuận với giảng viên (Spearman, lệch trung bình); số bài học viên được nhận xét chi tiết mà giảng viên không phải chấm | Trang `/quan-tri/cham-bai`, `npm run eval-cham`, `scripts/report.mts` |
-| Hiệu quả học tập | Điểm tự luận lượt đầu và lượt cuối; thực nghiệm có lớp đối chứng: bài tự luận đầu và cuối đợt, giảng viên chấm mù (không biết bài của lớp nào) | Bảng `open_answer_attempts`, bài thi do Khoa tổ chức |
+| Tính mới | Tự luận chấm theo barem của Khoa, nhận xét đến từng ý kèm trang giáo trình; Đấu trường phản bác luyện đấu tranh với quan điểm sai trái theo Nghị quyết 35-NQ/TW, giảng viên đánh giá lập trường; câu khiêu khích bị chặn trở thành đề luyện | Mục 4.5 |
+| Hiệu quả chấm | Số bài tự luận, phản bác giảng viên chấm và nhận xét qua hệ thống; thời gian chờ chấm; bài phản bác lập trường chưa vững được phát hiện để trao đổi riêng | Trang `/quan-tri/cham-bai`, `scripts/report.mts` |
+| Hiệu quả học tập | Điểm tự luận bài đầu và bài cuối được chấm; thực nghiệm có lớp đối chứng: bài tự luận đầu và cuối đợt, giảng viên chấm mù (không biết bài của lớp nào) | Bảng `open_answer_attempts`, bài thi do Khoa tổ chức |
 | Chất lượng trả lời | Chỉ số mục 9 của bản Streamlit so với bản mới | Kết quả `make eval` |
 | Hiệu quả học tập | Điểm trắc nghiệm đầu và cuối đợt thử nghiệm, so với lớp đối chứng nếu có | Bảng `practice_attempts` |
 | Mức độ sử dụng | Số trình duyệt dùng trợ lý, số câu hỏi theo chương, tỷ lệ 👍 | Bảng `messages`, `feedback` |
@@ -492,7 +471,7 @@ Nghị quyết 57-NQ/TW về đột phá phát triển khoa học, công nghệ,
 | 1 | Mô hình ngôn ngữ chạy tại Học viện hay qua API bên ngoài | Ưu tiên chạy tại Học viện. Trước giai đoạn 5, so sánh `qwen2.5:7b` với vài mô hình mở lớn hơn bằng `make eval` và chọn mô hình nhỏ nhất đạt mục 9. Chỉ dùng API ngoài khi Học viện cho phép. Riêng việc đo trên bộ câu chuẩn (không chứa dữ liệu học viên) tạm dùng `qwen/qwen-2.5-7b-instruct` qua OpenRouter, cấu hình trong `.env`. |
 | 2 | Máy chủ, GPU, dung lượng VRAM, tên miền | Hỏi đơn vị CNTT của Học viện trong tuần 1. Quyết định 1 phụ thuộc vào câu trả lời này. |
 | 3 | Đối tượng truy cập | Đã chốt 30/10/2026: bản sáng kiến mở trợ lý cho mọi người, không cần đăng nhập, chặn lạm dụng bằng giới hạn tần suất theo IP. Từ 01/11/2026 có thêm tài khoản không bắt buộc. |
-| 4 | Tài khoản riêng hay tích hợp hệ thống sẵn có | Đã chốt 01/11/2026: tài khoản riêng, học viên tự đăng ký bằng mã học viên. Từ 03/11/2026 có vai trò giảng viên do người phát triển cấp bằng `npm run cap-quyen`. Mã học viên chưa đối chiếu với danh sách lớp. |
+| 4 | Tài khoản riêng hay tích hợp hệ thống sẵn có | Đã chốt 01/11/2026: tài khoản riêng, học viên tự đăng ký bằng mã học viên. Từ 03/11/2026 có vai trò giảng viên do người phát triển cấp bằng `npm run cap-quyen`. Từ 07/11/2026 mã học viên đối chiếu với danh sách lớp do giảng viên nhập ở `/quan-tri/danh-sach`: chỉ mã có trong danh sách mới đăng ký được, họ tên và lớp lấy theo danh sách, học viên không tự đổi lớp. |
 | 5 | Người soạn bộ câu chuẩn và ngân hàng trắc nghiệm | Cần ít nhất một giảng viên KTCT tham gia từ tuần 1. |
 | 6 | Hiển thị toàn văn giáo trình | Đã chốt 29/10/2026: mọi tài liệu trong Thư viện đọc toàn văn công khai. Trước khi mở công khai, Khoa cần xác nhận quyền phát hành giáo trình, sách của NXB Chính trị quốc gia Sự thật và bài tạp chí; văn kiện của Đảng không vướng. |
 | 7 | Bảng màu, biểu trưng, cách xưng hô | Khoa và đơn vị truyền thông của Học viện duyệt. |

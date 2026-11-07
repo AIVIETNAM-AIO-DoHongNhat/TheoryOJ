@@ -5,6 +5,7 @@ import { useDeferredValue, useMemo, useState, useTransition } from "react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
@@ -34,6 +35,7 @@ export function ImportDialog({ subject, chapter, onDone }: { subject: string; ch
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [examOnly, setExamOnly] = useState(false);
   const [pending, startTransition] = useTransition();
   const deferred = useDeferredValue(text);
   const parsed = useMemo(() => parseQuestionText(deferred), [deferred]);
@@ -43,11 +45,11 @@ export function ImportDialog({ subject, chapter, onDone }: { subject: string; ch
     setError(null);
     startTransition(async () => {
       try {
-        const res = await importQuestions({ subject, chapter, text });
+        const res = await importQuestions({ subject, chapter, text, examOnly });
         if (!res.ok) return setError(res.error);
         setOpen(false);
         setText("");
-        onDone?.(`Đã nhập ${res.count} câu vào chương ${chapter}.`);
+        onDone?.(`Đã nhập ${res.count} câu vào chương ${chapter}${examOnly ? ", chỉ dùng cho đề thi" : ""}.`);
       } catch {
         setError("Chưa nhập được. Thử lại sau ít phút.");
       }
@@ -121,6 +123,14 @@ export function ImportDialog({ subject, chapter, onDone }: { subject: string; ch
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
+
+        <label className="flex items-start gap-2.5 text-sm">
+          <Checkbox checked={examOnly} onCheckedChange={(v) => setExamOnly(Boolean(v))} className="mt-0.5" />
+          <span>
+            <span className="font-medium">Chỉ dùng cho đề thi</span>
+            <span className="block text-xs text-muted-foreground">Các câu này không hiện ở trắc nghiệm ôn tập, học viên không xem trước được đáp án.</span>
+          </span>
+        </label>
 
         <DialogFooter>
           <DialogClose render={<Button variant="outline" />}>Hủy</DialogClose>

@@ -6,7 +6,9 @@ import { getPost } from "@/features/blog/server/posts";
 import { getDoc } from "@/features/library/server/catalog";
 import { printedPage, readerHref } from "@/features/library/types";
 import { getSubject } from "@/config/subjects";
+import { type DataResult, UserError } from "@/lib/action-result";
 import { getCurrentUser, isStudent, requireStudent } from "@/lib/auth/session";
+import { run } from "@/lib/run-action";
 
 import {
   allPages, appendToPage, countNotebooks, countPages, deleteNotebook, deletePage, getNotebook, getPage, insertNotebook,
@@ -46,37 +48,45 @@ function validChapter(subject: string | null, chapter: number | null | undefined
 
 async function ownNotebook(visitorId: string, id: number): Promise<Notebook> {
   const nb = await getNotebook(visitorId, id);
-  if (!nb) throw new Error("Không có sổ này.");
+  if (!nb) throw new UserError("Không có sổ này.");
   return nb;
 }
 
 async function ensureRoom(notebookId: number) {
-  if ((await countPages(notebookId)) >= PAGES_PER_NOTEBOOK) throw new Error(`Mỗi sổ có tối đa ${PAGES_PER_NOTEBOOK} trang. Hãy tạo sổ mới.`);
+  if ((await countPages(notebookId)) >= PAGES_PER_NOTEBOOK) throw new UserError(`Mỗi sổ có tối đa ${PAGES_PER_NOTEBOOK} trang. Hãy tạo sổ mới.`);
 }
 
-export async function createNotebook(input: z.input<typeof Settings>): Promise<Notebook> {
-  const { visitorId } = await requireStudent();
-  const data = Settings.parse(input);
-  if ((await countNotebooks(visitorId)) >= NOTEBOOKS_MAX) throw new Error(`Mỗi tài khoản có tối đa ${NOTEBOOKS_MAX} sổ.`);
-  return insertNotebook(visitorId, data);
+export async function createNotebook(input: z.input<typeof Settings>): Promise<DataResult<Notebook>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    const data = Settings.parse(input);
+    if ((await countNotebooks(visitorId)) >= NOTEBOOKS_MAX) throw new UserError(`Mỗi tài khoản có tối đa ${NOTEBOOKS_MAX} sổ.`);
+    return insertNotebook(visitorId, data);
+  });
 }
 
 const UpdateInput = Settings.extend({ id: Id });
 
-export async function saveNotebookSettings(input: z.input<typeof UpdateInput>): Promise<void> {
-  const { visitorId } = await requireStudent();
-  const { id, ...data } = UpdateInput.parse(input);
-  if (!(await updateNotebook(visitorId, id, data))) throw new Error("Không có sổ này.");
+export async function saveNotebookSettings(input: z.input<typeof UpdateInput>): Promise<DataResult<void>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    const { id, ...data } = UpdateInput.parse(input);
+    if (!(await updateNotebook(visitorId, id, data))) throw new UserError("Không có sổ này.");
+  });
 }
 
-export async function pinNotebook(id: number, pinned: boolean): Promise<void> {
-  const { visitorId } = await requireStudent();
-  await updateNotebook(visitorId, Id.parse(id), { pinned: z.boolean().parse(pinned) });
+export async function pinNotebook(id: number, pinned: boolean): Promise<DataResult<void>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    await updateNotebook(visitorId, Id.parse(id), { pinned: z.boolean().parse(pinned) });
+  });
 }
 
-export async function removeNotebook(id: number): Promise<void> {
-  const { visitorId } = await requireStudent();
-  await deleteNotebook(visitorId, Id.parse(id));
+export async function removeNotebook(id: number): Promise<DataResult<void>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    await deleteNotebook(visitorId, Id.parse(id));
+  });
 }
 
 const NewPage = z.object({
@@ -85,20 +95,24 @@ const NewPage = z.object({
   chapter: z.number().int().positive().nullable().default(null),
 });
 
-export async function createPage(input: z.input<typeof NewPage>): Promise<NotebookPage> {
-  const { visitorId } = await requireStudent();
-  const data = NewPage.parse(input);
-  const nb = await ownNotebook(visitorId, data.notebookId);
-  await ensureRoom(nb.id);
-  const chapter = validChapter(nb.subject, data.chapter);
-  return insertPage({ visitorId, notebookId: nb.id, title: data.title, body: "", subject: nb.subject, chapter });
+export async function createPage(input: z.input<typeof NewPage>): Promise<DataResult<NotebookPage>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    const data = NewPage.parse(input);
+    const nb = await ownNotebook(visitorId, data.notebookId);
+    await ensureRoom(nb.id);
+    const chapter = validChapter(nb.subject, data.chapter);
+    return insertPage({ visitorId, notebookId: nb.id, title: data.title, body: "", subject: nb.subject, chapter });
+  });
 }
 
-export async function loadPage(id: number): Promise<NotebookPage> {
-  const { visitorId } = await requireStudent();
-  const page = await getPage(visitorId, Id.parse(id));
-  if (!page) throw new Error("Không có trang này.");
-  return page;
+export async function loadPage(id: number): Promise<DataResult<NotebookPage>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    const page = await getPage(visitorId, Id.parse(id));
+    if (!page) throw new UserError("Không có trang này.");
+    return page;
+  });
 }
 
 const SavePage = z.object({
@@ -110,45 +124,57 @@ const SavePage = z.object({
 });
 
 /** Tự lưu từ trình soạn. Trả thời điểm lưu để hiện "Đã lưu lúc …". */
-export async function savePage(input: z.input<typeof SavePage>): Promise<{ updatedAt: string }> {
-  const { visitorId } = await requireStudent();
-  const { id, title, body, subject, chapter } = SavePage.parse(input);
-  const ch = validChapter(subject, chapter);
-  const page = await updatePage(visitorId, id, { title, body, subject, chapter: ch });
-  if (!page) throw new Error("Không có trang này.");
-  return { updatedAt: page.updatedAt };
+export async function savePage(input: z.input<typeof SavePage>): Promise<DataResult<{ updatedAt: string }>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    const { id, title, body, subject, chapter } = SavePage.parse(input);
+    const ch = validChapter(subject, chapter);
+    const page = await updatePage(visitorId, id, { title, body, subject, chapter: ch });
+    if (!page) throw new UserError("Không có trang này.");
+    return { updatedAt: page.updatedAt };
+  });
 }
 
-export async function pinPage(id: number, pinned: boolean): Promise<void> {
-  const { visitorId } = await requireStudent();
-  await updatePage(visitorId, Id.parse(id), { pinned: z.boolean().parse(pinned) });
+export async function pinPage(id: number, pinned: boolean): Promise<DataResult<void>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    await updatePage(visitorId, Id.parse(id), { pinned: z.boolean().parse(pinned) });
+  });
 }
 
-export async function movePage(id: number, notebookId: number): Promise<void> {
-  const { visitorId } = await requireStudent();
-  const target = await ownNotebook(visitorId, Id.parse(notebookId));
-  await ensureRoom(target.id);
-  if (!(await updatePage(visitorId, Id.parse(id), { notebookId: target.id }))) throw new Error("Không có trang này.");
+export async function movePage(id: number, notebookId: number): Promise<DataResult<void>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    const target = await ownNotebook(visitorId, Id.parse(notebookId));
+    await ensureRoom(target.id);
+    if (!(await updatePage(visitorId, Id.parse(id), { notebookId: target.id }))) throw new UserError("Không có trang này.");
+  });
 }
 
-export async function removePage(id: number): Promise<void> {
-  const { visitorId } = await requireStudent();
-  await deletePage(visitorId, Id.parse(id));
+export async function removePage(id: number): Promise<DataResult<void>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    await deletePage(visitorId, Id.parse(id));
+  });
 }
 
-export async function searchPages(notebookId: number, q: string): Promise<PageSummary[]> {
-  const { visitorId } = await requireStudent();
-  const nb = await ownNotebook(visitorId, Id.parse(notebookId));
-  return listPages(visitorId, nb.id, nb.pageOrder, z.string().max(100).parse(q));
+export async function searchPages(notebookId: number, q: string): Promise<DataResult<PageSummary[]>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    const nb = await ownNotebook(visitorId, Id.parse(notebookId));
+    return listPages(visitorId, nb.id, nb.pageOrder, z.string().max(100).parse(q));
+  });
 }
 
 /** Toàn bộ sổ dạng Markdown để học viên tải về máy. */
-export async function exportNotebook(id: number): Promise<{ filename: string; markdown: string }> {
-  const { visitorId } = await requireStudent();
-  const nb = await ownNotebook(visitorId, Id.parse(id));
-  const pages = await allPages(visitorId, nb.id, nb.pageOrder === "ten" ? "ten" : "cu-truoc");
-  const filename = `${nb.title.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/gi, "d").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "so-ghi-chep"}.md`;
-  return { filename, markdown: notebookToMarkdown(nb, pages) };
+export async function exportNotebook(id: number): Promise<DataResult<{ filename: string; markdown: string }>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    const nb = await ownNotebook(visitorId, Id.parse(id));
+    const pages = await allPages(visitorId, nb.id, nb.pageOrder === "ten" ? "ten" : "cu-truoc");
+    const filename = `${nb.title.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/gi, "d").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "so-ghi-chep"}.md`;
+    return { filename, markdown: notebookToMarkdown(nb, pages) };
+  });
 }
 
 /** Sổ và trang gần nhất cho hộp "Vào sổ" ở trình đọc. Người chưa đăng nhập nhận `signedIn: false`. */
@@ -195,38 +221,40 @@ function describeSource(source: "thu-vien" | "bai-viet", slug: string, pdfPage: 
  * Chép đoạn bôi đen trong trình đọc vào sổ: trích dẫn kèm nguồn (bấm để mở lại đúng trang), rồi lời bàn của học viên.
  * Nối vào trang có sẵn, hoặc tạo trang mới mang tên tài liệu.
  */
-export async function clipToNotebook(input: z.input<typeof ClipInput>): Promise<{ notebookId: number; pageId: number; notebookTitle: string; pageTitle: string }> {
-  const { visitorId } = await requireStudent();
-  const data = ClipInput.parse(input);
-  const src = describeSource(data.source, data.slug, data.pdfPage);
-  if (!src) throw new Error("Không có tài liệu này.");
+export async function clipToNotebook(input: z.input<typeof ClipInput>): Promise<DataResult<{ notebookId: number; pageId: number; notebookTitle: string; pageTitle: string }>> {
+  return run(async () => {
+    const { visitorId } = await requireStudent();
+    const data = ClipInput.parse(input);
+    const src = describeSource(data.source, data.slug, data.pdfPage);
+    if (!src) throw new UserError("Không có tài liệu này.");
 
-  const chunk = [
-    data.quote.split(/\n+/).map((l) => `> ${escapeMd(l)}`).join("\n"),
-    ">",
-    `> — [${escapeMd(src.label)}](${src.href})`,
-    data.note && `\n${data.note}`,
-  ]
-    .filter(Boolean)
-    .join("\n");
+    const chunk = [
+      data.quote.split(/\n+/).map((l) => `> ${escapeMd(l)}`).join("\n"),
+      ">",
+      `> — [${escapeMd(src.label)}](${src.href})`,
+      data.note && `\n${data.note}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
 
-  let nb: Notebook;
-  if (data.notebookId) {
-    nb = await ownNotebook(visitorId, data.notebookId);
-  } else {
-    if ((await countNotebooks(visitorId)) >= NOTEBOOKS_MAX) throw new Error(`Mỗi tài khoản có tối đa ${NOTEBOOKS_MAX} sổ.`);
-    const subject = getSubject(src.subject);
-    nb = await insertNotebook(visitorId, { ...DEFAULT_SETTINGS, title: `Ghi chép ${subject?.shortName ?? "chung"}`, subject: subject?.active ? subject.id : null });
-  }
+    let nb: Notebook;
+    if (data.notebookId) {
+      nb = await ownNotebook(visitorId, data.notebookId);
+    } else {
+      if ((await countNotebooks(visitorId)) >= NOTEBOOKS_MAX) throw new UserError(`Mỗi tài khoản có tối đa ${NOTEBOOKS_MAX} sổ.`);
+      const subject = getSubject(src.subject);
+      nb = await insertNotebook(visitorId, { ...DEFAULT_SETTINGS, title: `Ghi chép ${subject?.shortName ?? "chung"}`, subject: subject?.active ? subject.id : null });
+    }
 
-  const chapter = validChapter(src.subject, data.chapter);
-  if (data.pageId) {
-    const page = await appendToPage(visitorId, nb.id, data.pageId, chunk, PAGE_BODY_MAX);
-    if (!page) throw new Error("Không chép được: trang không còn, hoặc đã quá dài. Chọn “Trang mới”.");
+    const chapter = validChapter(src.subject, data.chapter);
+    if (data.pageId) {
+      const page = await appendToPage(visitorId, nb.id, data.pageId, chunk, PAGE_BODY_MAX);
+      if (!page) throw new UserError("Không chép được: trang không còn, hoặc đã quá dài. Chọn “Trang mới”.");
+      return { notebookId: nb.id, pageId: page.id, notebookTitle: nb.title, pageTitle: page.title };
+    }
+    await ensureRoom(nb.id);
+    const title = (chapter ? `${src.title} · Chương ${chapter}` : src.title).slice(0, PAGE_TITLE_MAX);
+    const page = await insertPage({ visitorId, notebookId: nb.id, title, body: chunk, subject: chapter ? src.subject : nb.subject, chapter });
     return { notebookId: nb.id, pageId: page.id, notebookTitle: nb.title, pageTitle: page.title };
-  }
-  await ensureRoom(nb.id);
-  const title = (chapter ? `${src.title} · Chương ${chapter}` : src.title).slice(0, PAGE_TITLE_MAX);
-  const page = await insertPage({ visitorId, notebookId: nb.id, title, body: chunk, subject: chapter ? src.subject : nb.subject, chapter });
-  return { notebookId: nb.id, pageId: page.id, notebookTitle: nb.title, pageTitle: page.title };
+  });
 }

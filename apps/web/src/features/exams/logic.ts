@@ -1,5 +1,7 @@
 // Quy tắc của đề thi dùng chung cho máy chủ, trang quản trị và trang học viên. Không chạm DB, để kiểm thử được.
 
+import { normalizeClassName } from "@/features/roster/normalize";
+
 export const REVEALS = ["ngay", "sau-han", "chi-diem"] as const;
 export type Reveal = (typeof REVEALS)[number];
 
@@ -72,11 +74,12 @@ export function answersVisible(exam: { reveal: Reveal; closesAt: Date | null }, 
 /** Lớp của học viên có trong danh sách lớp được giao không. Danh sách rỗng là giao cho mọi học viên. */
 export function classMatches(classes: string[], className: string): boolean {
   if (classes.length === 0) return true;
-  const own = className.trim().toLocaleUpperCase("vi");
-  return classes.some((c) => c.trim().toLocaleUpperCase("vi") === own);
+  const own = normalizeClassName(className);
+  return classes.some((c) => normalizeClassName(c) === own);
 }
 
-function shuffled<T>(items: T[], random: () => number): T[] {
+/** Trộn Fisher–Yates, trả mảng mới. Truyền `random` để kiểm thử cho ra thứ tự cố định. Trắc nghiệm ôn tập cũng dùng hàm này. */
+export function shuffled<T>(items: readonly T[], random: () => number = Math.random): T[] {
   const a = [...items];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1));

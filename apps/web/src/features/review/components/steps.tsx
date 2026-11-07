@@ -27,8 +27,8 @@ export const STEPS: { icon: LucideIcon; name: string; tool: string; text: string
   {
     icon: MODE_ICONS.review,
     name: "Ôn thi",
-    tool: "Tự luận có chấm điểm",
-    text: "Viết bài như khi thi. Hệ thống chấm từng ý theo barem, chỉ ra ý thiếu kèm trang giáo trình, rồi hỏi vặn như thi vấn đáp.",
+    tool: "Tự luận, giảng viên chấm",
+    text: "Viết bài như khi thi, gửi giảng viên phụ trách môn. Giảng viên chấm từng ý theo barem và nhận xét.",
   },
 ];
 

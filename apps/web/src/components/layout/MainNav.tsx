@@ -63,7 +63,11 @@ export function MainNav() {
                   </NavigationMenuContent>
                 </>
               ) : (
-                <NavigationMenuLink render={<Link href={n.href} onClick={close} />} active={active} className={cn(item, "inline-flex items-center")}>
+                <NavigationMenuLink
+                  render={<Link href={n.href} onClick={close} title={n.description} />}
+                  active={active}
+                  className={cn(item, "inline-flex items-center")}
+                >
                   {n.label}
                 </NavigationMenuLink>
               )}

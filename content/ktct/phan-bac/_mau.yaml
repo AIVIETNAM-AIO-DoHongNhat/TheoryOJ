@@ -4,8 +4,9 @@
 # - Chỉ đưa luận điệu đã bị báo chí, tạp chí chính thống phản bác công khai. Mỗi luận điệu BẮT BUỘC có ít nhất
 #   một bài phản bác trong `nguon_phan_bac` (tên bài, báo hoặc tạp chí, đường dẫn).
 # - Viết luận điệu ngắn gọn, đúng nội dung đã được nêu trong bài phản bác; không thêm chi tiết kích động.
-# - Hệ thống không bao giờ tự sinh luận điệu. Học viên chỉ thấy chương có `status: da-duyet`;
-#   khi còn `nhap` thì chỉ tài khoản giảng viên thấy để thử.
+# - Hệ thống không bao giờ tự sinh luận điệu. Học viên chỉ thấy luận điệu đã duyệt (`da-duyet`);
+#   khi còn `nhap` thì chỉ tài khoản giảng viên thấy để thử. `status` ở đầu file áp cho cả chương;
+#   muốn duyệt riêng một luận điệu thì ghi `status` ngay trong luận điệu đó (ghi đè trạng thái của file).
 #
 # Quy ước:
 # - id: mã không trùng, ví dụ pb5-01. Đã có người làm thì không đổi mã.

@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import { unwrap } from "@/lib/action-result";
+
 import { editNote, myNotes, removeNote } from "./actions";
 import type { NoteSource, ReaderNote } from "./types";
 
@@ -28,12 +30,12 @@ export function useDocNotes(source: NoteSource | null, slug: string) {
   const add = useCallback((n: ReaderNote) => setNotes((prev) => [...prev, n]), []);
 
   const update = useCallback(async (id: number, note: string) => {
-    const saved = await editNote({ id, note });
+    const saved = unwrap(await editNote({ id, note }));
     setNotes((prev) => prev.map((n) => (n.id === id ? saved : n)));
   }, []);
 
   const remove = useCallback(async (id: number) => {
-    await removeNote(id);
+    unwrap(await removeNote(id));
     setNotes((prev) => prev.filter((n) => n.id !== id));
   }, []);
 

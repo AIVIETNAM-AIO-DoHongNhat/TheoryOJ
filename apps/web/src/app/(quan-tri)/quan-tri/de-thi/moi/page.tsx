@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Tạo đề thi · Quản trị" };
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 async function NewExam({ searchParams }: { searchParams: SearchParams }) {
-  await requireTeacher("/quan-tri/de-thi/moi");
+  await requireTeacher();
   const mon = (await searchParams).mon;
   const subject = getSubject(typeof mon === "string" ? mon : "")?.active ? getSubject(mon as string)! : ACTIVE_SUBJECTS[0];
   const data = await examFormData(subject.id);

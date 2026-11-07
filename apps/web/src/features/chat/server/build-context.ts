@@ -25,10 +25,9 @@ export function toCitations(hits: Hit[], subject: Pick<Subject, "shortName">): C
   }));
 }
 
-// Đoạn tài liệu, câu hỏi và bài làm là dữ liệu không tin cậy: bỏ thẻ phân tách giả để không thoát được khỏi khối.
-// Các thẻ bai_lam, barem, de_bai, luan_dieu, loi_lap_luan dùng ở lõi chấm câu hỏi mở (features/open-answer).
+// Đoạn tài liệu và câu hỏi là dữ liệu không tin cậy: bỏ thẻ phân tách giả để không thoát được khỏi khối.
 export function sanitize(text: string): string {
-  return text.replace(/<\/?\s*(tai_lieu|cau_hoi|bai_lam|barem|de_bai|luan_dieu|loi_lap_luan)[^>]*>/gi, "");
+  return text.replace(/<\/?\s*(tai_lieu|cau_hoi)[^>]*>/gi, "");
 }
 
 export function buildContext(citations: Citation[]): string {

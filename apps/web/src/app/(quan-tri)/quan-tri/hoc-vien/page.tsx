@@ -19,7 +19,7 @@ export const metadata: Metadata = { title: "Học viên · Quản trị" };
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
 async function Students({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  await requireTeacher("/quan-tri/hoc-vien");
+  await requireTeacher();
   const params = await searchParams;
   const className = one(params.lop) ?? null;
   const [classes, students] = await Promise.all([getClasses(), getStudents({ q: one(params.q), className })]);
@@ -43,7 +43,7 @@ async function Students({ searchParams }: { searchParams: Promise<Record<string,
             </EmptyMedia>
             <EmptyTitle>Không có học viên phù hợp</EmptyTitle>
             <EmptyDescription>
-              Học viên tự đăng ký tài khoản ở trang Đăng ký bằng mã học viên. Số liệu của người chưa đăng nhập vẫn có ở trang Tổng quan.
+              Học viên đăng ký ở trang Đăng ký bằng mã có trong Danh sách lớp. Số liệu của người chưa đăng nhập vẫn có ở trang Tổng quan.
             </EmptyDescription>
           </EmptyHeader>
         </Empty>

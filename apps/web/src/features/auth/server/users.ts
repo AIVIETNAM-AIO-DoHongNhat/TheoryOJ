@@ -26,7 +26,7 @@ export async function updatePassword(userId: string, passwordHash: string) {
   await db.update(schema.users).set({ passwordHash }).where(eq(schema.users.id, userId));
 }
 
-export async function updateProfile(userId: string, input: { fullName: string; className: string }) {
+export async function updateProfile(userId: string, input: { fullName: string }) {
   await db.update(schema.users).set(input).where(eq(schema.users.id, userId));
 }
 

@@ -23,7 +23,7 @@ const Where = z.object({
 const Code = z.string().min(1).max(32);
 
 async function guard(input: unknown) {
-  const user = await requireTeacher(PATH);
+  const user = await requireTeacher();
   const { subject, chapter } = Where.parse(input);
   const scope = resolveChapter(subject, chapter);
   if (!scope) throw new Error("Không có môn hoặc chương này.");
@@ -36,14 +36,19 @@ function refresh() {
   revalidatePath(PATH);
 }
 
-const newCode = (chapter: number) => `gv${chapter}-${randomBytes(4).toString("hex").slice(0, 6)}`;
+/** Mã câu mới: 8 ký tự hex (32 bit) để lần nhập vài trăm câu không vấp trùng mã. */
+const newCode = (chapter: number) => `gv${chapter}-${randomBytes(4).toString("hex")}`;
 
-/** Thêm câu mới (không có `code`) hoặc lưu bản sửa của một câu. Sửa câu trong file thì lưu thành bản thay thế cùng mã. */
+/**
+ * Thêm câu mới (không có `code`) hoặc lưu bản sửa của một câu. Sửa câu trong file thì lưu thành bản thay thế cùng mã.
+ * `examOnly` chỉ áp cho câu mới; câu đã có đổi bằng setQuestionExamOnly.
+ */
 export async function saveQuestion(input: {
   subject: string;
   chapter: number;
   code: string | null;
   question: z.input<typeof QuestionInput>;
+  examOnly?: boolean;
 }): Promise<ActionResult<{ code: string }>> {
   const { user, subject, chapter } = await guard(input);
   const code = input.code === null ? null : Code.parse(input.code);
@@ -53,7 +58,8 @@ export async function saveQuestion(input: {
 
   if (code === null) {
     const created = newCode(chapter);
-    await db.insert(schema.quizQuestions).values({ subject, chapter, code: created, ...q, updatedBy: user.id });
+    const examOnly = z.boolean().default(false).parse(input.examOnly);
+    await db.insert(schema.quizQuestions).values({ subject, chapter, code: created, ...q, examOnly, updatedBy: user.id });
     refresh();
     return { ok: true, code: created };
   }
@@ -76,16 +82,18 @@ export async function saveQuestion(input: {
   return { ok: true, code };
 }
 
-/** Ẩn câu khỏi trắc nghiệm của học viên (hoặc hiện lại). Câu trong file chưa sửa thì chép nội dung gốc vào bảng. */
-export async function setQuestionHidden(input: { subject: string; chapter: number; code: string; hidden: boolean }): Promise<ActionResult> {
+/** Đặt cờ `hidden` hoặc `examOnly` của một câu. Câu trong file chưa sửa thì chép nội dung gốc vào bảng. */
+async function setFlag(
+  input: { subject: string; chapter: number; code: string },
+  flag: { hidden: boolean } | { examOnly: boolean },
+): Promise<ActionResult> {
   const { user, subject, chapter } = await guard(input);
   const code = Code.parse(input.code);
-  const hidden = z.boolean().parse(input.hidden);
   const match = and(eq(schema.quizQuestions.subject, subject), eq(schema.quizQuestions.chapter, chapter), eq(schema.quizQuestions.code, code));
 
   const updated = await db
     .update(schema.quizQuestions)
-    .set({ hidden, updatedBy: user.id, updatedAt: sql`now()` })
+    .set({ ...flag, updatedBy: user.id, updatedAt: sql`now()` })
     .where(match)
     .returning({ id: schema.quizQuestions.id });
   if (!updated.length) {
@@ -93,11 +101,24 @@ export async function setQuestionHidden(input: { subject: string; chapter: numbe
     if (!original) return { ok: false, error: "Không tìm thấy câu này." };
     await db.insert(schema.quizQuestions).values({
       subject, chapter, code, q: original.q, options: original.options, answer: original.answer,
-      explain: original.explain, page: original.page ?? null, hidden, updatedBy: user.id,
+      explain: original.explain, page: original.page ?? null, ...flag, updatedBy: user.id,
     });
   }
   refresh();
   return { ok: true };
+}
+
+/** Ẩn câu khỏi trắc nghiệm của học viên và bộ chọn câu đề thi (hoặc hiện lại). */
+export async function setQuestionHidden(input: { subject: string; chapter: number; code: string; hidden: boolean }): Promise<ActionResult> {
+  return setFlag(input, { hidden: z.boolean().parse(input.hidden) });
+}
+
+/**
+ * Chỉ dùng câu cho đề thi (hoặc cho ôn tập trở lại). Câu chỉ dùng cho đề thi không hiện ở trắc nghiệm ôn tập,
+ * để học viên không xem trước được câu và đáp án của đề. Đề đã lưu giữ nguyên bản chép của câu.
+ */
+export async function setQuestionExamOnly(input: { subject: string; chapter: number; code: string; examOnly: boolean }): Promise<ActionResult> {
+  return setFlag(input, { examOnly: z.boolean().parse(input.examOnly) });
 }
 
 /** Bỏ bản sửa (và trạng thái ẩn) của một câu trong file, dùng lại nội dung gốc. */
@@ -129,9 +150,10 @@ export async function deleteQuestion(input: { subject: string; chapter: number; 
 }
 
 /** Nhập nhiều câu từ văn bản dán vào. Máy chủ đọc lại văn bản; còn câu lỗi thì không nhập câu nào. */
-export async function importQuestions(input: { subject: string; chapter: number; text: string }): Promise<ActionResult<{ count: number }>> {
+export async function importQuestions(input: { subject: string; chapter: number; text: string; examOnly?: boolean }): Promise<ActionResult<{ count: number }>> {
   const { user, subject, chapter } = await guard(input);
   const text = z.string().max(200_000, "Văn bản quá dài, chia thành nhiều lần nhập.").parse(input.text);
+  const examOnly = z.boolean().default(false).parse(input.examOnly);
   const parsed = parseQuestionText(text);
   if (parsed.length === 0) return { ok: false, error: "Không đọc được câu nào." };
   if (parsed.length > 300) return { ok: false, error: "Mỗi lần nhập tối đa 300 câu." };
@@ -139,7 +161,7 @@ export async function importQuestions(input: { subject: string; chapter: number;
   if (bad) return { ok: false, error: `Câu ${bad.index} (dòng ${bad.line}): ${bad.error}` };
 
   await db.insert(schema.quizQuestions).values(
-    parsed.map((p) => ({ subject, chapter, code: newCode(chapter), ...p.data!, updatedBy: user.id })),
+    parsed.map((p) => ({ subject, chapter, code: newCode(chapter), ...p.data!, examOnly, updatedBy: user.id })),
   );
   refresh();
   return { ok: true, count: parsed.length };

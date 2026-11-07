@@ -21,7 +21,7 @@ export const metadata: Metadata = { title: "Kết quả đề thi · Quản tr�
 
 async function Results({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  await requireTeacher(`/quan-tri/de-thi/${id}`);
+  await requireTeacher();
   const data = /^\d+$/.test(id) ? await getExamResults(Number(id)) : null;
   if (!data) notFound();
   const { exam, phase, students, questions } = data;

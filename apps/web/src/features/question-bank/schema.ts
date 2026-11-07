@@ -1,11 +1,11 @@
 import { z } from "zod";
 
+import { LETTERS, MAX_OPTIONS, MIN_OPTIONS } from "./letters";
+
 // Quy ước soạn câu hỏi dùng chung cho trình soạn ở /quan-tri/cau-hoi, Server Action và bộ đọc văn bản dán vào.
 // Giống quy ước file content/<môn>/question-bank/_mau.yaml: 2–6 phương án, đúng một đáp án, trang in của giáo trình.
 
-export const LETTERS = "ABCDEF";
-export const MIN_OPTIONS = 2;
-export const MAX_OPTIONS = LETTERS.length;
+export { LETTERS, MAX_OPTIONS, MIN_OPTIONS };
 
 export const QuestionInput = z
   .object({

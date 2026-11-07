@@ -4,13 +4,16 @@ chapter: 5
 status: nhap
 items:
   - id: pb5-01
+    # Mở thử nghiệm cho học viên ngày 07/11/2026 (luận điệu đầu tiên của Đấu trường). Nguồn đã kiểm tra: bài trên Tạp chí
+    # Giáo chức có thật, đúng chủ đề; bài của Tổng Bí thư đăng trên Báo Nhân Dân. Khoa vẫn cần xác nhận lời văn và barem.
+    status: da-duyet
     tieu_de: "\"Không thể có kinh tế thị trường định hướng xã hội chủ nghĩa\""
     luan_dieu: >-
       Kinh tế thị trường là sản phẩm riêng của chủ nghĩa tư bản. Nói "kinh tế thị trường định hướng xã hội chủ nghĩa"
       là khiên cưỡng, vì đã theo thị trường thì không thể đi lên chủ nghĩa xã hội.
     nguon_phan_bac:
-      - { ten: "Nhận diện và đấu tranh chống quan điểm sai trái về kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam hiện nay", bao: "Tạp chí Giáo chức Việt Nam (VJOL)", url: "https://vjol.info.vn/giaochuc/vi/article/view/263435" }
-      - { ten: "Phản bác quan điểm sai trái, xuyên tạc dự thảo các văn kiện của Đảng về các thành phần kinh tế", bao: "Báo Lào Cai", url: "https://baolaocai.vn/phan-bac-quan-diem-sai-trai-xuyen-tac-du-thao-cac-van-kien-cua-dang-ve-cac-thanh-phan-kinh-te-post648209.html" }
+      - { ten: "Một số vấn đề lý luận và thực tiễn về chủ nghĩa xã hội và con đường đi lên chủ nghĩa xã hội ở Việt Nam (Nguyễn Phú Trọng)", bao: "Báo Nhân Dân", ngay: "2021-05-16", url: "https://special.nhandan.vn/mot-so-van-de-ly-luan-va-thuc-tien-ve-con-duong-di-len-CNXH/index.html" }
+      - { ten: "Nhận diện và đấu tranh chống quan điểm sai trái về kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam hiện nay (Nguyễn Thị Minh Hương)", bao: "Tạp chí Giáo chức Việt Nam, số 204", ngay: "2024-04-05", url: "https://vjol.info.vn/giaochuc/vi/article/view/263435" }
     ngay_bien:
       - Đồng nhất kinh tế thị trường, một thành tựu phát triển chung của nhân loại, với chế độ tư bản chủ nghĩa
       - Tuyệt đối hóa một mô hình kinh tế thị trường, phủ nhận sự đa dạng mô hình theo điều kiện từng quốc gia

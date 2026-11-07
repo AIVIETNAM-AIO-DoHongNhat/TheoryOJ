@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = { title: "Đề thi · Quản trị" };
 
 async function Exams() {
-  await requireTeacher("/quan-tri/de-thi");
+  await requireTeacher();
   const exams = await listExams();
 
   if (exams.length === 0) {

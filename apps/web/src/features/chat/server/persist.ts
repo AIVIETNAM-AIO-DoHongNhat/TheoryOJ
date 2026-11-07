@@ -79,12 +79,33 @@ export async function saveAssistantMessage(r: AssistantRecord) {
   await db.update(conversations).set({ updatedAt: sql`now()` }).where(eq(conversations.id, r.conversationId));
 }
 
-/** Trích dẫn của câu trả lời gần nhất trong hội thoại (đã trả lời, không bị từ chối). */
-export async function lastCitations(conversationId: string): Promise<Citation[]> {
+/** Tin nhắn tạo trước tin `beforeId` của hội thoại (chưa có tin đó thì mọi tin nhắn). */
+const createdBefore = (conversationId: string, beforeId: string) =>
+  sql`${messages.createdAt} < coalesce((select created_at from messages where id = ${beforeId} and conversation_id = ${conversationId}), now())`;
+
+/**
+ * Các lượt trước câu hỏi `beforeId`, đọc từ DB chứ không lấy lịch sử trình duyệt gửi lên, để không ai giả lượt "trợ lý"
+ * nhằm dẫn dắt mô hình. Bấm "Thử lại" thì câu hỏi cũ được gửi lại cùng id, nên lấy các tin nhắn tạo trước tin đó.
+ */
+export async function historyBefore(conversationId: string, beforeId: string, limit = 12): Promise<{ role: "user" | "assistant"; text: string }[]> {
+  const rows = await db
+    .select({ role: messages.role, content: messages.content })
+    .from(messages)
+    .where(and(eq(messages.conversationId, conversationId), createdBefore(conversationId, beforeId)))
+    .orderBy(desc(messages.createdAt))
+    .limit(limit);
+  return rows.reverse().map((r) => ({ role: r.role, text: r.content })).filter((t) => t.text);
+}
+
+/** Trích dẫn của câu trả lời gần nhất trước câu hỏi `beforeId` (đã trả lời, không bị từ chối). */
+export async function lastCitations(conversationId: string, beforeId: string): Promise<Citation[]> {
   const [row] = await db
     .select({ citations: messages.citations })
     .from(messages)
-    .where(and(eq(messages.conversationId, conversationId), eq(messages.role, "assistant"), isNull(messages.refused)))
+    .where(and(
+      eq(messages.conversationId, conversationId), eq(messages.role, "assistant"), isNull(messages.refused),
+      createdBefore(conversationId, beforeId),
+    ))
     .orderBy(desc(messages.createdAt))
     .limit(1);
   return Array.isArray(row?.citations) ? (row.citations as Citation[]) : [];

@@ -39,15 +39,15 @@ async function badgeStats(visitorId: string): Promise<BadgeStats> {
     db.select({ n: count() }).from(notebookPages).where(and(eq(notebookPages.visitorId, visitorId), ne(notebookPages.body, ""))),
     activityDays(visitorId),
     db
-      .select({ kind: openAnswerAttempts.kind, itemId: openAnswerAttempts.itemId, score: openAnswerAttempts.score, maxScore: openAnswerAttempts.maxScore, lecturerScore: openAnswerAttempts.lecturerScore, flagged: openAnswerAttempts.flagged })
+      .select({ kind: openAnswerAttempts.kind, itemId: openAnswerAttempts.itemId, score: openAnswerAttempts.score, maxScore: openAnswerAttempts.maxScore, flagged: openAnswerAttempts.flagged })
       .from(openAnswerAttempts)
       .where(eq(openAnswerAttempts.visitorId, visitorId)),
   ]);
-  // Điểm giảng viên (nếu có) thay điểm hệ thống; bài phản bác gắn cờ lập trường không tính.
+  // Chỉ bài giảng viên đã chấm (score khác null); bài phản bác lập trường sai hoặc dao động (gắn cờ) không tính.
   const passedItems = (kind: "tu_luan" | "phan_bac", pass: number) =>
     new Set(
       open
-        .filter((a) => a.kind === kind && !(kind === "phan_bac" && a.flagged) && a.maxScore > 0 && ((a.lecturerScore ?? a.score) / a.maxScore) * 10 >= pass)
+        .filter((a) => a.kind === kind && !(kind === "phan_bac" && a.flagged) && a.score !== null && a.maxScore > 0 && (a.score / a.maxScore) * 10 >= pass)
         .map((a) => a.itemId),
     ).size;
 

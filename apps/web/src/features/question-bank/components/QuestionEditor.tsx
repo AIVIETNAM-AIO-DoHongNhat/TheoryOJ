@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
@@ -46,6 +47,8 @@ export function QuestionEditor({
   const [draft, setDraft] = useState<QuestionContent>(initial ?? EMPTY);
   const [pageText, setPageText] = useState(initial?.page ? String(initial.page) : "");
   const [error, setError] = useState<string | null>(null);
+  /** Chỉ hỏi khi soạn câu mới; câu đã có đổi ở menu của câu trong danh sách. */
+  const [examOnly, setExamOnly] = useState(false);
   const [pending, startTransition] = useTransition();
 
   const setOption = (i: number, text: string) => setDraft((d) => ({ ...d, options: d.options.map((o, j) => (j === i ? text : o)) }));
@@ -69,7 +72,7 @@ export function QuestionEditor({
 
     startTransition(async () => {
       try {
-        const res = await saveQuestion({ subject, chapter, code, question: parsed.data });
+        const res = await saveQuestion({ subject, chapter, code, question: parsed.data, examOnly: code ? undefined : examOnly });
         if (!res.ok) return setError(res.error);
         onOpenChange(false);
         onSaved?.(code ? "Đã lưu câu hỏi." : "Đã thêm câu hỏi.");
@@ -171,6 +174,16 @@ export function QuestionEditor({
             <Input id="trang" inputMode="numeric" value={pageText} onChange={(e) => setPageText(e.target.value)} placeholder="Ví dụ: 59" className="h-9" />
             <FieldDescription>Trang in ở chân trang, không bắt buộc.</FieldDescription>
           </Field>
+
+          {!code && (
+            <label className="flex items-start gap-2.5 text-sm">
+              <Checkbox checked={examOnly} onCheckedChange={(v) => setExamOnly(Boolean(v))} className="mt-0.5" />
+              <span>
+                <span className="font-medium">Chỉ dùng cho đề thi</span>
+                <span className="block text-xs text-muted-foreground">Câu không hiện ở trắc nghiệm ôn tập, học viên không xem trước được đáp án.</span>
+              </span>
+            </label>
+          )}
 
           {error && (
             <Alert variant="destructive">

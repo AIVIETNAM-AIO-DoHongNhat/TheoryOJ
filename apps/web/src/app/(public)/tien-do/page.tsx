@@ -71,6 +71,14 @@ async function SubjectProgress({ subject, visitorId }: { subject: Subject; visit
   const essays = essayCounts(subject.id, numbers);
   const openOf = (n: number, kind: "tu_luan" | "phan_bac") => openAnswers.find((o) => o.chapter === n && o.kind === kind);
   const fmt10 = (x: number) => x.toLocaleString("vi-VN", { maximumFractionDigits: 2 });
+  /** "cao nhất 7,5/10 (2/2 câu đã chấm), 1 bài chờ chấm"; chưa nộp bài nào thì "chưa làm". */
+  const openText = (o: ReturnType<typeof openOf>, total: string) => {
+    if (!o) return "chưa làm";
+    const parts: string[] = [];
+    if (o.best !== null) parts.push(`cao nhất ${fmt10(o.best)}/10 (${o.graded} ${total.endsWith("câu") ? `/ ${total}` : total} đã chấm)`);
+    if (o.pending) parts.push(`${o.pending} bài chờ giảng viên chấm`);
+    return parts.join(", ");
+  };
   // Trạng thái thẻ (đến hạn, đã thuộc) tính theo thời điểm mở trang.
   await connection();
   const now = new Date();
@@ -176,19 +184,8 @@ async function SubjectProgress({ subject, visitorId }: { subject: Subject; visit
                           : "chưa ôn"}
                       </span>
                     )}
-                    {essays[chapter.number] && (
-                      <span>
-                        Tự luận:{" "}
-                        {openOf(chapter.number, "tu_luan")
-                          ? `cao nhất ${fmt10(openOf(chapter.number, "tu_luan")!.best)}/10, ${openOf(chapter.number, "tu_luan")!.items}/${essays[chapter.number]} câu`
-                          : "chưa làm"}
-                      </span>
-                    )}
-                    {openOf(chapter.number, "phan_bac") && (
-                      <span>
-                        Phản bác: cao nhất {fmt10(openOf(chapter.number, "phan_bac")!.best)}/10, {openOf(chapter.number, "phan_bac")!.items} luận điệu
-                      </span>
-                    )}
+                    {essays[chapter.number] && <span>Tự luận: {openText(openOf(chapter.number, "tu_luan"), `${essays[chapter.number]} câu`)}</span>}
+                    {openOf(chapter.number, "phan_bac") && <span>Phản bác: {openText(openOf(chapter.number, "phan_bac"), "luận điệu")}</span>}
                     {c.questions > 0 && <span>Đã hỏi trợ lý {c.questions} câu</span>}
                     {notes[chapter.number] > 0 && (
                       <Link href={`/mon/${subject.id}/chuong/${chapter.number}`} className="hover:text-primary hover:underline">

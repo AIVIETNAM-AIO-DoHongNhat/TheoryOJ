@@ -20,6 +20,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
 import { markStudied } from "@/features/progress/streak-event";
+import { errorMessage, unwrap } from "@/lib/action-result";
 import { cn } from "@/lib/utils";
 
 import { newQuiz, submitQuiz } from "../actions";
@@ -55,6 +56,8 @@ function jumpTo(n: number) {
 
 /** Bài đang làm dở lưu trong trình duyệt, để lỡ tải lại trang hay đóng tab vẫn làm tiếp được. */
 interface Draft {
+  /** Mã đề máy chủ cấp; bản lưu cũ không có mã thì bỏ, vì máy chủ không chấm đề không rõ nguồn. */
+  drawId: string;
   questions: QuizQuestion[];
   answers: Record<string, number>;
   flagged: string[];
@@ -75,7 +78,7 @@ function parseDraft(raw: string | null): Draft | null {
   if (!raw) return null;
   try {
     const d = JSON.parse(raw) as Draft;
-    return Array.isArray(d.questions) && d.questions.length && d.answers && Object.keys(d.answers).length ? d : null;
+    return typeof d.drawId === "string" && Array.isArray(d.questions) && d.questions.length && d.answers && Object.keys(d.answers).length ? d : null;
   } catch {
     return null;
   }
@@ -88,18 +91,22 @@ function parseDraft(raw: string | null): Draft | null {
 export function QuizRunner({
   subject,
   chapter,
+  initialDrawId,
   initialQuestions,
   textbook,
   flashcardsHref,
 }: {
   subject: string;
   chapter: number;
+  /** Mã đề máy chủ cấp cùng các câu; nộp bài gửi kèm mã này. */
+  initialDrawId: string;
   initialQuestions: QuizQuestion[];
   textbook: TextbookRef | null;
   /** Trang thẻ ghi nhớ của chương, nếu chương có bộ thẻ. */
   flashcardsHref: string | null;
 }) {
   // Đề giữ trong state để "Làm đề khác", "Ôn lại câu sai" và bài làm dở không phụ thuộc lần dựng trang.
+  const [drawId, setDrawId] = useState(initialDrawId);
   const [questions, setQuestions] = useState(initialQuestions);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [flagged, setFlagged] = useState<ReadonlySet<string>>(new Set());
@@ -138,14 +145,15 @@ export function QuizRunner({
       if (result) localStorage.removeItem(draftKey);
       else if (!reviewing && Object.keys(answers).length) {
         const spent = startRef.current ? Math.floor((Date.now() - startRef.current) / 1000) : 0;
-        localStorage.setItem(draftKey, JSON.stringify({ questions, answers, flagged: [...flagged], elapsed: spent } satisfies Draft));
+        localStorage.setItem(draftKey, JSON.stringify({ drawId, questions, answers, flagged: [...flagged], elapsed: spent } satisfies Draft));
       }
     } catch {
       // Trình duyệt chặn bộ nhớ (chế độ riêng tư): vẫn làm bài bình thường, chỉ không khôi phục được.
     }
-  }, [draftKey, questions, answers, flagged, result, reviewing]);
+  }, [draftKey, drawId, questions, answers, flagged, result, reviewing]);
 
   function resumeDraft(d: Draft) {
+    setDrawId(d.drawId);
     setQuestions(d.questions);
     setAnswers(d.answers);
     setFlagged(new Set(d.flagged));
@@ -192,11 +200,11 @@ export function QuizRunner({
     startTransition(async () => {
       try {
         const payload = Object.fromEntries(questions.map((q) => [q.id, answers[q.id] ?? null]));
-        setResult(await submitQuiz({ subject, chapter, answers: payload, review: reviewing }));
+        setResult(unwrap(await submitQuiz({ drawId, answers: payload, review: reviewing })));
         if (!reviewing) markStudied();
         window.scrollTo({ top: 0, behavior: "smooth" });
-      } catch {
-        setError("Chưa nộp được bài. Đồng chí thử lại sau ít phút.");
+      } catch (e) {
+        setError(errorMessage(e, "Chưa nộp được bài. Đồng chí thử lại sau ít phút."));
       }
     });
   }
@@ -205,8 +213,9 @@ export function QuizRunner({
     setError(null);
     startTransition(async () => {
       try {
-        const next = await newQuiz(subject, chapter);
-        setQuestions(next);
+        const next = unwrap(await newQuiz(subject, chapter));
+        setDrawId(next.drawId);
+        setQuestions(next.questions);
         setAnswers({});
         setFlagged(new Set());
         setResult(null);
@@ -214,8 +223,8 @@ export function QuizRunner({
         startRef.current = null;
         setElapsed(0);
         window.scrollTo({ top: 0, behavior: "smooth" });
-      } catch {
-        setError("Chưa tải được đề mới. Đồng chí thử lại sau ít phút.");
+      } catch (e) {
+        setError(errorMessage(e, "Chưa tải được đề mới. Đồng chí thử lại sau ít phút."));
       }
     });
   }

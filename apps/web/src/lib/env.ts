@@ -38,8 +38,24 @@ const schema = z.object({
   CHAT_LIMIT_VISITOR_10M: z.coerce.number().int().positive().default(20),
   CHAT_LIMIT_VISITOR_DAY: z.coerce.number().int().positive().default(200),
   CHAT_LIMIT_IP_10M: z.coerce.number().int().positive().default(120),
+  /**
+   * Header chứa IP thật của người dùng do lớp proxy phía trước ghi, ví dụ cf-connecting-ip khi dùng Cloudflare Tunnel.
+   * Bỏ trống: lấy phần tử cuối của X-Forwarded-For (Caddy ghi). Chỉ đặt khi mọi yêu cầu đều đi qua proxy đó.
+   */
+  TRUSTED_IP_HEADER: z.preprocess((v) => (v === "" ? undefined : v), z.string().toLowerCase().optional()),
+  /**
+   * false (mặc định): chỉ mã có trong danh sách học viên (/quan-tri/danh-sach) mới đăng ký được, họ tên và lớp lấy theo danh sách.
+   * true: ai cũng đăng ký được và tự khai họ tên, lớp. Chỉ bật khi phát triển hoặc thử nghiệm.
+   */
+  REGISTRATION_OPEN: z.stringbool().default(false),
   /** Đợt khảo sát đang mở ở /khao-sat: "truoc" khi bắt đầu thử nghiệm, "sau" khi kết thúc, "dong" để đóng. */
   SURVEY_PHASE: z.enum(["truoc", "sau", "dong"]).default("truoc"),
 });
 
 export const env = schema.parse(process.env);
+
+// Chạy production mà quên DATABASE_URL thì dừng ngay với lời báo rõ, thay vì âm thầm nối vào Postgres của máy phát triển
+// rồi lỗi khó hiểu ở yêu cầu đầu tiên. Lúc build (next build) chưa cần DB nên bỏ qua.
+if (process.env.NODE_ENV === "production" && process.env.NEXT_PHASE !== "phase-production-build" && !process.env.DATABASE_URL) {
+  throw new Error("Chưa đặt DATABASE_URL cho bản production.");
+}

@@ -1,0 +1,1 @@
+ALTER TABLE "open_answer_attempts" ADD COLUMN "pending_follow_up" jsonb;

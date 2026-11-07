@@ -1,10 +1,10 @@
-import type { Citation } from "@/features/chat/types";
+// Bài tự luận và bài phản bác (PLAN.md mục 4.5). Học viên nộp bài, giảng viên phụ trách môn chấm từng ý theo barem
+// do Khoa duyệt; không dùng AI. Giảng viên chọn mức đạt từng ý, tổng điểm do code tính (grading.ts).
 
-// Chấm câu hỏi mở (PLAN.md mục 4.5): tự luận theo barem và phản bác luận điệu sai trái dùng chung một lõi.
-// Mô hình chỉ phán đoán mức đạt của từng ý; điểm do code tính, như công cụ tinh_ktct.
-
-export const ATTEMPT_KINDS = ["tu_luan", "phan_bac", "hoi_vat"] as const;
+export const ATTEMPT_KINDS = ["tu_luan", "phan_bac"] as const;
 export type AttemptKind = (typeof ATTEMPT_KINDS)[number];
+
+export const KIND_LABELS: Record<AttemptKind, string> = { tu_luan: "Tự luận", phan_bac: "Phản bác" };
 
 /** Mức đạt của một ý: đủ ý, có nhưng chưa đủ, không có, nêu sai. */
 export const LEVELS = ["dat", "mot_phan", "thieu", "sai"] as const;
@@ -37,7 +37,7 @@ export interface RubricPoint {
   axis?: Axis;
 }
 
-/** Barem chụp lúc chấm, lưu cùng bài làm. */
+/** Barem chụp lúc nộp, lưu cùng bài làm. */
 export interface GradedRubric {
   prompt: string;
   points: RubricPoint[];
@@ -45,22 +45,36 @@ export interface GradedRubric {
   fallacies?: string[];
 }
 
+/** Lập trường của bài phản bác, giảng viên đánh giá. */
+export const STANCES = ["dung", "dao_dong", "sai"] as const;
+export type Stance = (typeof STANCES)[number];
+
+export const STANCE_LABELS: Record<Stance, string> = {
+  dung: "Lập trường đúng",
+  dao_dong: "Lập trường chưa vững",
+  sai: "Chưa phản bác, đồng tình với luận điệu",
+};
+
 export interface GradedPoint {
   id: string;
   level: Level;
-  /** Đoạn trích nguyên văn từ bài làm làm bằng chứng cho mức đạt. */
-  quote: string;
+  /** Nhận xét của giảng viên cho ý này (không bắt buộc). */
   comment: string;
-  /** Số thứ tự [n] của đoạn tài liệu làm căn cứ. */
-  sources: number[];
   score: number;
-  /** Mô hình nêu đoạn trích không có trong bài làm: mức đạt bị hạ. */
-  quoteRejected?: boolean;
 }
 
-/** Lập trường của bài phản bác. */
-export const STANCES = ["dung", "dao_dong", "sai"] as const;
-export type Stance = (typeof STANCES)[number];
+/** Kết quả giảng viên chấm. */
+export interface GradeResult {
+  points: GradedPoint[];
+  /** Nhận xét chung của giảng viên. */
+  overall: string;
+  score: number;
+  maxScore: number;
+  /** Chỉ có ở bài phản bác. */
+  stance?: Stance;
+  /** Lỗi lập luận bài làm đã chỉ ra, theo thứ tự trong barem. */
+  fallaciesFound?: boolean[];
+}
 
 export interface PublishedRebuttal {
   ten: string;
@@ -69,35 +83,22 @@ export interface PublishedRebuttal {
   url: string;
 }
 
-export interface GradeResult {
-  points: GradedPoint[];
-  overall: string;
-  score: number;
-  maxScore: number;
-  /** Chỉ có ở bài phản bác. */
-  stance?: Stance;
-  /** Lỗi lập luận đã chỉ ra, theo thứ tự trong barem. */
-  fallaciesFound?: boolean[];
-  flagged: boolean;
-  /** Lý do gắn cờ, để giảng viên lọc. */
-  flagReason?: "lap_truong" | "chen_lenh" | "lap_lai_luan_dieu";
-  /** Câu hỏi vặn đã đặt (chỉ ở lượt hỏi vặn). */
-  question?: string;
-}
-
-/** Kết quả gửi về trình duyệt sau khi chấm. */
-export interface GradeResponse {
+/** Bài đã nộp, gửi xuống trình duyệt của học viên. Barem và kết quả chỉ có khi giảng viên đã chấm. */
+export interface Submission {
   attemptId: number;
-  result: GradeResult;
-  rubric: GradedRubric;
-  citations: Citation[];
-  /** Bài phản bác chính thống: chỉ gửi sau khi nộp. */
+  answer: string;
+  /** ISO, thời điểm nộp (hoặc sửa) gần nhất. */
+  submittedAt: string;
+  status: "cho_cham" | "da_cham";
+  rubric?: GradedRubric;
+  result?: GradeResult;
+  gradedAt?: string;
+  graderName?: string | null;
+  /** Bài phản bác chính thống: chỉ gửi khi đã chấm. */
   published?: PublishedRebuttal[];
-  lecturerScore?: number | null;
-  lecturerNote?: string | null;
 }
 
 export const MIN_ANSWER = 80;
 export const MAX_ANSWER = 4000;
-export const MIN_FOLLOW_UP = 20;
-export const MAX_FOLLOW_UP = 1500;
+export const MAX_COMMENT = 600;
+export const MAX_OVERALL = 1500;

@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AdminScrollArea } from "@/features/admin/components/AdminScrollArea";
 import { AdminSidebar } from "@/features/admin/components/AdminSidebar";
 import { AdminTopbar } from "@/features/admin/components/AdminTopbar";
+import { pendingCount } from "@/features/admin/server/grading";
 import { getReviewCounts } from "@/features/admin/server/review";
 import { requireTeacher } from "@/lib/auth/session";
 
@@ -17,12 +18,12 @@ export const metadata: Metadata = {
 /** Cả khung chỉ dựng sau khi xác nhận giảng viên, để học viên không thấy cả tên các mục quản trị. */
 async function AdminShell({ children }: { children: React.ReactNode }) {
   const user = await requireTeacher();
-  const counts = await getReviewCounts();
+  const [counts, toGrade] = await Promise.all([getReviewCounts(), pendingCount(user.subjects)]);
   const toReview = counts["gan-co"] + counts["danh-gia"];
   return (
     // Khung cao đúng một màn hình: thanh bên và thanh trên đứng yên, chỉ vùng nội dung (AdminScrollArea) cuộn.
     <SidebarProvider className="admin-chrome h-svh">
-      <AdminSidebar fullName={user.fullName} toReview={toReview} />
+      <AdminSidebar fullName={user.fullName} toReview={toReview} toGrade={toGrade} />
       <SidebarInset className="min-h-0 min-w-0 overflow-hidden bg-subtle md:peer-data-[variant=inset]:shadow-[0_0_0_1px_rgb(255_255_255/0.04),0_24px_60px_-30px_rgb(0_0_0/0.6)]">
         <AdminTopbar toReview={toReview} />
         <AdminScrollArea>

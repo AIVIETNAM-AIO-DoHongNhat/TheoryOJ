@@ -5,7 +5,9 @@ import { z } from "zod";
 import { EXERCISES, getTemplate, gradeExercise } from "@/domain/ktct/exercises";
 import { QUANTITIES, type Quantity, type Step } from "@/domain/ktct/formulas";
 import { saveAttempt } from "@/features/progress/server/progress";
+import { type DataResult, UserError } from "@/lib/action-result";
 import { requireStudent } from "@/lib/auth/session";
+import { run } from "@/lib/run-action";
 
 const quantity = z.enum(Object.keys(QUANTITIES) as [Quantity, ...Quantity[]]);
 
@@ -23,26 +25,28 @@ export interface ExerciseResult {
 }
 
 /** Chấm bài tập: tính lại đáp án từ dữ kiện bằng cùng bộ công thức, rồi lưu lượt làm vào tiến độ. */
-export async function submitExercise(input: z.input<typeof SubmitInput>): Promise<ExerciseResult> {
-  const user = await requireStudent();
-  const { subject, chapter, template: templateId, given, answers } = SubmitInput.parse(input);
-  const template = getTemplate(templateId);
-  if (!template || !EXERCISES[subject]?.[chapter]?.includes(template)) throw new Error("Không có dạng bài này.");
-  // Chỉ nhận đúng các dữ kiện của dạng bài, để không ai gửi kèm sẵn đáp án vào dữ kiện.
-  const known = Object.fromEntries(template.given.map((q) => [q, given[q]]));
-  if (template.given.some((q) => known[q] === undefined)) throw new Error("Thiếu dữ kiện.");
+export async function submitExercise(input: z.input<typeof SubmitInput>): Promise<DataResult<ExerciseResult>> {
+  return run(async () => {
+    const user = await requireStudent();
+    const { subject, chapter, template: templateId, given, answers } = SubmitInput.parse(input);
+    const template = getTemplate(templateId);
+    if (!template || !EXERCISES[subject]?.[chapter]?.includes(template)) throw new UserError("Không có dạng bài này.");
+    // Chỉ nhận đúng các dữ kiện của dạng bài, để không ai gửi kèm sẵn đáp án vào dữ kiện.
+    const known = Object.fromEntries(template.given.map((q) => [q, given[q]]));
+    if (template.given.some((q) => known[q] === undefined)) throw new UserError("Thiếu dữ kiện.");
 
-  const { results, steps } = gradeExercise(template, known, answers);
-  const score = results.filter((r) => r.correct).length;
+    const { results, steps } = gradeExercise(template, known, answers);
+    const score = results.filter((r) => r.correct).length;
 
-  await saveAttempt({
-    visitorId: user.visitorId,
-    subject,
-    chapter,
-    kind: "exercise",
-    score,
-    total: results.length,
-    details: { template: template.id, given: known, answers, expected: Object.fromEntries(results.map((r) => [r.quantity, r.expected])) },
+    await saveAttempt({
+      visitorId: user.visitorId,
+      subject,
+      chapter,
+      kind: "exercise",
+      score,
+      total: results.length,
+      details: { template: template.id, given: known, answers, expected: Object.fromEntries(results.map((r) => [r.quantity, r.expected])) },
+    });
+    return { results, steps };
   });
-  return { results, steps };
 }

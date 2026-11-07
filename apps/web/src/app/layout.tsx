@@ -10,32 +10,33 @@ import { AuthTransitionHost } from "@/features/auth/components/AuthTransition";
 import { THEME_SCRIPT } from "@/lib/theme-script";
 import { cn } from "@/lib/utils";
 
+// Cả bốn họ chữ dùng bản biến thiên (variable font): không khai `weight` thì mỗi bộ ký tự chỉ một file cho mọi độ đậm,
+// thay vì một file cho từng độ đậm.
+
 // Nội dung: Roboto, nét thẳng, chắc; quen thuộc trên các cổng thông tin cơ quan nhà nước.
 const sans = Roboto({
   variable: "--font-roboto",
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600", "700"],
 });
 
 // Tiêu đề: Roboto Condensed đậm, chữ đứng, khổ hẹp, tạo cảm giác cứng cáp, kỷ luật.
 const heading = Roboto_Condensed({
   variable: "--font-roboto-condensed",
   subsets: ["latin", "vietnamese"],
-  weight: ["600", "700", "800"],
 });
 
 // Chữ có chân cho chế độ đọc. Không tải trước: trình duyệt chỉ tải khi người đọc chọn kiểu chữ này.
 const serif = Noto_Serif({
   variable: "--font-serif-vn",
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "600", "700"],
   preload: false,
 });
 
+// Chữ đơn cách chỉ dùng cho mã học viên, mã câu, công thức: không tải trước ở mọi trang.
 const mono = JetBrains_Mono({
   variable: "--font-mono-vn",
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "500"],
+  preload: false,
 });
 
 export const metadata: Metadata = {

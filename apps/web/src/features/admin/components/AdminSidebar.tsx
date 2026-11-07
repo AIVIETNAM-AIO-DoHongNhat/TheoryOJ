@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, ChartColumnBig, ClipboardList, LayoutDashboard, Library, LogOut, MessagesSquare, PenLine, Users } from "lucide-react";
+import { ArrowUpRight, ChartColumnBig, ClipboardList, IdCard, LayoutDashboard, Library, LogOut, MessagesSquare, PenLine, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -18,6 +18,7 @@ export const ADMIN_NAV = [
   { href: "/quan-tri", label: "Tổng quan", icon: LayoutDashboard, group: "Theo dõi" },
   { href: "/quan-tri/hoc-vien", label: "Học viên", icon: Users, group: "Theo dõi" },
   { href: "/quan-tri/lop", label: "Theo lớp", icon: ChartColumnBig, group: "Theo dõi" },
+  { href: "/quan-tri/danh-sach", label: "Danh sách lớp", icon: IdCard, group: "Theo dõi" },
   { href: "/quan-tri/hoi-dap", label: "Hỏi đáp", icon: MessagesSquare, group: "Theo dõi" },
   { href: "/quan-tri/cham-bai", label: "Chấm bài", icon: PenLine, group: "Theo dõi" },
   { href: "/quan-tri/cau-hoi", label: "Ngân hàng câu hỏi", icon: Library, group: "Nội dung" },
@@ -42,7 +43,7 @@ const ITEM = cn(
 /** Chữ mờ dần khi thanh bên thu về dạng biểu tượng, hiện lại khi mở (chậm hơn một nhịp để không chồng lên lúc đang giãn). */
 const FADE = "transition-opacity duration-300 delay-75 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0";
 
-export function AdminSidebar({ fullName, toReview }: { fullName: string; toReview: number }) {
+export function AdminSidebar({ fullName, toReview, toGrade }: { fullName: string; toReview: number; toGrade: number }) {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
 
@@ -88,6 +89,11 @@ export function AdminSidebar({ fullName, toReview }: { fullName: string; toRevie
                     {href === "/quan-tri/hoi-dap" && toReview > 0 && (
                       <SidebarMenuBadge className="top-2! right-2 rounded-full bg-amber-400 px-1.5 text-[11px] font-semibold text-amber-950! peer-hover/menu-button:text-amber-950! peer-data-active/menu-button:text-amber-950!">
                         {toReview > 99 ? "99+" : toReview}
+                      </SidebarMenuBadge>
+                    )}
+                    {href === "/quan-tri/cham-bai" && toGrade > 0 && (
+                      <SidebarMenuBadge className="top-2! right-2 rounded-full bg-amber-400 px-1.5 text-[11px] font-semibold text-amber-950! peer-hover/menu-button:text-amber-950! peer-data-active/menu-button:text-amber-950!">
+                        {toGrade > 99 ? "99+" : toGrade}
                       </SidebarMenuBadge>
                     )}
                   </SidebarMenuItem>

@@ -2,17 +2,20 @@ import "server-only";
 
 import { createHash, randomBytes } from "node:crypto";
 
-import { and, eq, gt, ne, sql } from "drizzle-orm";
+import { and, eq, gt, lt, ne, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { cache } from "react";
 
+import { UserError } from "@/lib/action-result";
 import { db, schema } from "@/lib/db";
+
+import { SESSION_COOKIE } from "./cookie";
 
 // Phiên đăng nhập lưu trong Postgres, cookie chỉ giữ mã phiên ngẫu nhiên; DB lưu SHA-256 của mã đó,
 // nên lộ bảng sessions cũng không dùng lại được phiên.
 
-export const SESSION_COOKIE = "theoryoj_phien";
+export { SESSION_COOKIE } from "./cookie";
 const SESSION_DAYS = 30;
 
 export interface CurrentUser {
@@ -22,6 +25,8 @@ export interface CurrentUser {
   className: string;
   visitorId: string;
   role: "hoc-vien" | "giang-vien";
+  /** Môn giảng viên phụ trách chấm bài; rỗng với học viên. */
+  subjects: string[];
   sessionId: string;
 }
 
@@ -32,6 +37,10 @@ export async function startSession(userId: string): Promise<void> {
   const token = randomBytes(32).toString("base64url");
   const expiresAt = new Date(Date.now() + SESSION_DAYS * 86_400_000);
   await db.insert(schema.sessions).values({ id: digest(token), userId, expiresAt });
+  // Dọn phiên đã hết hạn của người này (đăng nhập nhiều máy lâu ngày), và thỉnh thoảng của mọi người.
+  await db.delete(schema.sessions).where(
+    Math.random() < 0.05 ? lt(schema.sessions.expiresAt, sql`now()`) : and(eq(schema.sessions.userId, userId), lt(schema.sessions.expiresAt, sql`now()`)),
+  );
   (await cookies()).set(SESSION_COOKIE, token, {
     path: "/", expires: expiresAt, httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production",
   });
@@ -49,6 +58,7 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
       className: schema.users.className,
       visitorId: schema.users.visitorId,
       role: schema.users.role,
+      subjects: schema.users.subjects,
       sessionId: schema.sessions.id,
     })
     .from(schema.sessions)
@@ -77,17 +87,18 @@ export const isStudent = (user: CurrentUser | null): user is CurrentUser => user
 /** Server Action làm bài gọi hàm này. Trang đã chặn trước, nên lỗi ở đây chỉ xảy ra khi phiên hết hạn giữa chừng. */
 export async function requireStudent(): Promise<CurrentUser> {
   const user = await getCurrentUser();
-  if (!isStudent(user)) throw new Error("Chỉ tài khoản học viên đã đăng nhập mới làm bài.");
+  if (!isStudent(user)) throw new UserError("Phiên đăng nhập đã hết hạn hoặc tài khoản không phải học viên. Đồng chí đăng nhập lại rồi thử lại.");
   return user;
 }
 
 /**
- * Trang và Server Action của /quan-tri gọi hàm này đầu tiên. Chưa đăng nhập thì chuyển tới trang đăng nhập,
- * đăng nhập bằng tài khoản học viên thì báo không tìm thấy trang (không để lộ trang quản trị tồn tại).
+ * Trang và Server Action của /quan-tri gọi hàm này đầu tiên. Ai không phải giảng viên đã đăng nhập (khách, học viên,
+ * phiên hết hạn) đều nhận trang 404 như một đường dẫn không tồn tại, để không lộ là trang quản trị có thật.
+ * Giảng viên đăng nhập ở /dang-nhap như mọi người; homeFor (features/auth/schemas.ts) đưa thẳng vào /quan-tri.
+ * proxy.ts chặn trước ở tầng định tuyến khi không có cookie phiên; hàm này là chốt chặn thật (kiểm tra phiên và vai trò).
  */
-export async function requireTeacher(next = "/quan-tri"): Promise<CurrentUser> {
+export async function requireTeacher(): Promise<CurrentUser> {
   const user = await getCurrentUser();
-  if (!user) redirect(`/dang-nhap?tiep=${encodeURIComponent(next)}`);
-  if (user.role !== "giang-vien") notFound();
+  if (user?.role !== "giang-vien") notFound();
   return user;
 }

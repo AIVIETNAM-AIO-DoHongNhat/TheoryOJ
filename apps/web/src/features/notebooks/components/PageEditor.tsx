@@ -15,6 +15,7 @@ import {
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { getSubject } from "@/config/subjects";
+import { errorMessage, unwrap } from "@/lib/action-result";
 import { cn } from "@/lib/utils";
 
 import { savePage } from "../actions";
@@ -138,13 +139,13 @@ export function PageEditor({
       const snap = latest.current;
       setStatus({ kind: "saving" });
       try {
-        const { updatedAt } = await savePage({ id: page.id, ...snap, subject: subjectId });
+        const { updatedAt } = unwrap(await savePage({ id: page.id, ...snap, subject: subjectId }));
         if (dirty.current) setStatus({ kind: "dirty" });
         else setStatus({ kind: "saved", at: updatedAt });
         onChangeRef.current(page.id, { ...snap, subject: subjectId, updatedAt });
       } catch (e) {
         dirty.current = true;
-        setStatus({ kind: "error", message: e instanceof Error ? e.message : "Chưa lưu được." });
+        setStatus({ kind: "error", message: errorMessage(e, "Chưa lưu được.") });
       }
     });
     return chain.current;

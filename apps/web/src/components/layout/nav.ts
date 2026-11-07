@@ -15,6 +15,7 @@ export const NAV: NavItem[] = [
   { href: "/", label: "Trang chủ" },
   { href: "/mon", label: "Bài học" },
   { href: "/on-tap", label: "Ôn tập" },
+  { href: "/phan-bac", label: "Phản bác", description: "Đấu trường phản bác quan điểm sai trái" },
   { href: "/thu-vien", label: "Thư viện" },
   { href: "/bai-viet", label: "Bài viết" },
   { href: "/gioi-thieu", label: "Giới thiệu" },

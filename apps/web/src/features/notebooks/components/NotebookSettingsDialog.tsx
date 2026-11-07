@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { ACTIVE_SUBJECTS } from "@/config/subjects";
+import { errorMessage, unwrap } from "@/lib/action-result";
 import { cn } from "@/lib/utils";
 
 import { createNotebook, removeNotebook, saveNotebookSettings } from "../actions";
@@ -65,16 +66,16 @@ export function NotebookSettingsDialog({
     startTransition(async () => {
       try {
         if (notebook) {
-          await saveNotebookSettings({ id: notebook.id, ...s });
+          unwrap(await saveNotebookSettings({ id: notebook.id, ...s }));
           setOpen(false);
           router.refresh();
         } else {
-          const nb = await createNotebook(s);
+          const nb = unwrap(await createNotebook(s));
           setOpen(false);
           router.push(notebookHref(nb.id));
         }
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Chưa lưu được. Thử lại sau ít phút.");
+        setError(errorMessage(e, "Chưa lưu được. Thử lại sau ít phút."));
       }
     });
   };
@@ -83,12 +84,12 @@ export function NotebookSettingsDialog({
     if (!notebook) return;
     startTransition(async () => {
       try {
-        await removeNotebook(notebook.id);
+        unwrap(await removeNotebook(notebook.id));
         setOpen(false);
         router.push("/so-ghi-chep");
         router.refresh();
-      } catch {
-        setError("Chưa xóa được sổ. Thử lại sau ít phút.");
+      } catch (e) {
+        setError(errorMessage(e, "Chưa xóa được sổ. Thử lại sau ít phút."));
       }
     });
   };

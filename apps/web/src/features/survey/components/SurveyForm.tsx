@@ -10,6 +10,7 @@ import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel, FieldLeg
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { errorMessage, unwrap } from "@/lib/action-result";
 
 import { submitSurvey } from "../actions";
 import { questionsFor, ROLE_LABELS, SCALE, type SurveyPhase, type SurveyRole } from "../questions";
@@ -37,10 +38,10 @@ export function SurveyForm({ phase, initial }: { phase: SurveyPhase; initial: In
     setError(null);
     startTransition(async () => {
       try {
-        await submitSurvey({ role, answers, comment });
+        unwrap(await submitSurvey({ role, answers, comment }));
         setSent(true);
-      } catch {
-        setError("Chưa gửi được phiếu. Đồng chí thử lại sau ít phút.");
+      } catch (e) {
+        setError(errorMessage(e, "Chưa gửi được phiếu. Đồng chí thử lại sau ít phút."));
       }
     });
   }

@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { createCard } from "@/features/flashcards/actions";
 import { CARD_BACK_MAX, CARD_FRONT_MAX } from "@/features/flashcards/types";
 import { ClipForm } from "@/features/notebooks/components/ClipForm";
+import { errorMessage, unwrap } from "@/lib/action-result";
 
 import { saveNote } from "../actions";
 import { askAboutHref, NOTE_MAX, type NoteAnchor, type NoteSource, type ReaderNote } from "../types";
@@ -144,11 +145,11 @@ export function SelectionMenu({
     setPending(true);
     setError(null);
     try {
-      const note = await saveNote({ ...target, ...shown.anchor, note: String(form.get("note") ?? "") });
+      const note = unwrap(await saveNote({ ...target, ...shown.anchor, note: String(form.get("note") ?? "") }));
       onSaved(note);
       done("Đã lưu ghi chú.");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Không lưu được ghi chú.");
+      setError(errorMessage(e, "Không lưu được ghi chú."));
     } finally {
       setPending(false);
     }
@@ -159,18 +160,18 @@ export function SelectionMenu({
     setPending(true);
     setError(null);
     try {
-      await createCard({
+      unwrap(await createCard({
         subject,
         chapter: shown.anchor.chapter,
         front: String(form.get("front") ?? ""),
         back: String(form.get("back") ?? ""),
         sourceSlug: target.source === "thu-vien" ? target.slug : null,
         pdfPage: shown.anchor.pdfPage,
-      });
+      }));
       onCardCreated?.();
       done(`Đã thêm vào thẻ ghi nhớ chương ${shown.anchor.chapter}.`);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Không tạo được thẻ.");
+      setError(errorMessage(e, "Không tạo được thẻ."));
     } finally {
       setPending(false);
     }

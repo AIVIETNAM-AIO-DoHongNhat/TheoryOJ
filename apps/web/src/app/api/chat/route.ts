@@ -9,7 +9,9 @@ import { z } from "zod";
 
 import { getSubject } from "@/config/subjects";
 import { MODE_IDS } from "@/features/chat/modes";
-import { ensureConversation, lastCitations, saveAssistantMessage, saveUserMessage, type AssistantRecord } from "@/features/chat/server/persist";
+import {
+  ensureConversation, historyBefore, lastCitations, saveAssistantMessage, saveUserMessage, type AssistantRecord,
+} from "@/features/chat/server/persist";
 import { answerSettings, cannedAnswer, prepare } from "@/features/chat/server/pipeline";
 import { refusalText } from "@/features/chat/server/prompts";
 import type { Turn } from "@/features/chat/server/rewrite-query";
@@ -65,7 +67,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "Môn học này chưa hỗ trợ chế độ đã chọn" }, { status: 400 });
   }
 
-  // Chỉ lấy phần chữ: không tin vai trò system hay phần công cụ do client gửi lên.
+  // Chỉ lấy phần chữ của câu hỏi cuối: không tin vai trò system, phần công cụ hay các lượt trước do client gửi lên.
   const turns: Turn[] = messages
     .filter((m) => m.role !== "system")
     .map((m) => ({ role: m.role as Turn["role"], text: textOf(m.parts) }))
@@ -95,9 +97,9 @@ export async function POST(req: Request) {
   }
   await saveUserMessage(conversationId, lastMessage.id, last.text);
 
-  const history = turns.slice(0, -1);
-  // Trích dẫn của câu trả lời trước đọc từ DB, không lấy từ client, cho yêu cầu "tóm tắt lại ý trên".
-  const previousCitations = history.length ? await lastCitations(conversationId) : [];
+  // Các lượt trước và trích dẫn của câu trả lời trước đọc từ DB, không lấy từ client.
+  const history: Turn[] = await historyBefore(conversationId, lastMessage.id);
+  const previousCitations = history.length ? await lastCitations(conversationId, lastMessage.id) : [];
   const input = { subject, mode, chapters, history, question: last.text, previousCitations };
   const started = performance.now();
   const assistantId = generateId();

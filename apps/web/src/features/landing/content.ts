@@ -112,6 +112,20 @@ export const features = {
   } satisfies Record<ModeId, string[]>,
 };
 
+/** Khối giới thiệu Đấu trường phản bác (bản thử nghiệm) trên trang chủ. */
+export const rebuttalArena = {
+  overline: "Đấu trường phản bác",
+  title: "Luyện bản lĩnh trước luận điệu sai trái",
+  lead: "Mỗi đề là một luận điệu đã bị báo chí chính thống phản bác. Học viên tự viết bài phản bác; giảng viên phụ trách môn chấm theo ba trục lý luận, văn kiện, thực tiễn, chỉ ra lỗi lập luận còn bỏ sót, kèm bài phản bác đã đăng để đối chiếu.",
+  note: "Tính năng đang thử nghiệm, bộ luận điệu được Khoa rà soát và mở dần theo từng đợt.",
+  axes: [
+    { title: "Lý luận", text: "Dùng đúng khái niệm, quy luật trong giáo trình" },
+    { title: "Văn kiện", text: "Dẫn quan điểm của Đảng trong nghị quyết" },
+    { title: "Thực tiễn", text: "Dẫn chứng, vạch trần thủ đoạn đánh tráo khái niệm" },
+  ],
+  cta: "Vào Đấu trường",
+};
+
 export const principles = {
   overline: "Nguyên tắc",
   title: "Nguyên tắc hoạt động",
@@ -127,8 +141,10 @@ export const principles = {
 
 export const facultySection = {
   overline: "Khoa LLCT&KHXHNV",
-  title: "Đồng hành cùng học viên",
-  lead: "Nội dung của trợ lý do giảng viên Khoa biên soạn, kiểm định và cập nhật theo chương trình đào tạo của Học viện.",
+  title: "Học liệu do giảng viên Khoa biên soạn",
+  lead:
+    "Tài liệu trong Thư viện, bài học theo chương và ngân hàng câu hỏi trên TheoryOJ do giảng viên Khoa lựa chọn, biên soạn và rà soát. " +
+    "Khi chương trình đào tạo của Học viện thay đổi, Khoa cập nhật học liệu để câu trả lời của trợ lý khớp với giáo trình đang giảng dạy.",
 };
 
 /** Phần "Về Khoa" ở trang giới thiệu. Khoa rà soát lời văn và điền số liệu. */
@@ -136,19 +152,46 @@ export const faculty = {
   overline: "Về Khoa",
   nameStart: "Khoa Lý luận chính trị",
   nameAccent: "và Khoa học xã hội nhân văn",
-  paragraphs: [
-    "Khoa LLCT&KHXHNV là đơn vị chuyên môn của Học viện An ninh nhân dân, đảm nhiệm giảng dạy các môn lý luận chính trị " +
-      "và khoa học xã hội nhân văn cho học viên các hệ đào tạo.",
-    "Bên cạnh giảng dạy, Khoa tổ chức nghiên cứu khoa học, các sân chơi học thuật như Cuộc thi học tập song ngữ “Đường đến triết học”, " +
-      "và đẩy mạnh chuyển đổi số trong dạy và học. TheoryOJ là một sản phẩm của hướng đi đó.",
-  ],
+  lead:
+    "Khoa Lý luận chính trị và Khoa học xã hội nhân văn là đơn vị chuyên môn của Học viện An ninh nhân dân. " +
+    "Khoa giảng dạy các môn lý luận chính trị và khoa học xã hội nhân văn cho học viên các hệ đào tạo của Học viện.",
+  /** Hai thẻ dưới tiêu đề, đi theo thứ tự nhu cầu rồi lời giải. Thẻ thứ hai nền xanh đậm, có nút dẫn sang trợ lý. */
+  story: {
+    need: {
+      label: "Nhu cầu của học viên",
+      title: "Ôn tập ngoài giờ cần bám đúng giáo trình",
+      text:
+        "Các môn lý luận chính trị cung cấp hệ thống khái niệm, quy luật và quan điểm của Đảng làm cơ sở cho công tác bảo vệ an ninh quốc gia. " +
+        "Mỗi môn có nhiều khái niệm trừu tượng, trong khi thời gian lên lớp có hạn, nên học viên phải tự ôn tập nhiều ngoài giờ học. " +
+        "Công cụ tìm kiếm và trò chuyện phổ thông trả lời nhanh nhưng không dẫn về giáo trình và có thể lấy nội dung từ nguồn không chính thống.",
+    },
+    answer: {
+      label: "Cách TheoryOJ đáp ứng",
+      title: "Mỗi ý trả lời dẫn về chương và trang giáo trình",
+      text:
+        "Khoa xây dựng TheoryOJ để học viên tự học theo đúng giáo trình và văn kiện. " +
+        "Giảng viên lựa chọn tài liệu cho Thư viện, biên soạn bài học theo chương và rà soát ngân hàng câu hỏi. " +
+        "Trợ lý học tập chỉ trả lời từ các tài liệu đó và ghi rõ chương, trang in để học viên đối chiếu.",
+      cta: { href: "/tro-ly", label: "Hỏi trợ lý học tập" },
+    },
+  },
   duties: [
-    { title: "Giảng dạy", text: "Các môn lý luận chính trị theo chương trình đào tạo của Học viện." },
-    { title: "Nghiên cứu khoa học", text: "Đề tài, bài viết gắn lý luận với thực tiễn bảo vệ an ninh quốc gia." },
-    { title: "Giáo dục chính trị tư tưởng", text: "Bồi dưỡng bản lĩnh chính trị, phẩm chất người cán bộ Công an nhân dân." },
+    {
+      title: "Giảng dạy",
+      text: "Giảng dạy các môn lý luận chính trị và khoa học xã hội nhân văn, biên soạn bài giảng và đề thi theo chương trình đào tạo của Học viện.",
+    },
+    {
+      title: "Nghiên cứu khoa học",
+      text: "Thực hiện đề tài, bài viết gắn lý luận với thực tiễn bảo vệ an ninh quốc gia. Khoa tổ chức các sân chơi học thuật, trong đó có Cuộc thi học tập song ngữ “Đường đến triết học”.",
+    },
+    {
+      title: "Giáo dục chính trị tư tưởng",
+      text: "Bồi dưỡng bản lĩnh chính trị và phẩm chất của người cán bộ Công an nhân dân. Khoa rèn luyện cho học viên kỹ năng phản bác quan điểm sai trái, thù địch bằng lý luận, văn kiện và dẫn chứng thực tiễn.",
+    },
   ],
   photoCaption: "Tập thể cán bộ, giảng viên trong khuôn viên Học viện",
-  subjectsLabel: "môn lý luận chính trị do Khoa đảm nhiệm",
+  // SUBJECTS gồm cả Tâm lý học (khoa học xã hội nhân văn), nên không gọi chung là "môn lý luận chính trị".
+  subjectsLabel: "môn học trong lộ trình của TheoryOJ",
   // Số môn lấy từ config/subjects.ts. Các ô còn lại Khoa điền, ví dụ "40+"; ô để trống không hiển thị.
   stats: [
     { value: "", label: "Giảng viên" },

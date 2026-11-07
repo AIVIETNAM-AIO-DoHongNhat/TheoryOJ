@@ -20,9 +20,26 @@ export const users = pgTable("users", {
   visitorId: text("visitor_id").notNull().unique(),
   /** `giang-vien` vào được trang quản trị /quan-tri. */
   role: text("role", { enum: ["hoc-vien", "giang-vien"] }).notNull().default("hoc-vien"),
+  /** Môn giảng viên phụ trách (mã trong config/subjects.ts): chỉ chấm bài tự luận, phản bác của các môn này. */
+  subjects: text("subjects").array().notNull().default([]),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
 });
+
+/**
+ * Danh sách học viên do giảng viên nhập ở /quan-tri/danh-sach (features/roster). Chỉ mã có ở đây mới đăng ký được;
+ * họ tên, lớp của tài khoản lấy theo danh sách, nên học viên không mạo danh mã người khác hay tự đổi lớp để vào đề lớp khác.
+ */
+export const studentRoster = pgTable("student_roster", {
+  /** Mã học viên, viết hoa như `users.student_code`. */
+  studentCode: text("student_code").primaryKey(),
+  fullName: text("full_name").notNull(),
+  /** Đã chuẩn hóa bằng `normalizeClassName` (features/roster/normalize.ts). */
+  className: text("class_name").notNull(),
+  updatedBy: text("updated_by").references(() => users.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [index("student_roster_class_idx").on(t.className)]);
 
 /** Phiên đăng nhập. Chỉ lưu SHA-256 của mã phiên, mã gốc nằm trong cookie httpOnly. */
 export const sessions = pgTable("sessions", {
@@ -264,10 +281,28 @@ export const quizQuestions = pgTable("quiz_questions", {
   /** Trang in của giáo trình. */
   page: integer("page"),
   hidden: boolean("hidden").notNull().default(false),
+  /** Chỉ dùng cho đề thi: không hiện ở trắc nghiệm ôn tập, để học viên không biết trước câu và đáp án của đề. */
+  examOnly: boolean("exam_only").notNull().default(false),
   updatedBy: text("updated_by").references(() => users.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [uniqueIndex("quiz_questions_code_idx").on(t.subject, t.chapter, t.code)]);
+
+/**
+ * Một đề trắc nghiệm ôn tập đã rút cho học viên (features/quiz). Máy chủ chỉ chấm đúng các câu của đề, mỗi đề nộp một lần,
+ * để không ai nộp riêng vài câu đã biết đáp án lấy điểm tuyệt đối. Ôn lại câu sai chỉ nhận các câu sai của đề (`wrong_ids`).
+ */
+export const quizDraws = pgTable("quiz_draws", {
+  id: text("id").primaryKey(),
+  visitorId: text("visitor_id").notNull(),
+  subject: text("subject").notNull(),
+  chapter: integer("chapter").notNull(),
+  questionIds: text("question_ids").array().notNull(),
+  /** Câu sai hoặc bỏ trống khi nộp; null nếu chưa nộp. */
+  wrongIds: text("wrong_ids").array(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  submittedAt: timestamp("submitted_at", { withTimezone: true }),
+}, (t) => [index("quiz_draws_visitor_idx").on(t.visitorId, t.createdAt)]);
 
 /** Giảng viên đánh dấu đã duyệt (hoặc bỏ duyệt) bộ câu của một chương. Có dòng thì thay `status` trong file. */
 export const quizChapterReviews = pgTable("quiz_chapter_reviews", {
@@ -331,9 +366,9 @@ export const examAttempts = pgTable("exam_attempts", {
 ]);
 
 /**
- * Một lượt chấm câu hỏi mở (features/open-answer): tự luận theo barem, phản bác luận điệu sai trái, hoặc câu hỏi vặn
- * sau một lượt chấm. Barem chụp nguyên vào `rubric` lúc chấm, để sửa ngân hàng sau đó không đổi bài đã chấm.
- * Điểm do code tính từ mức đạt của từng ý; giảng viên có thể chấm lại (`lecturer_score`) để đo độ đồng thuận.
+ * Một bài tự luận hoặc bài phản bác học viên nộp (features/open-answer). Giảng viên phụ trách môn chấm từng ý theo barem;
+ * không dùng AI. Barem chụp nguyên vào `rubric` lúc nộp, để sửa ngân hàng sau đó không đổi bài đang chờ hay đã chấm.
+ * Chưa chấm: `graded_at` null, `score`, `result` null. Học viên sửa được bài trong lúc chờ (cập nhật `submitted_at`).
  */
 export const openAnswerAttempts = pgTable("open_answer_attempts", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
@@ -341,29 +376,24 @@ export const openAnswerAttempts = pgTable("open_answer_attempts", {
   userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
   subject: text("subject").notNull(),
   chapter: integer("chapter").notNull(),
-  kind: text("kind", { enum: ["tu_luan", "phan_bac", "hoi_vat"] }).notNull(),
-  /** Mã câu tự luận (tl3-01), mã luận điệu (pb5-01), hoặc mã ý barem với lượt hỏi vặn. */
+  kind: text("kind", { enum: ["tu_luan", "phan_bac"] }).notNull(),
+  /** Mã câu tự luận (tl3-01) hoặc mã luận điệu (pb5-01). */
   itemId: text("item_id").notNull(),
-  /** Lượt gốc của câu hỏi vặn. */
-  parentId: integer("parent_id"),
   answer: text("answer").notNull(),
   /** `GradedRubric` ở features/open-answer/types.ts. */
   rubric: jsonb("rubric").notNull(),
-  /** `GradeResult` ở features/open-answer/types.ts. */
-  result: jsonb("result").notNull(),
-  citations: jsonb("citations").notNull().default([]),
-  score: real("score").notNull(),
+  /** `GradeResult` do giảng viên chấm; null khi chưa chấm. */
+  result: jsonb("result"),
+  /** Tổng điểm do code tính từ mức đạt từng ý giảng viên chọn; null khi chưa chấm. */
+  score: real("score"),
   maxScore: real("max_score").notNull(),
-  /** Lập trường sai hoặc dao động, chèn lệnh: giảng viên cần xem. */
+  /** Bài phản bác giảng viên đánh giá lập trường sai hoặc dao động: cần trao đổi riêng với học viên. */
   flagged: boolean("flagged").notNull().default(false),
-  model: text("model"),
-  latencyMs: integer("latency_ms"),
-  lecturerScore: real("lecturer_score"),
-  lecturerNote: text("lecturer_note"),
-  reviewedBy: text("reviewed_by").references(() => users.id, { onDelete: "set null" }),
-  reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+  gradedBy: text("graded_by").references(() => users.id, { onDelete: "set null" }),
+  gradedAt: timestamp("graded_at", { withTimezone: true }),
+  submittedAt: timestamp("submitted_at", { withTimezone: true }).notNull().defaultNow(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
   index("open_answer_visitor_idx").on(t.visitorId, t.subject, t.chapter),
-  index("open_answer_review_idx").on(t.kind, t.createdAt),
+  index("open_answer_queue_idx").on(t.subject, t.gradedAt, t.submittedAt),
 ]);

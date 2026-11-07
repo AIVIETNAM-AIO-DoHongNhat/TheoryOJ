@@ -82,10 +82,13 @@ function ChatWindow(props: ChatWindowProps) {
   const [input, setInput] = useState(props.initialQuestion);
   // Tin nhắn tải lại từ lịch sử đứng yên; chỉ tin gửi trong phiên này mới có hiệu ứng trồi lên.
   const [initialCount] = useState(props.conversation?.messages.length ?? 0);
+  const [transport] = useState(() => new DefaultChatTransport<ChatMessage>({ api: "/api/chat" }));
   const { id, messages, sendMessage, regenerate, status, stop, error } = useChat<ChatMessage>({
     id: props.conversation?.id,
     messages: props.conversation?.messages,
-    transport: new DefaultChatTransport({ api: "/api/chat" }),
+    transport,
+    // Gom các mẩu chữ stream về mỗi 50 ms một lần dựng lại, thay vì dựng lại sau từng token.
+    throttle: 50,
   });
   const busy = status === "submitted" || status === "streaming";
   const body = { subject: subjectId, mode, chapters };

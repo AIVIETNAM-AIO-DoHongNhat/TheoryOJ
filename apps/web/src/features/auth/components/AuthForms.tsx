@@ -278,7 +278,11 @@ export function LoginForm() {
   );
 }
 
-export function RegisterForm() {
+/**
+ * `open`: đăng ký tự do (REGISTRATION_OPEN), học viên tự khai họ tên, lớp. Mặc định đăng ký theo danh sách học viên
+ * giảng viên đã nhập, họ tên và lớp lấy từ danh sách nên form chỉ hỏi mã và mật khẩu.
+ */
+export function RegisterForm({ open = false }: { open?: boolean }) {
   const next = useNextParam();
   const [state, action, pending] = useActionState(registerWithWelcome, empty);
   return (
@@ -294,13 +298,19 @@ export function RegisterForm() {
         autoComplete="username"
         autoCapitalize="characters"
         required
-        description="Dùng để đăng nhập, không đổi được sau khi đăng ký."
+        description={
+          open
+            ? "Dùng để đăng nhập, không đổi được sau khi đăng ký."
+            : "Mã trong danh sách lớp giảng viên đã nhập. Họ tên và lớp được lấy theo danh sách."
+        }
         className="animate-rise anim-delay-80"
       />
-      <div className="animate-rise anim-delay-120 grid gap-5 sm:grid-cols-[1.5fr_1fr]">
-        <GlassField name="fullName" label="Họ và tên" icon={UserRound} state={state} placeholder="Nguyễn Văn A" autoComplete="name" required />
-        <GlassField name="className" label="Lớp" icon={Users} state={state} placeholder="B2K60" required />
-      </div>
+      {open && (
+        <div className="animate-rise anim-delay-120 grid gap-5 sm:grid-cols-[1.5fr_1fr]">
+          <GlassField name="fullName" label="Họ và tên" icon={UserRound} state={state} placeholder="Nguyễn Văn A" autoComplete="name" required />
+          <GlassField name="className" label="Lớp" icon={Users} state={state} placeholder="B2K60" required />
+        </div>
+      )}
       <GlassField
         name="password"
         label="Mật khẩu"
@@ -334,14 +344,21 @@ export function RegisterForm() {
   );
 }
 
+/** Học viên sửa được họ tên; lớp chỉ hiện để xem, do giảng viên quản lý qua danh sách học viên. */
 export function ProfileForm({ fullName, className }: { fullName: string; className: string }) {
-  const [state, action, pending] = useActionState(saveProfile, { values: { fullName, className } });
+  const [state, action, pending] = useActionState(saveProfile, { values: { fullName } });
   return (
     <form action={action} className="flex flex-col gap-5">
       <FormMessage state={state} />
       <FieldGroup>
         <TextField name="fullName" label="Họ và tên" state={state} autoComplete="name" required />
-        <TextField name="className" label="Lớp" state={state} required />
+        <Field>
+          <FieldLabel htmlFor="tk-className">Lớp</FieldLabel>
+          <InputGroup className="h-11 bg-muted/40">
+            <InputGroupInput id="tk-className" value={className} readOnly aria-readonly className="text-[15px]" />
+          </InputGroup>
+          <FieldDescription>Lớp theo danh sách của giảng viên. Nếu sai lớp, đồng chí báo giảng viên sửa.</FieldDescription>
+        </Field>
       </FieldGroup>
       <div>
         <SubmitButton pending={pending}>Lưu thông tin</SubmitButton>

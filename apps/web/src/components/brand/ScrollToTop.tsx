@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowUp } from "lucide-react";
-import { type RefObject, useEffect, useState } from "react";
+import { type RefObject, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -16,7 +16,8 @@ const CIRCUMFERENCE = 2 * Math.PI * R;
  * truyền `target` để theo một vùng cuộn riêng, như vùng nội dung của trang quản trị.
  */
 export function ScrollToTop({ target }: { target?: RefObject<HTMLElement | null> }) {
-  const [progress, setProgress] = useState(0);
+  // Tiến độ cuộn ghi thẳng vào vòng tròn qua ref, không qua state: cuộn trang không làm React dựng lại mỗi khung hình.
+  const ring = useRef<SVGCircleElement>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -27,7 +28,9 @@ export function ScrollToTop({ target }: { target?: RefObject<HTMLElement | null>
       frame = 0;
       const top = el ? el.scrollTop : window.scrollY;
       const max = el ? el.scrollHeight - el.clientHeight : document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(max > 0 ? Math.min(1, top / max) : 0);
+      const progress = max > 0 ? Math.min(1, top / max) : 0;
+      ring.current?.setAttribute("stroke-dashoffset", String(CIRCUMFERENCE * (1 - progress)));
+      // Cùng giá trị thì React bỏ qua, nên chỉ dựng lại khi nút chuyển giữa ẩn và hiện.
       setVisible(top > SHOW_AFTER);
     };
     const onScroll = () => {
@@ -69,6 +72,7 @@ export function ScrollToTop({ target }: { target?: RefObject<HTMLElement | null>
           <svg viewBox="0 0 48 48" className="absolute inset-0 size-full -rotate-90" aria-hidden>
             <circle cx="24" cy="24" r={R} fill="none" stroke="var(--primary-tint)" strokeWidth="2.5" />
             <circle
+              ref={ring}
               cx="24"
               cy="24"
               r={R}
@@ -77,7 +81,7 @@ export function ScrollToTop({ target }: { target?: RefObject<HTMLElement | null>
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeDasharray={CIRCUMFERENCE}
-              strokeDashoffset={CIRCUMFERENCE * (1 - progress)}
+              strokeDashoffset={CIRCUMFERENCE}
             />
           </svg>
           <ArrowUp data-icon="inline-start" className="text-primary" />

@@ -14,9 +14,13 @@ export const ACTIVITY_LABELS: Record<ReviewActivity, string> = {
   "tu-luan": "Tự luận",
 };
 
-/** Đấu trường phản bác của môn, hoặc một luận điệu trong đó. */
-export function rebuttalHref(subject: string, id?: string) {
-  return id ? `/on-tap/${subject}/phan-bac/${id}` : `/on-tap/${subject}/phan-bac`;
+/**
+ * Đấu trường phản bác: mục riêng trên menu (không thuộc Ôn tập), gom luận điệu của mọi môn.
+ * Không truyền gì: trang Đấu trường; chỉ môn: phần của môn đó; môn và mã: một luận điệu.
+ */
+export function rebuttalHref(subject?: string, id?: string) {
+  if (subject && id) return `/phan-bac/${subject}/${id}`;
+  return subject ? `/phan-bac#mon-${subject}` : "/phan-bac";
 }
 
 /** Trang ôn của môn, một chương trong trang đó, hoặc một hoạt động luyện của chương. */

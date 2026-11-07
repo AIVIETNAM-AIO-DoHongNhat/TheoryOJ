@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  BookOpen, Check, CircleCheck, EllipsisVertical, Eye, EyeOff, FilePlus2, History, Pencil, Search, SearchX, Trash2, X,
+  BookOpen, Check, CircleCheck, ClipboardList, EllipsisVertical, Eye, EyeOff, FilePlus2, History, Pencil, Search, SearchX, Trash2, X,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
@@ -21,8 +21,8 @@ import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
 
-import { deleteQuestion, restoreQuestion, setChapterReviewed, setQuestionHidden } from "../actions";
-import { LETTERS } from "../schema";
+import { deleteQuestion, restoreQuestion, setChapterReviewed, setQuestionExamOnly, setQuestionHidden } from "../actions";
+import { LETTERS } from "../letters";
 import { type AdminQuestion, SOURCE_LABELS } from "../types";
 import { ImportDialog } from "./ImportDialog";
 import { QuestionEditor } from "./QuestionEditor";
@@ -184,6 +184,12 @@ export function QuestionManager({
                       Đang ẩn
                     </Badge>
                   )}
+                  {x.examOnly && (
+                    <Badge variant="outline" className="border-primary/40 text-primary" title="Không hiện ở trắc nghiệm ôn tập của học viên">
+                      <ClipboardList />
+                      Chỉ dùng cho đề thi
+                    </Badge>
+                  )}
                   {x.page && (
                     <span className="inline-flex items-center gap-1">
                       <BookOpen className="size-3" />
@@ -237,6 +243,15 @@ export function QuestionManager({
                       >
                         {x.hidden ? <Eye /> : <EyeOff />}
                         {x.hidden ? "Hiện lại" : "Ẩn khỏi học viên"}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          run(`de-thi:${x.code}`, () => setQuestionExamOnly({ subject, chapter, code: x.code, examOnly: !x.examOnly }),
+                            x.examOnly ? "Câu đã dùng lại được cho ôn tập." : "Câu chỉ còn dùng cho đề thi, học viên không thấy khi ôn tập.")
+                        }
+                      >
+                        <ClipboardList />
+                        {x.examOnly ? "Cho dùng ở ôn tập" : "Chỉ dùng cho đề thi"}
                       </DropdownMenuItem>
                       {x.source === "da-sua" && (
                         <DropdownMenuItem onClick={() => setConfirm({ kind: "khoi-phuc", question: x })}>

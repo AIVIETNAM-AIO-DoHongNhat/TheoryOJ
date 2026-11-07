@@ -3,6 +3,16 @@ import "server-only";
 import { sql } from "drizzle-orm";
 
 import { db } from "@/lib/db";
+import { env } from "@/lib/env";
+
+/** Cửa sổ dài nhất đang dùng là một ngày; dòng cũ hơn hai ngày không còn tác dụng. */
+const STALE = "2 days";
+
+/** Khoảng 1% lần gọi thì xóa các dòng đếm đã hết hạn, để bảng không phình mãi theo mỗi IP, mỗi mã khách từng ghé. */
+async function pruneSometimes() {
+  if (Math.random() >= 0.01) return;
+  await db.execute(sql`delete from chat_rate_limits where window_start < now() - ${STALE}::interval`);
+}
 
 export interface RateRule {
   key: string;
@@ -30,13 +40,17 @@ export async function hitRateLimits(rules: RateRule[]): Promise<number> {
     const row = rows[0];
     if (row && row.count > r.max) wait = Math.max(wait, row.reset_in);
   }
+  await pruneSometimes();
   return wait;
 }
 
 /**
  * IP của người dùng. Caddy là proxy duy nhất và ghi IP thật vào cuối X-Forwarded-For, nên lấy phần tử cuối:
  * phần tử đầu do trình duyệt tự gửi được, dùng nó thì ai cũng đổi IP để lách giới hạn. Khi phát triển dùng "local".
+ * Chạy sau một lớp proxy khác (Cloudflare Tunnel) thì phần tử cuối là IP của proxy đó, cả trường chung một IP;
+ * khi đó đặt TRUSTED_IP_HEADER (ví dụ cf-connecting-ip) để đọc IP thật từ header proxy ấy ghi.
  */
 export function clientIp(headers: Headers): string {
-  return headers.get("x-forwarded-for")?.split(",").at(-1)?.trim() || headers.get("x-real-ip") || "local";
+  const trusted = env.TRUSTED_IP_HEADER ? headers.get(env.TRUSTED_IP_HEADER)?.trim() : undefined;
+  return trusted || headers.get("x-forwarded-for")?.split(",").at(-1)?.trim() || headers.get("x-real-ip") || "local";
 }
